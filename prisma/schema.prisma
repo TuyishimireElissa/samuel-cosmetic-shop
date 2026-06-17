@@ -1,0 +1,280 @@
+// Samuel Cosmetic Shop - Prisma Schema
+// Kigali, Rwanda | RWF currency | RRA-compliant EBM VAT (18%)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ACCOUNTS
+// ============================================================
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  email        String    @default("samuelcosmeticshop@gmail.com")
+  fullName     String    @default("Administrator")
+  avatar       String?
+  isActive     Boolean   @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("admin_users")
+}
+
+model StaffAccount {
+  id           String   @id @default(cuid())
+  name         String
+  username     String   @unique
+  passwordHash String
+  role         String   @default("viewer") // sales | inventory | viewer | custom
+  permissions  String   @default("[]") // JSON array of permission strings
+  isActive     Boolean  @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("staff_accounts")
+}
+
+// ============================================================
+// CATALOG
+// ============================================================
+
+model Category {
+  id        String    @id
+  nameEn    String
+  nameFr    String
+  nameRw    String
+  emoji     String
+  slug      String    @unique
+  isActive  Boolean   @default(true)
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id            String   @id
+  nameEn        String
+  nameFr        String
+  nameRw        String
+  descEn        String
+  descFr        String
+  descRw        String
+  categoryId    String
+  emoji         String
+  sku           String   @unique
+
+  // RRA-compliant pricing
+  costPrice     Float   @default(0) // HT - what shop paid supplier
+  sellingPrice  Float   // TTC - what customer pays (includes 18% VAT)
+  wholesalePrice Float  @default(0)
+
+  // Inventory
+  moq               Int  @default(1)
+  stockQty          Int  @default(0)
+  lowStockThreshold Int  @default(5)
+
+  // Display
+  badge        String   @default("") // bestseller | new | hot | popular | ""
+  isActive     Boolean  @default(true)
+
+  // Stats
+  ratingAvg    Float    @default(0)
+  ratingCount  Int      @default(0)
+  salesCount   Int      @default(0)
+  viewCount    Int      @default(0)
+
+  // Wholesale tier discounts (%)
+  tier1Discount Float   @default(2)
+  tier2Discount Float   @default(3)
+  tier3Discount Float   @default(5)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  category Category       @relation(fields: [categoryId], references: [id])
+  images   ProductImage[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([sellingPrice])
+  @@index([stockQty])
+  @@map("products")
+}
+
+model ProductImage {
+  id           String   @id @default(cuid())
+  productId    String
+  url          String
+  altText      String   @default("")
+  isPrimary    Boolean  @default(false)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+// ============================================================
+// CUSTOMERS & ORDERS
+// ============================================================
+
+model Customer {
+  id            String   @id @default(cuid())
+  name          String
+  phone         String   @unique
+  email         String   @default("")
+  district      String   @default("")
+  loyaltyPoints Int      @default(0)
+  totalSpent    Float    @default(0)
+  totalOrders   Int      @default(0)
+  tier          String   @default("bronze") // bronze | silver | gold | platinum
+  isActive      Boolean  @default(true)
+  lastOrderAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orders Order[]
+
+  @@map("customers")
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  orderNumber   String   @unique // SC-YYYYMMDD-XXX
+  customerId    String?
+  customerName  String
+  customerPhone String
+  customerEmail String   @default("")
+  district      String
+  address       String   @default("")
+
+  // Totals (all in RWF)
+  subtotalHT    Float    @default(0) // sum of item HT
+  vatAmount     Float    @default(0) // 18% on HT
+  deliveryFee   Float    @default(0)
+  discount      Float    @default(0)
+  totalTTC      Float    @default(0) // final paid
+
+  // Payment
+  paymentMethod String   @default("whatsapp") // whatsapp | momo | airtel | cash
+  paymentStatus String   @default("pending") // pending | paid | failed | refunded
+  paymentRef    String?
+
+  // Order state
+  status        String   @default("pending") // pending | confirmed | processing | shipped | delivered | cancelled
+  notes         String   @default("")
+
+  // EBM
+  mrcCode       String?  // EBM receipt MRC code
+  receiptNumber String?  // EBM receipt number
+
+  itemsJson     String   @default("[]") // snapshot of items (JSON)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  customer Customer? @relation(fields: [customerId], references: [id])
+
+  @@index([customerPhone])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+// ============================================================
+// DELIVERY & PROMOTIONS
+// ============================================================
+
+model DeliveryZone {
+  id          String   @id @default(cuid())
+  name        String
+  nameEn      String
+  nameFr      String
+  nameRw      String
+  district    String
+  fee         Float    @default(2000)
+  etaHours    Int      @default(24)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("delivery_zones")
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  type        String   @default("percent") // percent | fixed
+  value       Float    @default(0)
+  minOrder    Float    @default(0)
+  maxUses     Int      @default(0) // 0 = unlimited
+  usesCount   Int      @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean  @default(true)
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("coupons")
+}
+
+// ============================================================
+// ANALYTICS & MESSAGES
+// ============================================================
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String   @default("")
+  userAgent String   @default("")
+  ip        String   @default("")
+  createdAt DateTime @default(now())
+
+  @@map("page_views")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String   @default("")
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+model SiteSetting {
+  id            String   @id @default("singleton")
+  shopName      String   @default("Samuel Cosmetic Shop")
+  shopTaglineEn String   @default("Beauty for Every Rwandan")
+  shopTaglineFr String   @default("Beauté pour chaque rwandais")
+  shopTaglineRw String   @default("Ubwiza ku buri Munyarwanda")
+  logoEmoji     String   @default("✿")
+  whatsappNumber String  @default("250790215965")
+  email         String   @default("samuelcosmeticshop@gmail.com")
+  address       String   @default("Kigali, Rwanda")
+  tin           String   @default("102345678")
+  sdcId         String   @default("SCS-EBM-001")
+  vatRate       Float    @default(18)
+  primaryColor  String   @default("#e75480")
+  openingHours  String   @default("Mon-Sat: 8AM - 8PM")
+  updatedAt     DateTime @updatedAt
+
+  @@map("site_settings")
+}

@@ -1,0 +1,2002 @@
+     1→╔══════════════════════════════════════════════════════════════════════════════════╗
+     2→║   SAMUEL COSMETIC SHOP — FULL STACK PLATFORM v7.0 FINAL                        ║
+     3→║   FRONTEND: HTML5 + CSS3 + Vanilla JavaScript (Zero Frameworks)                ║
+     4→║   BACKEND:  Python Django 5.0 + DRF + PostgreSQL + Redis + Celery              ║
+     5→║   ALL 18 BUGS FIXED + 15 EXTRA IMPROVEMENTS + PRODUCTION READY                ║
+     6→╚══════════════════════════════════════════════════════════════════════════════════╝
+     7→
+     8→You are a SENIOR FULL-STACK ENGINEER with 15+ years of experience.
+     9→Build a COMPLETE, ERROR-FREE, PRODUCTION-READY full-stack e-commerce
+    10→platform for Samuel Cosmetic Shop in Kigali, Rwanda.
+    11→
+    12→━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    13→ABSOLUTE RULES — NEVER BREAK THESE:
+    14→━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    15→① Build ONE file at a time — never two files in one response
+    16→② Every file must be 100% complete — zero placeholders
+    17→③ After EVERY file stop and show the checkpoint box
+    18→④ Wait for "next" before building the next file
+    19→⑤ Never write: # TODO / # add later / # similar to above
+    20→⑥ Never truncate with: # ... rest of code / etc.
+    21→⑦ If a file is too long → split into Part 1 / Part 2 / Part 3
+    22→⑧ Tell me to combine parts after last part is done
+    23→⑨ Every Django view must have try/except + proper JSON response
+    24→⑩ Every API response must follow standard format
+    25→⑪ Every frontend fetch() must handle loading + success + error
+    26→⑫ All passwords hashed with Django make_password / check_password
+    27→⑬ Default language is KINYARWANDA (rw) not English
+    28→⑭ All prices show in RWF with toLocaleString() formatting
+    29→⑮ Event delegation for ALL dynamic content click handlers
+    30→⑯ Every modal closes on ESC key and backdrop click
+    31→⑰ All forms have inline validation + aria attributes
+    32→⑱ Mobile first — all features work on 360px screens
+    33→
+    34→═══════════════════════════════════════════════════════════════════════════════════
+    35→SECTION 1: COMPLETE TECHNOLOGY STACK
+    36→═══════════════════════════════════════════════════════════════════════════════════
+    37→
+    38→╔══════════════════════════════════════════════════════════════════╗
+    39→║  FRONTEND — Browser Layer                                        ║
+    40→╠══════════════════════════════════════════════════════════════════╣
+    41→║  ✅ HTML5           semantic + ARIA + Schema.org + Open Graph    ║
+    42→║  ✅ CSS3            custom properties + grid + flexbox + anim    ║
+    43→║  ✅ Vanilla JS      ES6+ fetch API + async/await + modules       ║
+    44→║  ✅ Swiper.js       touch sliders (featured + testimonials)      ║
+    45→║  ✅ AOS.js          scroll reveal animations                     ║
+    46→║  ✅ GLightbox       full product image gallery + zoom            ║
+    47→║  ✅ Notyf           toast notifications (5 types)                ║
+    48→║  ✅ CountUp.js      animated number counters                     ║
+    49→║  ✅ Chart.js        admin analytics charts                       ║
+    50→║  ✅ jsPDF           client-side PDF generation                   ║
+    51→║  ✅ html2canvas     PDF screenshots                              ║
+    52→║  ✅ Cleave.js       phone number formatting                      ║
+    53→║  ✅ Fuse.js         fuzzy search + did you mean                  ║
+    54→║  ✅ QRCode.js       QR code generation                           ║
+    55→║  ✅ Lottie Player   empty state animations                       ║
+    56→║  ✅ Google Fonts    Playfair Display + Poppins (CDN)             ║
+    57→╠══════════════════════════════════════════════════════════════════╣
+    58→║  BACKEND — Server Layer                                          ║
+    59→╠══════════════════════════════════════════════════════════════════╣
+    60→║  ✅ Python 3.11+                                                 ║
+    61→║  ✅ Django 5.0              main framework                       ║
+    62→║  ✅ Django REST Framework   API endpoints                        ║
+    63→║  ✅ Simple JWT              secure token authentication          ║
+    64→║  ✅ Django CORS Headers     frontend-backend communication       ║
+    65→║  ✅ Django Filter           advanced API filtering               ║
+    66→║  ✅ Django Axes             brute force login protection         ║
+    67→║  ✅ Django Ratelimit        rate limiting per IP                 ║
+    68→║  ✅ PostgreSQL              production database                  ║
+    69→║  ✅ SQLite                  development database                 ║
+    70→║  ✅ Redis                   caching + sessions + Celery          ║
+    71→║  ✅ Celery                  background async tasks               ║
+    72→║  ✅ Cloudinary              product image storage + CDN          ║
+    73→║  ✅ Pillow                  image processing + compression       ║
+    74→║  ✅ ReportLab               professional PDF generation          ║
+    75→║  ✅ WeasyPrint              HTML to PDF conversion               ║
+    76→║  ✅ OpenPyXL                Excel report generation              ║
+    77→║  ✅ Twilio                  WhatsApp Business API                ║
+    78→║  ✅ Django Anymail          email (Gmail/Mailgun/SendGrid)       ║
+    79→║  ✅ Requests                MTN MoMo API + Airtel API calls      ║
+    80→║  ✅ WhiteNoise              serve frontend static files          ║
+    81→║  ✅ Gunicorn                production WSGI server               ║
+    82→║  ✅ python-decouple         environment variables                ║
+    83→╠══════════════════════════════════════════════════════════════════╣
+    84→║  NOT ALLOWED                                                     ║
+    85→╠══════════════════════════════════════════════════════════════════╣
+    86→║  ❌ React / Vue / Angular / Svelte                               ║
+    87→║  ❌ Bootstrap / Tailwind / any CSS framework                     ║
+    88→║  ❌ jQuery                                                       ║
+    89→║  ❌ Flask / FastAPI (use Django)                                 ║
+    90→║  ❌ MongoDB (use PostgreSQL)                                     ║
+    91→║  ❌ npm / webpack for frontend (CDN links only)                  ║
+    92→╚══════════════════════════════════════════════════════════════════╝
+    93→
+    94→═══════════════════════════════════════════════════════════════════════════════════
+    95→SECTION 2: BUSINESS INFORMATION
+    96→═══════════════════════════════════════════════════════════════════════════════════
+    97→
+    98→Business Name:      Samuel Cosmetic Shop
+    99→Location:           Kigali, Rwanda
+   100→WhatsApp:           +250 790 215 965
+   101→WhatsApp Link:      https://wa.me/250790215965
+   102→Email:              samuelcosmeticshop@gmail.com
+   103→Admin Username:     admin
+   104→Admin Password:     admin123 (stored as Django make_password hash)
+   105→Currency:           RWF (Rwandan Franc)
+   106→VAT Rate:           18% (RRA standard — on selling price TTC)
+   107→TIN:                102345678
+   108→SDC ID:             SCS-EBM-001
+   109→
+   110→Default Language:   Kinyarwanda (rw) ← IMPORTANT
+   111→Languages:
+   112→  → Kinyarwanda (default) — code: rw — flag: 🇷🇼
+   113→  → English               — code: en — flag: 🇬🇧
+   114→  → Français              — code: fr — flag: 🇫🇷
+   115→  → Auto-detect browser language on first visit
+   116→  → If browser not rw/fr → default to rw
+   117→  → Save to localStorage "sc_language"
+   118→
+   119→Design Colors:
+   120→  Primary Pink:    #e75480   Dark Pink:     #c9406a
+   121→  Light Pink:      #fef0f5   Pale Pink:     #fdf5f8
+   122→  Mid Pink:        #f8d7e3   Purple:        #8b5cf6
+   123→  Dark Purple:     #6d28d9   Light Purple:  #f5f3ff
+   124→  Success:         #22c55e   Warning:       #f59e0b
+   125→  Error:           #ef4444   Info:          #3b82f6
+   126→  Dark:            #171717   White:         #ffffff
+   127→  Flash Red:       #ff4757   Flash Dark:    #c0392b
+   128→  MoMo Yellow:     #ffcc00   MoMo Dark:     #f5a623
+   129→  WhatsApp Green:  #25D366   WA Dark:       #128C7E
+   130→
+   131→Tier Colors:
+   132→  Bronze:   #cd7f32
+   133→  Silver:   #71717a
+   134→  Gold:     #d97706
+   135→  Platinum: #7c3aed
+   136→
+   137→Fonts:
+   138→  Headings: Playfair Display (400, 700, 900, italic)
+   139→  Body:     Poppins (300, 400, 500, 600, 700)
+   140→
+   141→WhatsApp SVG Icon (official — use everywhere):
+   142→<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+   143→  <path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867
+   144→  -2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164
+   145→  -.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883
+   146→  -.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133
+   147→  .298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025
+   148→  -.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51
+   149→  -.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04
+   150→  1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096
+   151→  3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195
+   152→  1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289
+   153→  .173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0
+   154→  12c0 2.136.563 4.14 1.535 5.875L.057 24l6.305-1.654A11.954
+   155→  11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0
+   156→  21.818a9.818 9.818 0 01-5.017-1.374l-.36-.214-3.737.979.999
+   157→  -3.648-.235-.374A9.818 9.818 0 1112 21.818z"/>
+   158→</svg>
+   159→
+   160→═══════════════════════════════════════════════════════════════════════════════════
+   161→SECTION 3: ALL 18 BUGS FIXED + 15 EXTRA IMPROVEMENTS
+   162→═══════════════════════════════════════════════════════════════════════════════════
+   163→
+   164→── BUG FIX 1: EBM VAT — RRA COMPLIANT ─────────────────────────────────────────
+   165→
+   166→RRA CORRECT VAT CALCULATION:
+   167→  Every product has TWO prices:
+   168→    cost_price:      What you paid supplier (buying price)
+   169→    selling_price:   What customer pays (TTC — includes VAT)
+   170→
+   171→  From selling_price (TTC), calculate:
+   172→    selling_price_ht  = selling_price × (100/118)   [excl. VAT]
+   173→    vat_collected     = selling_price × (18/118)    [VAT collected]
+   174→    gross_profit_ht   = selling_price_ht - cost_price
+   175→    profit_margin_pct = (gross_profit_ht / selling_price_ht) × 100
+   176→
+   177→  EBM Receipt must show:
+   178→    Désignation | Qté | PU HT | Montant HT | TVA 18% | Montant TTC
+   179→
+   180→  Monthly VAT Declaration (RRA):
+   181→    TVA Collectée  = Sum of all vat_collected from sales
+   182→    TVA Déductible = Sum of all VAT paid to VAT-registered suppliers
+   183→    TVA Nette à Payer = TVA Collectée - TVA Déductible
+   184→
+   185→  Admin Product Form shows:
+   186→    [Cost Price HT] ← what you paid (buying price, excl. VAT)
+   187→    [Selling Price TTC] ← what customer pays (incl. VAT)
+   188→    Auto-displays: Selling HT / VAT Amount / Gross Profit / Margin %
+   189→
+   190→  Admin VAT Report:
+   191→    Monthly summary table for RRA filing
+   192→    Export as CSV formatted for RRA submission
+   193→    Columns: Date | Receipt# | Customer | HT | TVA | TTC | MRC
+   194→
+   195→── BUG FIX 2: REAL PRODUCT PHOTO UPLOAD ────────────────────────────────────────
+   196→
+   197→  v7.0 (Django backend):
+   198→    → Admin uploads image → Cloudinary → URL stored in DB
+   199→    → Frontend shows <img src="cloudinary_url">
+   200→    → Multiple images per product (gallery)
+   201→    → Auto-compress to max 800px width before upload
+   202→    → Show upload progress bar
+   203→    → Drag and drop support in admin
+   204→    → GLightbox opens on click (full gallery)
+   205→
+   206→  Product card fallback hierarchy:
+   207→    1. First Cloudinary image → <img src="url" alt="name">
+   208→    2. No image → show emoji in styled circle (60px)
+   209→    3. Image load error → fallback to emoji
+   210→
+   211→  Image upload in admin:
+   212→    → Drag & drop zone with dashed border
+   213→    → Click to browse files
+   214→    → Preview thumbnails with remove button
+   215→    → Max 5 images per product
+   216→    → Max file size: 5MB per image
+   217→    → Accepted: JPG, PNG, WEBP
+   218→    → Progress bar during upload
+   219→    → Reorder images by drag
+   220→
+   221→── BUG FIX 3: STAFF LOGIN TO ADMIN ─────────────────────────────────────────────
+   222→
+   223→  Login page checks in order:
+   224→    1. Admin credentials (full access)
+   225→    2. Staff accounts (permission-based access)
+   226→
+   227→  After staff login:
+   228→    → Sidebar shows ONLY permitted pages
+   229→    → Header shows: "👤 {name} ({role})" badge
+   230→    → Restricted pages show "Access Denied" message
+   231→    → All actions logged to audit_log with staff_id
+   232→
+   233→  Staff permission system:
+   234→    view_dashboard        → can see dashboard
+   235→    view_orders           → can see orders list
+   236→    update_order_status   → can change order status
+   237→    notify_customer       → can send WhatsApp notifications
+   238→    view_products         → can see products
+   239→    manage_products       → can add/edit/delete products
+   240→    manage_stock          → can adjust stock quantities
+   241→    view_customers        → can see customers
+   242→    manage_customers      → can edit customer data
+   243→    adjust_points         → can change loyalty points
+   244→    view_analytics        → can see analytics
+   245→    view_wholesale        → can see wholesale section
+   246→    manage_bookings       → can manage bookings
+   247→    view_messages         → can see contact messages
+   248→    export_data           → can download CSV/PDF reports
+   249→    manage_reviews        → can approve/reject reviews
+   250→
+   251→── BUG FIX 4: BULK BUYER ADD TO CART ──────────────────────────────────────────
+   252→
+   253→  Use event delegation for ALL product card clicks:
+   254→    document.addEventListener('click', handler)
+   255→    Check e.target.closest('[data-action]')
+   256→
+   257→  Bulk add to cart flow:
+   258→    1. Check wholesale session exists
+   259→    2. If not logged in → show login modal (not error)
+   260→    3. Check MOQ (minimum order quantity)
+   261→    4. Add to sc_wholesale_cart with wholesale_price
+   262→    5. Show quantity as MOQ initially
+   263→    6. Update bulk cart badge instantly
+   264→    7. Open bulk cart drawer automatically
+   265→    8. Button shows "✓ Added!" for 2 seconds
+   266→    9. Haptic feedback: navigator.vibrate(10)
+   267→
+   268→  Bulk cart drawer opens:
+   269→    → Shows all items with qty controls
+   270→    → Qty cannot go below MOQ
+   271→    → Shows tier discount applied
+   272→    → Live total calculation
+   273→    → "Generate Invoice" button
+   274→    → "Order via WhatsApp" button
+   275→
+   276→── BUG FIX 5: STAR RATING SYSTEM ──────────────────────────────────────────────
+   277→
+   278→  Complete star rating implementation:
+   279→    → 5 clickable star buttons (☆ → ⭐ on hover/click)
+   280→    → Hover: preview highlight
+   281→    → Click: permanent selection
+   282→    → Mouse leave: show selected state
+   283→    → Label updates: Terrible/Bad/OK/Good/Excellent
+   284→    → Touch events for mobile (touchstart)
+   285→    → Accessible: keyboard navigable
+   286→    → aria-label on each star button
+   287→    → Cannot submit review without rating selected
+   288→    → Stars shown on product cards (static display)
+   289→    → Stars shown in quick view modal
+   290→    → Stars shown in reviews list
+   291→
+   292→  Product card star display:
+   293→    function renderStars(rating) {
+   294→      return Array.from({length: 5}, (_, i) =>
+   295→        `<span class="${i < Math.round(rating) ?
+   296→          'star filled' : 'star empty'}">
+   297→          ${i < Math.round(rating) ? '⭐' : '☆'}
+   298→        </span>`
+   299→      ).join('');
+   300→    }
+   301→
+   302→── BUG FIX 6: PRODUCTS IN SHOPPING CART ───────────────────────────────────────
+   303→
+   304→  Cart stores minimal data:
+   305→    { id, qty, added_at }
+   306→
+   307→  Cart renders by looking up product from API/cache:
+   308→    async function renderCart() {
+   309→      const cart = getCart();
+   310→      if (!cart.length) { showEmptyCart(); return; }
+   311→
+   312→      showCartSkeleton();
+   313→      const products = await API.products.list();
+   314→      const productMap = {};
+   315→      products.forEach(p => productMap[p.id] = p);
+   316→
+   317→      cart.forEach(item => {
+   318→        const product = productMap[item.id];
+   319→        if (!product) {
+   320→          removeFromCart(item.id); // auto-clean invalid items
+   321→          return;
+   322→        }
+   323→        renderCartItem(item, product);
+   324→      });
+   325→
+   326→      calculateCartTotals();
+   327→    }
+   328→
+   329→  Cart item shows:
+   330→    → Product image (or emoji fallback)
+   331→    → Product name (in current language)
+   332→    → Unit price (with flash sale if active)
+   333→    → Qty controls (− / n / +)
+   334→    → Item subtotal
+   335→    → Remove button (✕)
+   336→    → Swipe left to delete (mobile)
+   337→    → Swipe right to save to wishlist (mobile)
+   338→
+   339→── BUG FIX 7 (EXTRA): CONTINUE SHOPPING BUTTON ────────────────────────────────
+   340→
+   341→  In cart drawer footer:
+   342→    → "← Continue Shopping" link (closes cart, scrolls to #shop)
+   343→    → "Checkout →" button (scrolls to cart bottom)
+   344→
+   345→  After "Add to Cart":
+   346→    → Mini popup appears (2 seconds):
+   347→        "✅ Added to cart! [View Cart] [Continue Shopping]"
+   348→    → Not a full drawer open (less disruptive)
+   349→    → Cart badge updates with count + bounce animation
+   350→
+   351→── BUG FIX 8: UX REDESIGN — USER FRIENDLY ─────────────────────────────────────
+   352→
+   353→  NAVIGATION:
+   354→    → Sticky nav with blur backdrop
+   355→    → Cart icon always visible with count badge
+   356→    → WhatsApp button prominent (green, always visible)
+   357→    → Back to top button appears after 300px scroll
+   358→
+   359→  PRODUCT CARDS:
+   360→    → "Add to Cart" button always visible (not hover-only)
+   361→    → Price in large bold font (24px+)
+   362→    → Stock badge visible on card
+   363→    → One-tap to add (no confirmation needed)
+   364→
+   365→  CART UX:
+   366→    → Cart opens as side drawer (not modal)
+   367→    → Items clearly visible with images
+   368→    → Running total always visible
+   369→    → "Order via WhatsApp" button always at bottom
+   370→    → Sticky cart footer on mobile
+   371→
+   372→  FORMS:
+   373→    → All inputs minimum 48px height
+   374→    → Clear labels above every input
+   375→    → Inline error messages in red under field
+   376→    → Success checkmark on valid fields
+   377→    → Phone: auto-format as user types
+   378→    → Auto-focus first input when modal opens
+   379→
+   380→  MOBILE SPECIFIC:
+   381→    → Bottom navigation bar (Home/Shop/Cart/WhatsApp)
+   382→    → Thumb-friendly button sizes (min 48×48px)
+   383→    → No horizontal scroll anywhere
+   384→    → Pull to refresh on product grid
+   385→    → Swipe gestures on cart items
+   386→
+   387→  LOADING STATES:
+   388→    → Skeleton cards while products load
+   389→    → Spinner on all async buttons
+   390→    → Progress bar on page load
+   391→    → Lazy load images with blur-up effect
+   392→
+   393→  EMPTY STATES:
+   394→    → Friendly illustrations (Lottie animations)
+   395→    → Helpful message + action button
+   396→    → Never just blank white space
+   397→
+   398→  ERROR STATES:
+   399→    → Network error: "No internet — showing cached data"
+   400→    → No results: "Try: lipstick, kremu, parfum"
+   401→    → Out of stock: greyed card + "Notify Me" button
+   402→
+   403→── BUG FIX 9: SEARCH BY PHOTO ─────────────────────────────────────────────────
+   404→
+   405→  Camera search button in search bar (📷):
+   406→    → Opens file picker (camera on mobile)
+   407→    → Accepts image/* files
+   408→    → Canvas API extracts dominant color
+   409→    → Matches color to product categories:
+   410→        Reds/Pinks → Makeup (lipstick)
+   411→        Whites/Creams → Skincare
+   412→        Blues/Purples → Perfumes
+   413→        Greens/Browns → Hair care
+   414→    → Shows: "Showing products matching your photo 📷"
+   415→    → Also: Google Lens link as fallback
+   416→
+   417→  In v7.0 Django:
+   418→    → Optional: Google Cloud Vision API
+   419→    → Send image → get labels
+   420→    → Match labels to product tags
+   421→    → Return ranked product results
+   422→
+   423→── BUG FIX 10: CONTINUE SHOPPING IN CART ───────────────────────────────────────
+   424→
+   425→  Three ways to continue shopping:
+   426→    A) "← Continue Shopping" link in cart drawer header
+   427→    B) After adding item → mini toast with "Continue"
+   428→    C) Empty cart → "Browse Products" big button
+   429→
+   430→  Also add BOTTOM MOBILE NAV BAR:
+   431→    [🏠 Home] [🛍️ Shop] [🛒 Cart(n)] [💬 WhatsApp]
+   432→    → Fixed at bottom on mobile (≤768px)
+   433→    → Cart tab shows item count badge
+   434→    → WhatsApp tab opens chat widget
+   435→
+   436→── BUG FIX 11: REAL WHATSAPP SVG ICON ──────────────────────────────────────────
+   437→
+   438→  Use official WhatsApp SVG everywhere:
+   439→  (path data provided in Section 2 above)
+   440→
+   441→  WhatsApp icon appears in:
+   442→    → Sticky navigation CTA button (green bg)
+   443→    → Mobile bottom nav bar
+   444→    → Cart "Order via WhatsApp" button
+   445→    → WhatsApp floating widget button
+   446→    → Product card "Buy on WhatsApp" button
+   447→    → Footer social links
+   448→    → Contact section card
+   449→    → All WhatsApp notification buttons
+   450→
+   451→  Widget button (56px circle):
+   452→    → Background: #25D366 (WhatsApp green)
+   453→    → White SVG icon inside
+   454→    → Pulse animation ring (rgba(37,211,102,0.3))
+   455→    → Unread badge "1" on first visit
+   456→
+   457→── BUG FIX 12: AUTO-SUBSCRIBE WHATSAPP CHATTERS ────────────────────────────────
+   458→
+   459→  Auto-subscribe triggered by ANY of these:
+   460→    → Customer submits retail order (WhatsApp)
+   461→    → Customer submits wholesale application
+   462→    → Customer fills contact form
+   463→    → Customer books consultation
+   464→    → Customer submits review (if phone given)
+   465→    → Customer signs up for newsletter
+   466→    → Customer sets price alert
+   467→
+   468→  Auto-subscribe function:
+   469→    async function autoSubscribe(phone, name, source) {
+   470→      if (!phone || phone.length < 8) return;
+   471→      try {
+   472→        await API.notifications.subscribe(phone, name, source);
+   473→        // Silent — no toast shown to customer
+   474→      } catch (e) {
+   475→        // Ignore duplicate error silently
+   476→      }
+   477→    }
+   478→
+   479→  Subscriber record includes:
+   480→    phone, name, source (order/booking/contact/etc.),
+   481→    subscribed_at, is_active, total_received, last_message_at
+   482→
+   483→  Admin subscribers page shows:
+   484→    → Source column (where they came from)
+   485→    → Total subscribers count
+   486→    → Active / unsubscribed count
+   487→
+   488→── BUG FIX 13: ADMIN LOGO + BRANDING SETTINGS ──────────────────────────────────
+   489→
+   490→  Admin Settings → Branding tab:
+   491→    Shop Name (text input)
+   492→    Logo Type: [Emoji] [Image Upload] [Text Only]
+   493→    Logo Emoji: input (default: ✿)
+   494→    Logo Image: drag+drop upload → Cloudinary
+   495→    Shop Tagline (EN / FR / RW)
+   496→    Theme Color: color picker (updates CSS variable)
+   497→    Favicon: upload (shown in browser tab)
+   498→    Preview: live preview of nav with new branding
+   499→    "Save Branding" → updates all pages instantly
+   500→
+   501→  Logo appears in:
+   502→    → Navigation bar (desktop + mobile)
+   503→    → Footer
+   504→    → EBM Receipts
+   505→    → Pro-Forma Invoices
+   506→    → Email templates
+   507→    → WhatsApp widget header
+   508→    → PWA icon (if image uploaded)
+   509→
+   510→── BUG FIX 14: AGILE-READY MODULAR CODE ────────────────────────────────────────
+   511→
+   512→  Frontend modules are self-contained:
+   513→    Each module has: init() / render() / destroy()
+   514→    New features = new module file
+   515→    Zero global variable conflicts
+   516→    Versioned API (v1, v2...)
+   517→
+   518→  Backend apps are independent:
+   519→    Each Django app is plug-and-play
+   520→    Feature flags in SiteSetting model
+   521→    Migration history maintained
+   522→    Backward-compatible API changes
+   523→
+   524→  Feature flags (can toggle in admin):
+   525→    enable_loyalty_points
+   526→    enable_flash_sales
+   527→    enable_bundles
+   528→    enable_reviews
+   529→    enable_bookings
+   530→    enable_wholesale
+   531→    enable_visual_search
+   532→    enable_momo_api
+   533→    enable_whatsapp_api
+   534→    enable_email_notifications
+   535→
+   536→── BUG FIX 15: CURRENCY CONVERTER FIX ──────────────────────────────────────────
+   537→
+   538→  Currency selector in nav:
+   539→    → <select id="currencySelect"> with all options
+   540→    → Event listener: 'change' → updateAllPrices()
+   541→    → All price elements have data-price-rwf="25000"
+   542→    → On change: convert and update all elements
+   543→
+   544→  Live exchange rates:
+   545→    → Try: fetch from exchangerate-api.com (free tier)
+   546→    → Fallback hardcoded rates:
+   547→        USD: 0.00073  EUR: 0.00067
+   548→        KES: 0.094    UGX: 2.71
+   549→
+   550→  All prices display:
+   551→    <span class="price"
+   552→          data-price-rwf="25000">
+   553→      RWF 25,000
+   554→    </span>
+   555→
+   556→  On currency change:
+   557→    document.querySelectorAll('[data-price-rwf]')
+   558→      .forEach(el => {
+   559→        const rwf = el.dataset.priceRwf;
+   560→        el.textContent = convertPrice(rwf);
+   561→      });
+   562→
+   563→── BUG FIX 16: BULK BUYER CART LIVE UPDATE ──────────────────────────────────────
+   564→
+   565→  After addToBulkCart():
+   566→    1. Update sc_wholesale_cart in localStorage
+   567→    2. Update bulk cart badge count
+   568→    3. If bulk cart drawer is open → re-render items
+   569→    4. Animate badge: scale(1.3) then scale(1)
+   570→    5. Show mini confirmation toast
+   571→    6. Button shows "✓ Added!" then resets
+   572→
+   573→  Bulk cart drawer:
+   574→    → Header: "🛒 Wholesale Cart ({n} items)"
+   575→    → Each item: name + unit price + qty ± + total
+   576→    → MOQ warning if qty below minimum
+   577→    → Tier discount row (green)
+   578→    → VAT row (18% on HT amount)
+   579→    → Grand total (bold, large)
+   580→    → "Generate Pro-Forma" button
+   581→    → "Order via WhatsApp" button
+   582→
+   583→── BUG FIX 17: GENERATE INVOICE/RECEIPT IN ADMIN ────────────────────────────────
+   584→
+   585→  Admin Orders page — each order has:
+   586→    [View] [Update Status] [📱 Notify] [🧾 EBM] [📄 Invoice]
+   587→
+   588→  EBM Receipt generation:
+   589→    → Django EBMService.create_receipt(order)
+   590→    → Generates MRC code (deterministic hash)
+   591→    → Saves to EBMReceipt model
+   592→    → Returns receipt data as JSON
+   593→    → Frontend renders 80mm thermal format
+   594→    → Print button → window.print()
+   595→    → Download PDF → jsPDF
+   596→
+   597→  Pro-Forma Invoice generation:
+   598→    → Available for wholesale orders
+   599→    → ReportLab generates professional PDF
+   600→    → Includes: logo, shop details, TIN, items table
+   601→    → VAT breakdown (HT + TVA + TTC)
+   602→    → Payment terms + bank details
+   603→    → QR code for verification
+   604→    → Download button → streams PDF file
+   605→
+   606→  PDF Invoice API endpoint:
+   607→    GET /api/v1/orders/{id}/invoice/
+   608→    → Returns PDF file (Content-Type: application/pdf)
+   609→    → Frontend: window.open(url) or blob download
+   610→
+   611→── BUG FIX 18: DEFAULT LANGUAGE KINYARWANDA ────────────────────────────────────
+   612→
+   613→  Language initialization:
+   614→    1. Check localStorage "sc_language"
+   615→    2. Check browser navigator.language
+   616→       → rw-* → use 'rw'
+   617→       → fr-* → use 'fr'
+   618→       → anything else → use 'rw' (DEFAULT)
+   619→    3. Save to localStorage
+   620→
+   621→  Language switcher shows:
+   622→    🇷🇼 Kinyarwanda (active by default)
+   623→    🇬🇧 English
+   624→    🇫🇷 Français
+   625→
+   626→  All UI text uses t(key) which reads currentLang
+   627→  All API requests send Accept-Language header
+   628→  Django returns translated content based on header
+   629→
+   630→═══════════════════════════════════════════════════════════════════════════════════
+   631→SECTION 4: 15 EXTRA IMPROVEMENTS (Beyond Bug Fixes)
+   632→═══════════════════════════════════════════════════════════════════════════════════
+   633→
+   634→── EXTRA 1: BOTTOM MOBILE NAVIGATION BAR ───────────────────────────────────────
+   635→
+   636→  Fixed bar at bottom on mobile (≤768px):
+   637→  ┌──────────────────────────────────┐
+   638→  │ 🏠 Home │ 🛍️ Shop │ 🛒(3)│ 💬  │
+   639→  │  Ahabanza│  Iduka  │ Igikoni│ WA │
+   640→  └──────────────────────────────────┘
+   641→  → Each tab 25% width
+   642→  → Active tab: pink color + border-top
+   643→  → Cart tab shows item count badge
+   644→  → WhatsApp tab opens widget
+   645→  → Labels in current language
+   646→  → Hides when keyboard open (resize listener)
+   647→  → Z-index: 990 (below modals)
+   648→
+   649→── EXTRA 2: SKELETON LOADING CARDS ─────────────────────────────────────────────
+   650→
+   651→  While products load from API:
+   652→  ┌────────────────┐
+   653→  │ ████████████  │  ← shimmer animation
+   654→  │ ██████ ████   │  ← gray rectangles
+   655→  │ ████████      │  ← wave animation
+   656→  │ [▓▓▓▓▓▓▓▓]   │  ← button placeholder
+   657→  └────────────────┘
+   658→
+   659→  CSS shimmer animation:
+   660→    background: linear-gradient(
+   661→      90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%
+   662→    );
+   663→    background-size: 200% 100%;
+   664→    animation: shimmer 1.5s infinite;
+   665→
+   666→  Show 8 skeleton cards while loading
+   667→  Fade in real cards when data arrives
+   668→
+   669→── EXTRA 3: PRODUCT QUICK ADD (ONE TAP) ────────────────────────────────────────
+   670→
+   671→  Product card has prominent "+ Add" button:
+   672→    → Always visible (not hover-only)
+   673→    → Bottom of card, full width
+   674→    → Pink background, white text
+   675→    → On click:
+   676→        1. Button → "✓ Added!" (green, 2s)
+   677→        2. Cart badge bounces + updates
+   678→        3. Mini toast appears (top-right, 3s)
+   679→        4. Haptic feedback on mobile
+   680→    → No modal opens (quick add = no friction)
+   681→    → Qty in cart increases on repeat click
+   682→
+   683→── EXTRA 4: ORDER TRACKING PAGE ────────────────────────────────────────────────
+   684→
+   685→  Public order tracking (no login needed):
+   686→  URL: /#track or /track/
+   687→
+   688→  Form:
+   689→    WhatsApp Number: [+250 7XX XXX XXX]
+   690→    [Track My Orders →]
+   691→
+   692→  Shows all orders for that phone:
+   693→    ┌─────────────────────────────┐
+   694→    │ Order #SC-20250101-001      │
+   695→    │ 📅 Jan 1, 2025              │
+   696→    │ ────────────────────────── │
+   697→    │ ● Pending → ● Confirmed    │
+   698→    │   ○ Processing ○ Shipped   │
+   699→    │   ○ Delivered              │
+   700→    │ ────────────────────────── │
+   701→    │ 3 items · RWF 75,000       │
+   702→    │ [📱 WhatsApp Update]       │
+   703→    └─────────────────────────────┘
+   704→
+   705→  Progress bar shows order status visually
+   706→
+   707→── EXTRA 5: SMART WHATSAPP WIDGET ──────────────────────────────────────────────
+   708→
+   709→  Enhanced from v6.0:
+   710→    → Business hours check (8AM-8PM Kigali time)
+   711→    → Online: 🟢 "Turiho!" / Offline: 🔴 "Tuzasubiza"
+   712→    → Typing animation (1.5s) before greeting
+   713→    → Quick reply chips (6 options)
+   714→    → Unread badge "1" on first visit
+   715→    → Widget state saved to sessionStorage
+   716→
+   717→  Auto-messages for chips (in Kinyarwanda):
+   718→    🛍️ Gura → "Muraho! Ndashaka kugura..."
+   719→    📦 Kurikira → "Ndashaka kurikira itumiza..."
+   720→    💎 Ubugari → "Nshaka amakuru y'ubugari..."
+   721→    ❓ Ikibazo → "Mfite ikibazo ku gicuruzwa..."
+   722→    💰 Igiciro → "Mwambwira igiciro bya..."
+   723→    🎁 Ibikorwa → "Mufite ibikorwa bihe ubu?"
+   724→
+   725→  New: "Send us your location" button
+   726→    → Opens WhatsApp with location prompt
+   727→    → "Share location for faster delivery"
+   728→
+   729→── EXTRA 6: CUSTOMER ACCOUNT PORTAL ───────────────────────────────────────────
+   730→
+   731→  Lightweight customer portal (no password needed):
+   732→  Access: click "My Orders" → enter phone number
+   733→
+   734→  Customer portal shows:
+   735→    → Order history (all orders by phone)
+   736→    → Loyalty points balance + tier badge
+   737→    → Wishlist items
+   738→    → Bookings upcoming
+   739→    → Price alerts set
+   740→    → "Track Order" for each order
+   741→
+   742→  Customer tier display:
+   743→    ┌────────────────────────────┐
+   744→    │ 💛 Gold Member             │
+   745→    │ 2,450 / 5,000 pts → Plat. │
+   746→    │ ████████████░░░░ 49%       │
+   747→    │ Extra 5% on all orders     │
+   748→    └────────────────────────────┘
+   749→
+   750→── EXTRA 7: REAL-TIME STOCK COUNTER ────────────────────────────────────────────
+   751→
+   752→  Product cards show live stock:
+   753→    > 10 items: no indicator
+   754→    6-10 items: "📦 {n} left"
+   755→    3-5 items:  "⚡ Only {n} left!" (amber pulse)
+   756→    1-2 items:  "🔥 Last {n}! Order now!" (red pulse)
+   757→    0 items:    "Out of Stock" (gray, disabled button)
+   758→
+   759→  When user adds last item:
+   760→    Toast: "🔥 You got the last one! Order quickly."
+   761→
+   762→  Admin dashboard widget:
+   763→    "⚠️ 3 products nearly out of stock"
+   764→    [View Low Stock →]
+   765→
+   766→── EXTRA 8: SMART COUPON SUGGESTIONS ───────────────────────────────────────────
+   767→
+   768→  In cart coupon field:
+   769→    → On focus: show active coupons (if any public)
+   770→    → "💡 Try: WELCOME5 for 5% off your first order"
+   771→    → Auto-apply coupon from URL param: ?coupon=MOMO500
+   772→    → Show savings before applying: "MOMO500 saves RWF 500"
+   773→    → Confetti animation when coupon applied
+   774→
+   775→  Admin coupon management:
+   776→    → Public coupons (shown as suggestions)
+   777→    → Private coupons (hidden, must know code)
+   778→    → One-time use coupons (per phone)
+   779→    → Expiry countdown shown in admin
+   780→
+   781→── EXTRA 9: DELIVERY TIME ESTIMATOR ────────────────────────────────────────────
+   782→
+   783→  Smart delivery estimate based on:
+   784→    → District selected
+   785→    → Current time (before/after 2PM cutoff)
+   786→    → Day of week (weekday vs weekend)
+   787→
+   788→  Shows in cart:
+   789→    Gasabo: "🚚 Delivery today by 6PM" (ordered before 2PM)
+   790→    Gasabo: "🚚 Delivery tomorrow morning" (ordered after 2PM)
+   791→    Musanze: "🚚 Delivery in 2-3 days (Thu-Fri)"
+   792→
+   793→  Interactive map shows same estimate on hover
+   794→
+   795→── EXTRA 10: PRODUCT COMPARISON IMPROVEMENTS ───────────────────────────────────
+   796→
+   797→  Compare bar (fixed bottom):
+   798→    → Add up to 3 products (click compare on card)
+   799→    → Shows product thumbnails in bar
+   800→    → "Compare Now" button
+   801→    → "Clear" button
+   802→
+   803→  Comparison modal table:
+   804→    Feature       | Product 1 | Product 2 | Product 3
+   805→    ─────────────────────────────────────────────────
+   806→    Image         | 📷        | 📷        | 📷
+   807→    Price         | 25,000    | 18,000    | 22,000
+   808→    Rating        | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐  | ⭐⭐⭐⭐⭐
+   809→    Category      | Makeup    | Skincare  | Skincare
+   810→    Stock         | 45        | 32        | 18
+   811→    Discount      | 5%        | 0%        | 2%
+   812→    [Add to Cart] | [btn]     | [btn]     | [btn]
+   813→
+   814→── EXTRA 11: PROGRESSIVE CHECKOUT FLOW ─────────────────────────────────────────
+   815→
+   816→  Cart has guided checkout steps:
+   817→    Step 1: Review Items (can edit qty)
+   818→    Step 2: Delivery Info (name + phone + district)
+   819→    Step 3: Payment Method (MoMo / Airtel / Cash)
+   820→    Step 4: Confirm & Order (summary before submit)
+   821→
+   822→  Progress indicator: ①②③④
+   823→  "Back" button between steps
+   824→  Step 2 auto-fills if phone already saved
+   825→  Step 3 shows MoMo number field if MoMo selected
+   826→  Step 4 shows full summary + "Edit" links
+   827→
+   828→── EXTRA 12: ADMIN NOTIFICATION CENTER ─────────────────────────────────────────
+   829→
+   830→  Admin header bell icon 🔔:
+   831→    → Badge count: unread notifications
+   832→    → Dropdown panel shows recent alerts:
+   833→        "🛒 New order #SC-001 — RWF 75,000"
+   834→        "📋 New wholesale application — Amina Beauty"
+   835→        "⭐ New review pending approval"
+   836→        "⚠️ MAC Lipstick: only 3 left in stock"
+   837→        "📅 New booking: Tomorrow 10AM"
+   838→    → "Mark all read" button
+   839→    → "View all notifications" link
+   840→
+   841→  Notifications stored in admin session
+   842→  Polling: check new notifications every 60 seconds
+   843→  (WebSocket in future upgrade)
+   844→
+   845→── EXTRA 13: ADVANCED ANALYTICS DASHBOARD ──────────────────────────────────────
+   846→
+   847→  Admin dashboard shows:
+   848→    Revenue Overview (Chart.js line):
+   849→      → Today / This week / This month / This year tabs
+   850→      → Retail vs Wholesale split
+   851→      → Previous period comparison
+   852→
+   853→    Top Products (horizontal bar):
+   854→      → Top 5 by revenue
+   855→      → Top 5 by units sold
+   856→
+   857→    District Heatmap (bar chart):
+   858→      → Orders per district
+   859→      → Revenue per district
+   860→      → Color coded by volume
+   861→
+   862→    Customer Insights:
+   863→      → New vs returning customers
+   864→      → Average order value
+   865→      → Customer lifetime value
+   866→      → Churn rate estimate
+   867→
+   868→    Sales Funnel:
+   869→      → Viewed products: {n}
+   870→      → Added to cart: {n}
+   871→      → Started checkout: {n}
+   872→      → Completed order: {n}
+   873→      → Conversion rate: {pct}%
+   874→
+   875→    Best Selling Hours (horizontal bar):
+   876→      → Orders by hour (8AM-8PM)
+   877→      → Peak hours highlighted
+   878→
+   879→── EXTRA 14: PRINT-FRIENDLY PAGES ──────────────────────────────────────────────
+   880→
+   881→  @media print rules:
+   882→    → Hide: nav, sidebar, buttons, modals, alerts
+   883→    → Show: content only, clean layout
+   884→    → Black/white (no colors)
+   885→    → Page breaks before each section
+   886→
+   887→  Printable pages:
+   888→    → EBM Receipt (80mm thermal format)
+   889→    → Pro-Forma Invoice (A4)
+   890→    → Order summary
+   891→    → Customer report
+   892→    → Monthly VAT report
+   893→
+   894→  "Print" button on all receipts/invoices
+   895→  "Download PDF" uses jsPDF (frontend)
+   896→  or ReportLab PDF (backend API)
+   897→
+   898→── EXTRA 15: SITE HEALTH DASHBOARD ─────────────────────────────────────────────
+   899→
+   900→  Admin → Settings → Site Health tab:
+   901→    ✅ Database: Connected (PostgreSQL)
+   902→    ✅ Redis: Connected
+   903→    ✅ Cloudinary: Connected
+   904→    ✅ Email: Configured (Mailgun)
+   905→    ⚠️ WhatsApp API: Not configured
+   906→    ⚠️ MoMo API: Sandbox mode
+   907→    ✅ SSL Certificate: Valid (expires Dec 2025)
+   908→    ✅ Service Worker: Active
+   909→    ✅ Last backup: 2 hours ago
+   910→
+   911→  Performance metrics:
+   912→    Average API response time: 120ms
+   913→    Database queries per request: 4.2 avg
+   914→    Cache hit rate: 87%
+   915→    Storage used: 234MB / 1GB
+   916→
+   917→  Quick actions:
+   918→    [Clear Cache] [Run Backup] [Check Updates]
+   919→    [View Error Log] [Restart Workers]
+   920→
+   921→═══════════════════════════════════════════════════════════════════════════════════
+   922→SECTION 5: COMPLETE PROJECT FILE STRUCTURE
+   923→═══════════════════════════════════════════════════════════════════════════════════
+   924→
+   925→samuel-cosmetic-shop/
+   926→│
+   927→├── ══ CONFIGURATION ══════════════════════════════════════════════
+   928→│
+   929→├── manage.py
+   930→├── requirements.txt
+   931→├── requirements-dev.txt
+   932→├── .env.example
+   933→├── .env (NOT committed to git)
+   934→├── .gitignore
+   935→├── Procfile
+   936→├── runtime.txt
+   937→├── README.md
+   938→│
+   939→├── ══ DJANGO PROJECT ═════════════════════════════════════════════
+   940→│
+   941→├── config/
+   942→│   ├── __init__.py
+   943→│   ├── settings/
+   944→│   │   ├── __init__.py
+   945→│   │   ├── base.py
+   946→│   │   ├── development.py
+   947→│   │   └── production.py
+   948→│   ├── urls.py
+   949→│   ├── wsgi.py
+   950→│   └── asgi.py
+   951→│
+   952→├── ══ DJANGO APPS ════════════════════════════════════════════════
+   953→│
+   954→├── apps/
+   955→│   ├── __init__.py
+   956→│   │
+   957→│   ├── accounts/
+   958→│   │   ├── __init__.py
+   959→│   │   ├── models.py       AdminUser + StaffAccount
+   960→│   │   ├── serializers.py
+   961→│   │   ├── views.py        login/logout/me/staff CRUD
+   962→│   │   ├── urls.py
+   963→│   │   ├── permissions.py  HasPermission class
+   964→│   │   └── admin.py
+   965→│   │
+   966→│   ├── products/
+   967→│   │   ├── __init__.py
+   968→│   │   ├── models.py       Product + Category + ProductImage
+   969→│   │   ├── serializers.py
+   970→│   │   ├── views.py        CRUD + search + featured + bulk import
+   971→│   │   ├── urls.py
+   972→│   │   ├── filters.py      price/category/rating/stock filters
+   973→│   │   ├── search.py       Fuse-style full-text search
+   974→│   │   └── admin.py
+   975→│   │
+   976→│   ├── orders/
+   977→│   │   ├── __init__.py
+   978→│   │   ├── models.py       Order + OrderItem
+   979→│   │   ├── serializers.py
+   980→│   │   ├── views.py        create/list/status/track/notify
+   981→│   │   ├── urls.py
+   982→│   │   └── admin.py
+   983→│   │
+   984→│   ├── customers/
+   985→│   │   ├── __init__.py
+   986→│   │   ├── models.py       Customer + LoyaltyTransaction
+   987→│   │   ├── serializers.py
+   988→│   │   ├── views.py        CRUD + points adjust + lookup
+   989→│   │   ├── urls.py
+   990→│   │   └── admin.py
+   991→│   │
+   992→│   ├── wholesale/
+   993→│   │   ├── __init__.py
+   994→│   │   ├── models.py       WholesaleUser + WholesaleOrder
+   995→│   │   ├── serializers.py
+   996→│   │   ├── views.py        register/login/approve/reject/orders
+   997→│   │   ├── urls.py
+   998→│   │   └── admin.py
+   999→│   │
+  1000→│   ├── inventory/
+  1001→│   │   ├── __init__.py
+  1002→│   │   ├── models.py       StockAdjustment + ReorderLog
+  1003→│   │   ├── serializers.py
+  1004→│   │   ├── views.py        overview/low-stock/adjust/forecast
+  1005→│   │   └── urls.py
+  1006→│   │
+  1007→│   ├── promotions/
+  1008→│   │   ├── __init__.py
+  1009→│   │   ├── models.py       Coupon + FlashSale + Bundle
+  1010→│   │   ├── serializers.py
+  1011→│   │   ├── views.py        coupons/flash-sales/bundles CRUD
+  1012→│   │   └── urls.py
+  1013→│   │
+  1014→│   ├── reviews/
+  1015→│   │   ├── __init__.py
+  1016→│   │   ├── models.py       Review
+  1017→│   │   ├── serializers.py
+  1018→│   │   ├── views.py        submit/approve/reject/reply/helpful
+  1019→│   │   └── urls.py
+  1020→│   │
+  1021→│   ├── bookings/
+  1022→│   │   ├── __init__.py
+  1023→│   │   ├── models.py       Booking + BlockedDate
+  1024→│   │   ├── serializers.py
+  1025→│   │   ├── views.py        create/list/status/blocked/slots
+  1026→│   │   └── urls.py
+  1027→│   │
+  1028→│   ├── payments/
+  1029→│   │   ├── __init__.py
+  1030→│   │   ├── models.py       MoMoTransaction + AirtelTransaction
+  1031→│   │   ├── serializers.py
+  1032→│   │   ├── services.py     MTNMoMoService + AirtelService
+  1033→│   │   ├── views.py        initiate/status/webhook
+  1034→│   │   └── urls.py
+  1035→│   │
+  1036→│   ├── notifications/
+  1037→│   │   ├── __init__.py
+  1038→│   │   ├── models.py       WhatsAppTemplate + NotifLog + Sub + Alert
+  1039→│   │   ├── serializers.py
+  1040→│   │   ├── services.py     WhatsAppService + EmailService
+  1041→│   │   ├── tasks.py        Celery async tasks
+  1042→│   │   ├── views.py        subscribe/broadcast/templates/alerts
+  1043→│   │   └── urls.py
+  1044→│   │
+  1045→│   ├── analytics/
+  1046→│   │   ├── __init__.py
+  1047→│   │   ├── models.py       PageView + AuditLog
+  1048→│   │   ├── serializers.py
+  1049→│   │   ├── views.py        dashboard/revenue/products/districts
+  1050→│   │   └── urls.py
+  1051→│   │
+  1052→│   ├── delivery/
+  1053→│   │   ├── __init__.py
+  1054→│   │   ├── models.py       DeliveryZone
+  1055→│   │   ├── serializers.py
+  1056→│   │   ├── views.py        zones/calculate/update
+  1057→│   │   └── urls.py
+  1058→│   │
+  1059→│   ├── ebm/
+  1060→│   │   ├── __init__.py
+  1061→│   │   ├── models.py       EBMReceipt
+  1062→│   │   ├── serializers.py
+  1063→│   │   ├── services.py     MRC generation + PDF generation
+  1064→│   │   ├── views.py        list/get/generate/export-vat
+  1065→│   │   └── urls.py
+  1066→│   │
+  1067→│   ├── cms/
+  1068→│   │   ├── __init__.py
+  1069→│   │   ├── models.py       SiteContent + SiteSetting + Testimonial
+  1070→│   │   ├── serializers.py
+  1071→│   │   ├── views.py        content/settings CRUD
+  1072→│   │   └── urls.py
+  1073→│   │
+  1074→│   ├── reports/
+  1075→│   │   ├── __init__.py
+  1076→│   │   ├── services.py     PDF+CSV report builders (ReportLab)
+  1077→│   │   ├── views.py        generate endpoints (stream PDF/CSV)
+  1078→│   │   └── urls.py
+  1079→│   │
+  1080→│   └── messages_app/
+  1081→│       ├── __init__.py
+  1082→│       ├── models.py       ContactMessage + AutoReplyTemplate
+  1083→│       ├── serializers.py
+  1084→│       ├── views.py        submit/list/read/delete/templates
+  1085→│       └── urls.py
+  1086→│
+  1087→├── ══ MANAGEMENT COMMANDS ════════════════════════════════════════
+  1088→│
+  1089→├── management/
+  1090→│   └── commands/
+  1091→│       ├── seed_data.py    seeds all initial data
+  1092→│       ├── seed_delivery.py seeds 30 Rwanda districts
+  1093→│       └── create_admin.py creates default admin user
+  1094→│
+  1095→├── ══ FRONTEND ═══════════════════════════════════════════════════
+  1096→│
+  1097→└── frontend/
+  1098→    ├── index.html              main website
+  1099→    ├── admin.html              admin panel
+  1100→    ├── style.css               website styles (5000+ lines)
+  1101→    ├── admin.css               admin styles (3000+ lines)
+  1102→    ├── api.js                  all fetch() API calls
+  1103→    ├── app.js                  website JavaScript (7000+ lines)
+  1104→    ├── admin.js                admin JavaScript (5500+ lines)
+  1105→    ├── translations.js         EN/FR/RW translations
+  1106→    ├── admin-translations.js   admin translations
+  1107→    ├── rwanda-map.js           SVG map district data
+  1108→    ├── manifest.json           PWA manifest
+  1109→    └── sw.js                   Service Worker
+  1110→
+  1111→═══════════════════════════════════════════════════════════════════════════════════
+  1112→SECTION 6: COMPLETE DATABASE MODELS
+  1113→═══════════════════════════════════════════════════════════════════════════════════
+  1114→
+  1115→── accounts/models.py ──────────────────────────────────────────────────────────
+  1116→
+  1117→from django.db import models
+  1118→from django.contrib.auth.hashers import make_password, check_password
+  1119→import uuid
+  1120→
+  1121→class AdminUser(models.Model):
+  1122→    username      = models.CharField(max_length=50, unique=True)
+  1123→    password_hash = models.CharField(max_length=255)
+  1124→    email         = models.EmailField()
+  1125→    full_name     = models.CharField(max_length=100, default='Administrator')
+  1126→    avatar        = models.URLField(blank=True)
+  1127→    is_active     = models.BooleanField(default=True)
+  1128→    last_login    = models.DateTimeField(null=True, blank=True)
+  1129→    created_at    = models.DateTimeField(auto_now_add=True)
+  1130→
+  1131→    def set_password(self, raw_password):
+  1132→        self.password_hash = make_password(raw_password)
+  1133→
+  1134→    def check_password(self, raw_password):
+  1135→        return check_password(raw_password, self.password_hash)
+  1136→
+  1137→    class Meta:
+  1138→        db_table = 'admin_users'
+  1139→
+  1140→class StaffAccount(models.Model):
+  1141→    ROLE_CHOICES = [
+  1142→        ('sales', 'Sales Manager'),
+  1143→        ('inventory', 'Stock Manager'),
+  1144→        ('viewer', 'Viewer'),
+  1145→        ('custom', 'Custom'),
+  1146→    ]
+  1147→    id          = models.UUIDField(primary_key=True, default=uuid.uuid4)
+  1148→    name        = models.CharField(max_length=100)
+  1149→    username    = models.CharField(max_length=50, unique=True)
+  1150→    password_hash = models.CharField(max_length=255)
+  1151→    role        = models.CharField(max_length=20, choices=ROLE_CHOICES)
+  1152→    permissions = models.JSONField(default=list)
+  1153→    is_active   = models.BooleanField(default=True)
+  1154→    last_login  = models.DateTimeField(null=True, blank=True)
+  1155→    created_at  = models.DateTimeField(auto_now_add=True)
+  1156→
+  1157→    def set_password(self, raw): self.password_hash = make_password(raw)
+  1158→    def check_password(self, raw): return check_password(raw, self.password_hash)
+  1159→
+  1160→    class Meta:
+  1161→        db_table = 'staff_accounts'
+  1162→
+  1163→── products/models.py ──────────────────────────────────────────────────────────
+  1164→
+  1165→class Category(models.Model):
+  1166→    id          = models.CharField(max_length=20, primary_key=True)
+  1167→    name_en     = models.CharField(max_length=100)
+  1168→    name_fr     = models.CharField(max_length=100)
+  1169→    name_rw     = models.CharField(max_length=100)
+  1170→    emoji       = models.CharField(max_length=10)
+  1171→    slug        = models.SlugField(unique=True)
+  1172→    is_active   = models.BooleanField(default=True)
+  1173→    sort_order  = models.IntegerField(default=0)
+  1174→    created_at  = models.DateTimeField(auto_now_add=True)
+  1175→
+  1176→    class Meta:
+  1177→        db_table = 'categories'
+  1178→        ordering = ['sort_order']
+  1179→
+  1180→class Product(models.Model):
+  1181→    BADGE_CHOICES = [
+  1182→        ('bestseller','Best Seller'),('new','New'),
+  1183→        ('hot','Hot'),('popular','Popular'),('','None'),
+  1184→    ]
+  1185→    id                  = models.CharField(max_length=20, primary_key=True)
+  1186→    name_en             = models.CharField(max_length=200)
+  1187→    name_fr             = models.CharField(max_length=200)
+  1188→    name_rw             = models.CharField(max_length=200)
+  1189→    desc_en             = models.TextField()
+  1190→    desc_fr             = models.TextField()
+  1191→    desc_rw             = models.TextField()
+  1192→    category            = models.ForeignKey(Category,
+  1193→                            on_delete=models.PROTECT,
+  1194→                            related_name='products')
+  1195→    emoji               = models.CharField(max_length=10)
+  1196→    sku                 = models.CharField(max_length=50, unique=True)
+  1197→
+  1198→    # ── PRICING (RRA COMPLIANT) ───────────────────────────────
+  1199→    cost_price          = models.DecimalField(max_digits=12,
+  1200→                            decimal_places=2, default=0)
+  1201→    selling_price       = models.DecimalField(max_digits=12,
+  1202→                            decimal_places=2)
+  1203→    # selling_price is TTC (includes 18% VAT)
+  1204→    # selling_price_ht = selling_price * 100/118 (computed property)
+  1205→    # vat_amount = selling_price * 18/118 (computed property)
+  1206→    wholesale_price     = models.DecimalField(max_digits=12,
+  1207→                            decimal_places=2)
+  1208→    # ── PROPERTIES ───────────────────────────────────────────
+  1209→    @property
+  1210→    def selling_price_ht(self):
+  1211→        return round(float(self.selling_price) * 100 / 118, 2)
+  1212→
+  1213→    @property
+  1214→    def vat_amount(self):
+  1215→        return round(float(self.selling_price) * 18 / 118, 2)
+  1216→
+  1217→    @property
+  1218→    def gross_profit_ht(self):
+  1219→        return round(self.selling_price_ht - float(self.cost_price), 2)
+  1220→
+  1221→    @property
+  1222→    def profit_margin_pct(self):
+  1223→        if self.selling_price_ht == 0: return 0
+  1224→        return round(self.gross_profit_ht / self.selling_price_ht * 100, 1)
+  1225→
+  1226→    # ── INVENTORY ─────────────────────────────────────────────
+  1227→    moq                 = models.IntegerField(default=1)
+  1228→    stock_qty           = models.IntegerField(default=0)
+  1229→    low_stock_threshold = models.IntegerField(default=5)
+  1230→
+  1231→    # ── DISPLAY ───────────────────────────────────────────────
+  1232→    badge               = models.CharField(max_length=20,
+  1233→                            choices=BADGE_CHOICES, blank=True)
+  1234→    is_active           = models.BooleanField(default=True)
+  1235→
+  1236→    # ── STATS ─────────────────────────────────────────────────
+  1237→    rating_avg          = models.DecimalField(max_digits=3,
+  1238→                            decimal_places=2, default=0)
+  1239→    rating_count        = models.IntegerField(default=0)
+  1240→    sales_count         = models.IntegerField(default=0)
+  1241→    view_count          = models.IntegerField(default=0)
+  1242→
+  1243→    # ── WHOLESALE TIER DISCOUNTS ──────────────────────────────
+  1244→    tier1_discount      = models.DecimalField(max_digits=5,
+  1245→                            decimal_places=2, default=2)
+  1246→    tier2_discount      = models.DecimalField(max_digits=5,
+  1247→                            decimal_places=2, default=3)
+  1248→    tier3_discount      = models.DecimalField(max_digits=5,
+  1249→                            decimal_places=2, default=5)
+  1250→
+  1251→    created_at          = models.DateTimeField(auto_now_add=True)
+  1252→    updated_at          = models.DateTimeField(auto_now=True)
+  1253→
+  1254→    class Meta:
+  1255→        db_table = 'products'
+  1256→        ordering = ['-created_at']
+  1257→        indexes = [
+  1258→            models.Index(fields=['category']),
+  1259→            models.Index(fields=['is_active']),
+  1260→            models.Index(fields=['selling_price']),
+  1261→            models.Index(fields=['stock_qty']),
+  1262→        ]
+  1263→
+  1264→class ProductImage(models.Model):
+  1265→    product         = models.ForeignKey(Product,
+  1266→                        on_delete=models.CASCADE,
+  1267→                        related_name='images')
+  1268→    cloudinary_url  = models.URLField()
+  1269→    cloudinary_id   = models.CharField(max_length=200)
+  1270→    alt_text        = models.CharField(max_length=200, blank=True)
+  1271→    is_primary      = models.BooleanField(default=False)
+  1272→    sort_order      = models.IntegerField(default=0)
+  1273→    created_at      = models.DateTimeField(auto_now_add=True)
+  1274→
+  1275→    class Meta:
+  1276→        db_table = 'product_images'
+  1277→        ordering = ['sort_order']
+  1278→
+  1279→── customers/models.py ─────────────────────────────────────────────────────────
+  1280→
+  1281→class Customer(models.Model):
+  1282→    TIER_CHOICES = [
+  1283→        ('bronze','Bronze'),('silver','Silver'),
+  1284→        ('gold','Gold'),('platinum','Platinum'),
+  1285→    ]
+  1286→    name            = models.CharField(max_length=100)
+  1287→    phone           = models.CharField(max_length=20, unique=True)
+  1288→    email           = models.EmailField(blank=True)
+  1289→    district        = models.CharField(max_length=50, blank=True)
+  1290→    loyalty_points  = models.IntegerField(default=0)
+  1291→    total_spent     = models.DecimalField(max_digits=15,
+  1292→                        decimal_places=2, default=0)
+  1293→    total_orders    = models.IntegerField(default=0)
+  1294→    tier            = models.CharField(max_length=10,
+  1295→                        choices=TIER_CHOICES, default='bronze')
+  1296→    is_active       = models.BooleanField(default=True)
+  1297→    last_order_at   = models.DateTimeField(null=True, blank=True)
+  1298→    created_at      = models.DateTimeField(auto_now_add=True)
+  1299→    updated_at      = models.DateTimeField(auto_now=True)
+  1300→
+  1301→    class Meta:
+  1302→        db_table = 'customers'
+  1303→        ordering = ['-total_spent']
+  1304→
+  1305→    def update_tier(self):
+  1306→        pts = self.loyalty_points
+  1307→        if pts >= 5000:   self.tier = 'platinum'
+  1308→        elif pts >= 2000: self.tier = 'gold'
+  1309→        elif pts >= 500:  self.tier = 'silver'
+  1310→        else:             self.tier = 'bronze'
+  1311→        self.save(update_fields=['tier'])
+  1312→
+  1313→class LoyaltyTransaction(models.Model):
+  1314→    TYPE_CHOICES = [('earn','Earn'),('redeem','Redeem'),('adjust','Adjust')]
+  1315→    customer    = models.ForeignKey(Customer,
+  1316→                    on_delete=models.CASCADE,
+  1317→                    related_name='loyalty_transactions')
+  1318→    type        = models.CharField(max_length=10, choices=TYPE_CHOICES)
+  1319→    points      = models.IntegerField()
+  1320→    balance     = models.IntegerField()
+  1321→    order_id    = models.CharField(max_length=30, blank=True)
+  1322→    reason      = models.CharField(max_length=200, blank=True)
+  1323→    created_by  = models.CharField(max_length=50, blank=True)
+  1324→    created_at  = models.DateTimeField(auto_now_add=True)
+  1325→
+  1326→    class Meta:
+  1327→        db_table = 'loyalty_transactions'
+  1328→
+  1329→── orders/models.py ────────────────────────────────────────────────────────────
+  1330→
+  1331→class Order(models.Model):
+  1332→    STATUS_CHOICES = [
+  1333→        ('pending','Pending'),('confirmed','Confirmed'),
+  1334→        ('processing','Processing'),('shipped','Shipped'),
+  1335→        ('delivered','Delivered'),('cancelled','Cancelled'),
+  1336→    ]
+  1337→    PAYMENT_CHOICES = [
+  1338→        ('momo','MTN MoMo'),('airtel','Airtel Money'),
+  1339→        ('bank','Bank Transfer'),('cash','Cash on Delivery'),
+  1340→    ]
+  1341→    order_id        = models.CharField(max_length=30, unique=True)
+  1342→    customer        = models.ForeignKey('customers.Customer',
+  1343→                        on_delete=models.PROTECT,
+  1344→                        null=True, blank=True,
+  1345→                        related_name='orders')
+  1346→    customer_name   = models.CharField(max_length=100)
+  1347→    customer_phone  = models.CharField(max_length=20)
+  1348→    district        = models.CharField(max_length=50)
+  1349→    province        = models.CharField(max_length=50, blank=True)
+  1350→    items           = models.JSONField()
+  1351→    # items = [{ product_id, name, qty, unit_price_ttc,
+  1352→    #            unit_price_ht, vat_per_unit, subtotal_ht,
+  1353→    #            subtotal_vat, subtotal_ttc }]
+  1354→    subtotal_ht     = models.DecimalField(max_digits=15, decimal_places=2)
+  1355→    total_vat       = models.DecimalField(max_digits=12, decimal_places=2)
+  1356→    delivery_cost   = models.DecimalField(max_digits=10, decimal_places=2)
+  1357→    discount_amount = models.DecimalField(max_digits=12,
+  1358→                        decimal_places=2, default=0)
+  1359→    coupon_code     = models.CharField(max_length=20, blank=True)
+  1360→    loyalty_used    = models.IntegerField(default=0)
+  1361→    loyalty_earned  = models.IntegerField(default=0)
+  1362→    total_ttc       = models.DecimalField(max_digits=15, decimal_places=2)
+  1363→    payment_method  = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
+  1364→    payment_status  = models.CharField(max_length=20, default='pending')
+  1365→    status          = models.CharField(max_length=15,
+  1366→                        choices=STATUS_CHOICES, default='pending')
+  1367→    notes           = models.TextField(blank=True)
+  1368→    ebm_receipt_no  = models.CharField(max_length=50, blank=True)
+  1369→    mrc_code        = models.CharField(max_length=100, blank=True)
+  1370→    notified        = models.BooleanField(default=False)
+  1371→    created_at      = models.DateTimeField(auto_now_add=True)
+  1372→    updated_at      = models.DateTimeField(auto_now=True)
+  1373→
+  1374→    class Meta:
+  1375→        db_table = 'orders'
+  1376→        ordering = ['-created_at']
+  1377→        indexes = [
+  1378→            models.Index(fields=['status']),
+  1379→            models.Index(fields=['customer_phone']),
+  1380→            models.Index(fields=['created_at']),
+  1381→            models.Index(fields=['order_id']),
+  1382→        ]
+  1383→
+  1384→    def generate_order_id(self):
+  1385→        from datetime import datetime
+  1386→        date = datetime.now().strftime('%Y%m%d')
+  1387→        count = Order.objects.filter(
+  1388→            created_at__date=datetime.now().date()
+  1389→        ).count() + 1
+  1390→        return f"SC-{date}-{count:03d}"
+  1391→
+  1392→── wholesale/models.py ─────────────────────────────────────────────────────────
+  1393→
+  1394→class WholesaleUser(models.Model):
+  1395→    TIER_CHOICES = [
+  1396→        ('bronze','Bronze'),('silver','Silver'),
+  1397→        ('gold','Gold'),('platinum','Platinum'),
+  1398→    ]
+  1399→    STATUS_CHOICES = [
+  1400→        ('pending','Pending'),('approved','Approved'),
+  1401→        ('rejected','Rejected'),('suspended','Suspended'),
+  1402→    ]
+  1403→    business_name   = models.CharField(max_length=200)
+  1404→    owner_name      = models.CharField(max_length=100)
+  1405→    tin             = models.CharField(max_length=20, unique=True)
+  1406→    phone           = models.CharField(max_length=20)
+  1407→    email           = models.EmailField(blank=True)
+  1408→    district        = models.CharField(max_length=50)
+  1409→    business_type   = models.CharField(max_length=50)
+  1410→    expected_volume = models.DecimalField(max_digits=15, decimal_places=2)
+  1411→    tier            = models.CharField(max_length=10,
+  1412→                        choices=TIER_CHOICES, default='bronze')
+  1413→    status          = models.CharField(max_length=15,
+  1414→                        choices=STATUS_CHOICES, default='pending')
+  1415→    credit_limit    = models.DecimalField(max_digits=15,
+  1416→                        decimal_places=2, default=0)
+  1417→    credit_used     = models.DecimalField(max_digits=15,
+  1418→                        decimal_places=2, default=0)
+  1419→    total_spent     = models.DecimalField(max_digits=15,
+  1420→                        decimal_places=2, default=0)
+  1421→    total_orders    = models.IntegerField(default=0)
+  1422→    rejection_reason= models.TextField(blank=True)
+  1423→    approved_at     = models.DateTimeField(null=True, blank=True)
+  1424→    approved_by     = models.CharField(max_length=50, blank=True)
+  1425→    last_order_at   = models.DateTimeField(null=True, blank=True)
+  1426→    created_at      = models.DateTimeField(auto_now_add=True)
+  1427→
+  1428→    class Meta:
+  1429→        db_table = 'wholesale_users'
+  1430→
+  1431→    def get_tier_discount(self):
+  1432→        discounts = {
+  1433→            'bronze': 5, 'silver': 8,
+  1434→            'gold': 12, 'platinum': 18
+  1435→        }
+  1436→        return discounts.get(self.tier, 5)
+  1437→
+  1438→    def update_tier(self):
+  1439→        spent = float(self.total_spent)
+  1440→        if spent >= 20000000:   self.tier = 'platinum'
+  1441→        elif spent >= 5000000:  self.tier = 'gold'
+  1442→        elif spent >= 1000000:  self.tier = 'silver'
+  1443→        else:                   self.tier = 'bronze'
+  1444→        self.save(update_fields=['tier'])
+  1445→
+  1446→── promotions/models.py ────────────────────────────────────────────────────────
+  1447→
+  1448→class Coupon(models.Model):
+  1449→    TYPE_CHOICES = [('percent','Percent'),('fixed','Fixed')]
+  1450→    code            = models.CharField(max_length=20, unique=True)
+  1451→    description     = models.CharField(max_length=200, blank=True)
+  1452→    discount_type   = models.CharField(max_length=10, choices=TYPE_CHOICES)
+  1453→    discount_value  = models.DecimalField(max_digits=10, decimal_places=2)
+  1454→    min_order       = models.DecimalField(max_digits=12,
+  1455→                        decimal_places=2, default=0)
+  1456→    max_discount    = models.DecimalField(max_digits=10,
+  1457→                        decimal_places=2, null=True, blank=True)
+  1458→    max_uses        = models.IntegerField(default=0)
+  1459→    used_count      = models.IntegerField(default=0)
+  1460→    valid_from      = models.DateTimeField()
+  1461→    valid_until     = models.DateTimeField()
+  1462→    is_public       = models.BooleanField(default=False)
+  1463→    is_active       = models.BooleanField(default=True)
+  1464→    created_at      = models.DateTimeField(auto_now_add=True)
+  1465→
+  1466→    class Meta:
+  1467→        db_table = 'coupons'
+  1468→
+  1469→class FlashSale(models.Model):
+  1470→    TYPE_CHOICES  = [('percent','Percent'),('fixed','Fixed')]
+  1471→    APPLY_CHOICES = [
+  1472→        ('all','All Products'),
+  1473→        ('categories','Specific Categories'),
+  1474→        ('products','Specific Products'),
+  1475→    ]
+  1476→    title_en        = models.CharField(max_length=200)
+  1477→    title_fr        = models.CharField(max_length=200)
+  1478→    title_rw        = models.CharField(max_length=200)
+  1479→    discount_type   = models.CharField(max_length=10, choices=TYPE_CHOICES)
+  1480→    discount_value  = models.DecimalField(max_digits=10, decimal_places=2)
+  1481→    applicable_to   = models.CharField(max_length=15,
+  1482→                        choices=APPLY_CHOICES, default='all')
+  1483→    applicable_ids  = models.JSONField(default=list)
+  1484→    start_time      = models.DateTimeField()
+  1485→    end_time        = models.DateTimeField()
+  1486→    banner_text_en  = models.CharField(max_length=300)
+  1487→    banner_text_fr  = models.CharField(max_length=300)
+  1488→    banner_text_rw  = models.CharField(max_length=300)
+  1489→    banner_color    = models.CharField(max_length=7, default='#ff4757')
+  1490→    notify_subs     = models.BooleanField(default=False)
+  1491→    is_active       = models.BooleanField(default=True)
+  1492→    created_at      = models.DateTimeField(auto_now_add=True)
+  1493→
+  1494→    class Meta:
+  1495→        db_table = 'flash_sales'
+  1496→
+  1497→class Bundle(models.Model):
+  1498→    name_en         = models.CharField(max_length=200)
+  1499→    name_fr         = models.CharField(max_length=200)
+  1500→    name_rw         = models.CharField(max_length=200)
+  1501→    desc_en         = models.TextField()
+  1502→    desc_fr         = models.TextField()
+  1503→    desc_rw         = models.TextField()
+  1504→    products        = models.ManyToManyField('products.Product',
+  1505→                        related_name='bundles')
+  1506→    normal_price    = models.DecimalField(max_digits=12, decimal_places=2)
+  1507→    bundle_price    = models.DecimalField(max_digits=12, decimal_places=2)
+  1508→    savings_pct     = models.DecimalField(max_digits=5, decimal_places=2)
+  1509→    emoji           = models.CharField(max_length=10, default='🎁')
+  1510→    stock_qty       = models.IntegerField(default=0)
+  1511→    sales_count     = models.IntegerField(default=0)
+  1512→    is_active       = models.BooleanField(default=True)
+  1513→    created_at      = models.DateTimeField(auto_now_add=True)
+  1514→
+  1515→    class Meta:
+  1516→        db_table = 'bundles'
+  1517→
+  1518→── ebm/models.py ───────────────────────────────────────────────────────────────
+  1519→
+  1520→class EBMReceipt(models.Model):
+  1521→    receipt_no      = models.CharField(max_length=50, unique=True)
+  1522→    order           = models.OneToOneField('orders.Order',
+  1523→                        on_delete=models.PROTECT,
+  1524→                        related_name='ebm_receipt')
+  1525→    mrc_code        = models.CharField(max_length=100)
+  1526→    cashier         = models.CharField(max_length=100,
+  1527→                        default='Samuel Cosmetic Shop')
+  1528→    customer_name   = models.CharField(max_length=100)
+  1529→    customer_tin    = models.CharField(max_length=20, blank=True)
+  1530→    items_detail    = models.JSONField()
+  1531→    # items_detail = [{ name, qty, unit_ht, unit_vat,
+  1532→    #                   unit_ttc, total_ht, total_vat, total_ttc }]
+  1533→    subtotal_ht     = models.DecimalField(max_digits=15, decimal_places=2)
+  1534→    total_vat       = models.DecimalField(max_digits=12, decimal_places=2)
+  1535→    total_ttc       = models.DecimalField(max_digits=15, decimal_places=2)
+  1536→    payment_method  = models.CharField(max_length=20)
+  1537→    is_b2b          = models.BooleanField(default=False)
+  1538→    created_at      = models.DateTimeField(auto_now_add=True)
+  1539→
+  1540→    class Meta:
+  1541→        db_table = 'ebm_receipts'
+  1542→        ordering = ['-created_at']
+  1543→
+  1544→── notifications/models.py ─────────────────────────────────────────────────────
+  1545→
+  1546→class Subscriber(models.Model):
+  1547→    SOURCE_CHOICES = [
+  1548→        ('order','Order'),('booking','Booking'),
+  1549→        ('contact','Contact'),('newsletter','Newsletter'),
+  1550→        ('wholesale','Wholesale'),('review','Review'),
+  1551→        ('price_alert','Price Alert'),('manual','Manual'),
+  1552→    ]
+  1553→    phone           = models.CharField(max_length=20, unique=True)
+  1554→    name            = models.CharField(max_length=100, blank=True)
+  1555→    source          = models.CharField(max_length=20,
+  1556→                        choices=SOURCE_CHOICES, default='manual')
+  1557→    is_active       = models.BooleanField(default=True)
+  1558→    total_received  = models.IntegerField(default=0)
+  1559→    last_message_at = models.DateTimeField(null=True, blank=True)
+  1560→    subscribed_at   = models.DateTimeField(auto_now_add=True)
+  1561→    unsubscribed_at = models.DateTimeField(null=True, blank=True)
+  1562→
+  1563→    class Meta:
+  1564→        db_table = 'subscribers'
+  1565→
+  1566→class PriceAlert(models.Model):
+  1567→    product         = models.ForeignKey('products.Product',
+  1568→                        on_delete=models.CASCADE,
+  1569→                        related_name='price_alerts')
+  1570→    customer_name   = models.CharField(max_length=100)
+  1571→    customer_phone  = models.CharField(max_length=20)
+  1572→    target_price    = models.DecimalField(max_digits=12, decimal_places=2)
+  1573→    notified        = models.BooleanField(default=False)
+  1574→    notified_at     = models.DateTimeField(null=True, blank=True)
+  1575→    created_at      = models.DateTimeField(auto_now_add=True)
+  1576→
+  1577→    class Meta:
+  1578→        db_table = 'price_alerts'
+  1579→
+  1580→class WhatsAppTemplate(models.Model):
+  1581→    key             = models.CharField(max_length=50, unique=True)
+  1582→    title           = models.CharField(max_length=100)
+  1583→    message         = models.TextField()
+  1584→    category        = models.CharField(max_length=50)
+  1585→    usage_count     = models.IntegerField(default=0)
+  1586→    updated_at      = models.DateTimeField(auto_now=True)
+  1587→
+  1588→    class Meta:
+  1589→        db_table = 'whatsapp_templates'
+  1590→
+  1591→class NotificationLog(models.Model):
+  1592→    TYPE_CHOICES = [
+  1593→        ('whatsapp','WhatsApp'),('email','Email'),('sms','SMS')
+  1594→    ]
+  1595→    recipient_phone = models.CharField(max_length=20, blank=True)
+  1596→    recipient_email = models.EmailField(blank=True)
+  1597→    type            = models.CharField(max_length=10, choices=TYPE_CHOICES)
+  1598→    template_key    = models.CharField(max_length=50)
+  1599→    message         = models.TextField()
+  1600→    status          = models.CharField(max_length=20, default='sent')
+  1601→    error_msg       = models.CharField(max_length=300, blank=True)
+  1602→    created_at      = models.DateTimeField(auto_now_add=True)
+  1603→
+  1604→    class Meta:
+  1605→        db_table = 'notification_logs'
+  1606→
+  1607→── cms/models.py ───────────────────────────────────────────────────────────────
+  1608→
+  1609→class SiteContent(models.Model):
+  1610→    key             = models.CharField(max_length=100, unique=True)
+  1611→    value_en        = models.TextField()
+  1612→    value_fr        = models.TextField(blank=True)
+  1613→    value_rw        = models.TextField(blank=True)
+  1614→    updated_at      = models.DateTimeField(auto_now=True)
+  1615→    updated_by      = models.CharField(max_length=50, blank=True)
+  1616→
+  1617→    class Meta:
+  1618→        db_table = 'site_content'
+  1619→
+  1620→class SiteSetting(models.Model):
+  1621→    key             = models.CharField(max_length=100, unique=True)
+  1622→    value           = models.JSONField()
+  1623→    updated_at      = models.DateTimeField(auto_now=True)
+  1624→
+  1625→    class Meta:
+  1626→        db_table = 'site_settings'
+  1627→
+  1628→class Testimonial(models.Model):
+  1629→    customer_name   = models.CharField(max_length=100)
+  1630→    customer_phone  = models.CharField(max_length=20, blank=True)
+  1631→    district        = models.CharField(max_length=50, blank=True)
+  1632→    message_en      = models.TextField()
+  1633→    message_fr      = models.TextField(blank=True)
+  1634→    message_rw      = models.TextField(blank=True)
+  1635→    rating          = models.IntegerField(default=5)
+  1636→    is_approved     = models.BooleanField(default=False)
+  1637→    sort_order      = models.IntegerField(default=0)
+  1638→    created_at      = models.DateTimeField(auto_now_add=True)
+  1639→
+  1640→    class Meta:
+  1641→        db_table = 'testimonials'
+  1642→
+  1643→class BrandingSetting(models.Model):
+  1644→    logo_type       = models.CharField(max_length=10, default='emoji')
+  1645→    logo_emoji      = models.CharField(max_length=10, default='✿')
+  1646→    logo_url        = models.URLField(blank=True)
+  1647→    shop_name       = models.CharField(max_length=100,
+  1648→                        default='Samuel Cosmetic Shop')
+  1649→    tagline_en      = models.CharField(max_length=200,
+  1650→                        default="Rwanda's #1 Trusted Cosmetics Shop")
+  1651→    tagline_fr      = models.CharField(max_length=200, blank=True)
+  1652→    tagline_rw      = models.CharField(max_length=200, blank=True)
+  1653→    primary_color   = models.CharField(max_length=7, default='#e75480')
+  1654→    favicon_url     = models.URLField(blank=True)
+  1655→    updated_at      = models.DateTimeField(auto_now=True)
+  1656→
+  1657→    class Meta:
+  1658→        db_table = 'branding_settings'
+  1659→
+  1660→── analytics/models.py ─────────────────────────────────────────────────────────
+  1661→
+  1662→class PageView(models.Model):
+  1663→    page            = models.CharField(max_length=100)
+  1664→    product         = models.ForeignKey('products.Product',
+  1665→                        on_delete=models.SET_NULL,
+  1666→                        null=True, blank=True)
+  1667→    session_id      = models.CharField(max_length=100)
+  1668→    ip_hash         = models.CharField(max_length=64, blank=True)
+  1669→    created_at      = models.DateTimeField(auto_now_add=True)
+  1670→
+  1671→    class Meta:
+  1672→        db_table = 'page_views'
+  1673→
+  1674→class AuditLog(models.Model):
+  1675→    staff_id        = models.CharField(max_length=50)
+  1676→    staff_name      = models.CharField(max_length=100)
+  1677→    action          = models.CharField(max_length=200)
+  1678→    model_name      = models.CharField(max_length=50, blank=True)
+  1679→    object_id       = models.CharField(max_length=50, blank=True)
+  1680→    details         = models.JSONField(default=dict)
+  1681→    ip_address      = models.GenericIPAddressField(null=True, blank=True)
+  1682→    created_at      = models.DateTimeField(auto_now_add=True)
+  1683→
+  1684→    class Meta:
+  1685→        db_table = 'audit_logs'
+  1686→        ordering = ['-created_at']
+  1687→
+  1688→═══════════════════════════════════════════════════════════════════════════════════
+  1689→SECTION 7: COMPLETE API ENDPOINTS
+  1690→═══════════════════════════════════════════════════════════════════════════════════
+  1691→
+  1692→BASE URL: /api/v1/
+  1693→
+  1694→STANDARD RESPONSE FORMAT:
+  1695→  Success: {"success": true, "data": {...}, "message": "OK", "code": 200}
+  1696→  List:    {"success": true, "data": [...], "count": N,
+  1697→             "next": null, "previous": null}
+  1698→  Error:   {"success": false, "error": "...", "code": 400}
+  1699→
+  1700→AUTH ENDPOINTS:
+  1701→  POST /api/v1/auth/login/           Admin + Staff login → JWT
+  1702→  POST /api/v1/auth/logout/          Invalidate token
+  1703→  POST /api/v1/auth/refresh/         Refresh JWT
+  1704→  GET  /api/v1/auth/me/              Current user info + permissions
+  1705→  POST /api/v1/auth/change-password/ Change password (admin only)
+  1706→
+  1707→PRODUCTS:
+  1708→  GET    /api/v1/products/            List (filter: category, price,
+  1709→                                       rating, in_stock, flash_sale,
+  1710→                                       search, sort, page, page_size)
+  1711→  POST   /api/v1/products/            Create (admin)
+  1712→  GET    /api/v1/products/{id}/       Detail with images + reviews count
+  1713→  PUT    /api/v1/products/{id}/       Update (admin)
+  1714→  DELETE /api/v1/products/{id}/       Soft delete (admin)
+  1715→  GET    /api/v1/products/featured/   Top 8 by sales_count
+  1716→  GET    /api/v1/products/search/?q=  Fuzzy search + suggestions
+  1717→  POST   /api/v1/products/bulk-import/CSV import (admin)
+  1718→  POST   /api/v1/products/{id}/images/Upload image → Cloudinary (admin)
+  1719→  DELETE /api/v1/products/{id}/images/{img_id}/ Remove image (admin)
+  1720→  GET    /api/v1/products/{id}/reviews/ Approved reviews for product
+  1721→  GET    /api/v1/products/low-stock/  Below threshold (admin)
+  1722→
+  1723→CATEGORIES:
+  1724→  GET    /api/v1/categories/          All active + product count
+  1725→  POST   /api/v1/categories/          Create (admin)
+  1726→  PUT    /api/v1/categories/{id}/     Update (admin)
+  1727→  DELETE /api/v1/categories/{id}/     Delete if no products (admin)
+  1728→  PATCH  /api/v1/categories/reorder/  Update sort_order (admin)
+  1729→
+  1730→ORDERS:
+  1731→  GET    /api/v1/orders/              List (admin) filter: status, date,
+  1732→                                       district, payment, search
+  1733→  POST   /api/v1/orders/              Create retail order (public)
+  1734→  GET    /api/v1/orders/{id}/         Order detail
+  1735→  PATCH  /api/v1/orders/{id}/status/  Update status (admin)
+  1736→  GET    /api/v1/orders/track/        Track by phone (public)
+  1737→  POST   /api/v1/orders/{id}/notify/  WhatsApp notification (admin)
+  1738→  GET    /api/v1/orders/{id}/invoice/ Download PDF invoice (admin)
+  1739→  POST   /api/v1/orders/{id}/ebm/     Generate EBM receipt (admin)
+  1740→  POST   /api/v1/orders/bulk-status/  Update multiple statuses (admin)
+  1741→
+  1742→CUSTOMERS:
+  1743→  GET    /api/v1/customers/           List (admin) filter+search
+  1744→  GET    /api/v1/customers/{id}/      Detail + order history + loyalty
+  1745→  PUT    /api/v1/customers/{id}/      Update (admin)
+  1746→  POST   /api/v1/customers/{id}/points/ Adjust loyalty points (admin)
+  1747→  GET    /api/v1/customers/lookup/?phone= Find by phone (public)
+  1748→  GET    /api/v1/customers/portal/?phone= Customer self-service portal
+  1749→
+  1750→WHOLESALE:
+  1751→  POST   /api/v1/wholesale/register/     Apply (public)
+  1752→  POST   /api/v1/wholesale/login/        Login with TIN (public)
+  1753→  GET    /api/v1/wholesale/applications/ Pending applications (admin)
+  1754→  PATCH  /api/v1/wholesale/{id}/approve/ Approve (admin)
+  1755→  PATCH  /api/v1/wholesale/{id}/reject/  Reject with reason (admin)
+  1756→  GET    /api/v1/wholesale/buyers/       Approved buyers (admin)
+  1757→  PUT    /api/v1/wholesale/buyers/{id}/  Edit buyer (admin)
+  1758→  PATCH  /api/v1/wholesale/buyers/{id}/suspend/ Toggle suspend (admin)
+  1759→  GET    /api/v1/wholesale/orders/       Wholesale orders (admin)
+  1760→  POST   /api/v1/wholesale/orders/       Create wholesale order
+  1761→  GET    /api/v1/wholesale/dashboard/    Buyer's own stats (buyer JWT)
+  1762→
+  1763→INVENTORY:
+  1764→  GET    /api/v1/inventory/             Stock overview (admin)
+  1765→  GET    /api/v1/inventory/low-stock/   Below threshold (admin)
+  1766→  POST   /api/v1/inventory/adjust/      Adjust qty + reason (admin)
+  1767→  GET    /api/v1/inventory/forecast/    Weeks remaining calc (admin)
+  1768→  GET    /api/v1/inventory/log/         Adjustment history (admin)
+  1769→
+  1770→PROMOTIONS:
+  1771→  GET    /api/v1/coupons/               All coupons (admin)
+  1772→  POST   /api/v1/coupons/               Create (admin)
+  1773→  PUT    /api/v1/coupons/{id}/          Update (admin)
+  1774→  DELETE /api/v1/coupons/{id}/          Delete (admin)
+  1775→  POST   /api/v1/coupons/validate/      Validate coupon + cart total
+  1776→  GET    /api/v1/flash-sales/           All flash sales (admin)
+  1777→  GET    /api/v1/flash-sales/active/    Current active sale (public)
+  1778→  POST   /api/v1/flash-sales/           Create (admin)
+  1779→  PUT    /api/v1/flash-sales/{id}/      Update (admin)
+  1780→  DELETE /api/v1/flash-sales/{id}/      Delete (admin)
+  1781→  GET    /api/v1/bundles/               Active bundles (public)
+  1782→  POST   /api/v1/bundles/               Create (admin)
+  1783→  PUT    /api/v1/bundles/{id}/          Update (admin)
+  1784→  DELETE /api/v1/bundles/{id}/          Delete (admin)
+  1785→
+  1786→REVIEWS:
+  1787→  GET    /api/v1/reviews/               All reviews (admin) filter status
+  1788→  POST   /api/v1/reviews/               Submit review (public)
+  1789→  PATCH  /api/v1/reviews/{id}/approve/  Approve (admin)
+  1790→  PATCH  /api/v1/reviews/{id}/reject/   Reject (admin)
+  1791→  PATCH  /api/v1/reviews/{id}/hide/     Hide (admin)
+  1792→  POST   /api/v1/reviews/{id}/reply/    Admin reply (admin)
+  1793→  POST   /api/v1/reviews/{id}/helpful/  Mark helpful (public)
+  1794→  DELETE /api/v1/reviews/{id}/          Delete (admin)
+  1795→
+  1796→BOOKINGS:
+  1797→  GET    /api/v1/bookings/              All bookings (admin)
+  1798→  POST   /api/v1/bookings/              Create booking (public)
+  1799→  PATCH  /api/v1/bookings/{id}/status/  Update status (admin)
+  1800→  GET    /api/v1/bookings/blocked-dates/ Blocked dates (public)
+  1801→  POST   /api/v1/bookings/block-date/   Block a date (admin)
+  1802→  DELETE /api/v1/bookings/blocked/{id}/ Unblock date (admin)
+  1803→  GET    /api/v1/bookings/slots/?date=  Available time slots (public)
+  1804→
+  1805→PAYMENTS:
+  1806→  POST   /api/v1/payments/momo/initiate/  Start MoMo payment
+  1807→  GET    /api/v1/payments/momo/{id}/      Check status
+  1808→  POST   /api/v1/payments/momo/webhook/   MoMo webhook callback
+  1809→  POST   /api/v1/payments/airtel/initiate/ Start Airtel payment
+  1810→  GET    /api/v1/payments/transactions/    All transactions (admin)
+  1811→
+  1812→NOTIFICATIONS:
+  1813→  GET    /api/v1/subscribers/            All subscribers (admin)
+  1814→  POST   /api/v1/subscribers/            Subscribe (public, auto-sub)
+  1815→  PATCH  /api/v1/subscribers/{id}/toggle/ Toggle active (admin)
+  1816→  DELETE /api/v1/subscribers/{id}/       Delete (admin)
+  1817→  POST   /api/v1/broadcast/              Send WhatsApp broadcast (admin)
+  1818→  GET    /api/v1/price-alerts/           All alerts (admin)
+  1819→  POST   /api/v1/price-alerts/           Create alert (public)
+  1820→  POST   /api/v1/price-alerts/{id}/notify/ Send notification (admin)
+  1821→  POST   /api/v1/price-alerts/notify-all/ Notify all triggered (admin)
+  1822→  DELETE /api/v1/price-alerts/{id}/      Delete (admin)
+  1823→  GET    /api/v1/whatsapp-templates/     All templates (admin)
+  1824→  PUT    /api/v1/whatsapp-templates/{key}/ Update template (admin)
+  1825→
+  1826→DELIVERY:
+  1827→  GET    /api/v1/delivery/zones/         All 30 districts (public)
+  1828→  GET    /api/v1/delivery/calculate/?district= Cost + days (public)
+  1829→  PUT    /api/v1/delivery/zones/{id}/    Update zone (admin)
+  1830→  POST   /api/v1/delivery/zones/reset/   Reset to defaults (admin)
+  1831→
+  1832→EBM:
+  1833→  GET    /api/v1/ebm/                    All receipts (admin)
+  1834→  GET    /api/v1/ebm/{id}/              Receipt detail + print HTML
+  1835→  GET    /api/v1/ebm/export/?from=&to=  VAT CSV for RRA (admin)
+  1836→  GET    /api/v1/ebm/stats/             Monthly VAT summary (admin)
+  1837→
+  1838→CMS:
+  1839→  GET    /api/v1/content/               All site content (public)
+  1840→  PUT    /api/v1/content/{key}/         Update content (admin)
+  1841→  GET    /api/v1/settings/              Site settings (public: limited)
+  1842→  PUT    /api/v1/settings/{key}/        Update setting (admin)
+  1843→  GET    /api/v1/branding/              Branding settings (public)
+  1844→  PUT    /api/v1/branding/              Update branding (admin)
+  1845→
+  1846→ANALYTICS:
+  1847→  GET    /api/v1/analytics/dashboard/   Full dashboard stats (admin)
+  1848→  GET    /api/v1/analytics/revenue/     Revenue data (admin)
+  1849→  GET    /api/v1/analytics/products/    Product performance (admin)
+  1850→  GET    /api/v1/analytics/customers/   Customer insights (admin)
+  1851→  GET    /api/v1/analytics/districts/   District breakdown (admin)
+  1852→  GET    /api/v1/analytics/funnel/      Sales funnel data (admin)
+  1853→  GET    /api/v1/analytics/hours/       Best selling hours (admin)
+  1854→  POST   /api/v1/analytics/pageview/    Track view (public)
+  1855→  GET    /api/v1/analytics/health/      Site health check (admin)
+  1856→
+  1857→REPORTS:
+  1858→  POST   /api/v1/reports/revenue/       Revenue PDF (admin)
+  1859→  POST   /api/v1/reports/inventory/     Inventory PDF (admin)
+  1860→  POST   /api/v1/reports/wholesale/     Wholesale PDF (admin)
+  1861→  POST   /api/v1/reports/vat/           VAT CSV for RRA (admin)
+  1862→  POST   /api/v1/reports/customers/     Customer CSV (admin)
+  1863→  POST   /api/v1/reports/reviews/       Reviews CSV (admin)
+  1864→
+  1865→STAFF:
+  1866→  GET    /api/v1/staff/                 All staff (admin)
+  1867→  POST   /api/v1/staff/                 Create staff (admin)
+  1868→  PUT    /api/v1/staff/{id}/            Update (admin)
+  1869→  PATCH  /api/v1/staff/{id}/toggle/     Suspend/activate (admin)
+  1870→  POST   /api/v1/staff/{id}/reset-password/ Generate temp password (admin)
+  1871→  DELETE /api/v1/staff/{id}/            Delete (admin)
+  1872→
+  1873→MESSAGES:
+  1874→  GET    /api/v1/messages/              All contact messages (admin)
+  1875→  POST   /api/v1/messages/              Submit form (public)
+  1876→  PATCH  /api/v1/messages/{id}/read/    Mark read (admin)
+  1877→  DELETE /api/v1/messages/{id}/         Delete (admin)
+  1878→  GET    /api/v1/auto-replies/          All templates (admin)
+  1879→  POST   /api/v1/auto-replies/          Create template (admin)
+  1880→  PUT    /api/v1/auto-replies/{id}/     Update (admin)
+  1881→  DELETE /api/v1/auto-replies/{id}/     Delete (admin)
+  1882→
+  1883→TESTIMONIALS:
+  1884→  GET    /api/v1/testimonials/          Approved only (public)
+  1885→  POST   /api/v1/testimonials/          Submit (public)
+  1886→  PATCH  /api/v1/testimonials/{id}/approve/ Approve (admin)
+  1887→  DELETE /api/v1/testimonials/{id}/     Delete (admin)
+  1888→
+  1889→═══════════════════════════════════════════════════════════════════════════════════
+  1890→SECTION 8: EBM SERVICE — RRA COMPLIANT
+  1891→═══════════════════════════════════════════════════════════════════════════════════
+  1892→
+  1893→# apps/ebm/services.py
+  1894→
+  1895→class EBMService:
+  1896→    TIN = "102345678"
+  1897→    SDC_ID = "SCS-EBM-001"
+  1898→    SHOP_NAME = "Samuel Cosmetic Shop"
+  1899→    VAT_RATE = Decimal("0.18")
+  1900→
+  1901→    @staticmethod
+  1902→    def calculate_vat_breakdown(selling_price_ttc):
+  1903→        """
+  1904→        RRA requires VAT-inclusive pricing.
+  1905→        Given TTC price, extract HT and VAT.
+  1906→        """
+  1907→        ttc = Decimal(str(selling_price_ttc))
+  1908→        ht = round(ttc * Decimal("100") / Decimal("118"), 2)
+  1909→        vat = round(ttc - ht, 2)
+  1910→        return {"ttc": ttc, "ht": ht, "vat": vat}
+  1911→
+  1912→    @classmethod
+  1913→    def generate_mrc(cls, receipt_no, date_str):
+  1914→        """
+  1915→        MRC = Machine Receipt Code
+  1916→        Deterministic hash for RRA verification
+  1917→        """
+  1918→        import hashlib
+  1919→        raw = f"{cls.TIN}{cls.SDC_ID}{receipt_no}{date_str}"
+  1920→        hash_obj = hashlib.sha256(raw.encode())
+  1921→        mrc = hash_obj.hexdigest()[:16].upper()
+  1922→        formatted = '-'.join([mrc[i:i+4] for i in range(0,16,4)])
+  1923→        return formatted
+  1924→
+  1925→    @classmethod
+  1926→    def create_receipt(cls, order):
+  1927→        """
+  1928→        Creates EBM receipt with full VAT breakdown.
+  1929→        Each line item shows HT + VAT + TTC separately.
+  1930→        """
+  1931→        from .models import EBMReceipt
+  1932→        from orders.models import Order
+  1933→
+  1934→        receipt_no = f"RCP{order.created_at.strftime('%Y%m%d')}" \
+  1935→                     f"{EBMReceipt.objects.count()+1:05d}"
+  1936→        date_str = order.created_at.strftime('%Y%m%d%H%M%S')
+  1937→        mrc = cls.generate_mrc(receipt_no, date_str)
+  1938→
+  1939→        items_detail = []
+  1940→        total_ht = Decimal("0")
+  1941→        total_vat = Decimal("0")
+  1942→        total_ttc = Decimal("0")
+  1943→
+  1944→        for item in order.items:
+  1945→            unit_ttc = Decimal(str(item['unit_price_ttc']))
+  1946→            qty = item['qty']
+  1947→            breakdown = cls.calculate_vat_breakdown(unit_ttc)
+  1948→
+  1949→            line_ht  = round(breakdown['ht'] * qty, 2)
+  1950→            line_vat = round(breakdown['vat'] * qty, 2)
+  1951→            line_ttc = round(unit_ttc * qty, 2)
+  1952→
+  1953→            items_detail.append({
+  1954→                "name": item['name'],
+  1955→                "qty": qty,
+  1956→                "unit_ht":  float(breakdown['ht']),
+  1957→                "unit_vat": float(breakdown['vat']),
+  1958→                "unit_ttc": float(unit_ttc),
+  1959→                "line_ht":  float(line_ht),
+  1960→                "line_vat": float(line_vat),
+  1961→                "line_ttc": float(line_ttc),
+  1962→            })
+  1963→
+  1964→            total_ht  += line_ht
+  1965→            total_vat += line_vat
+  1966→            total_ttc += line_ttc
+  1967→
+  1968→        receipt = EBMReceipt.objects.create(
+  1969→            receipt_no=receipt_no,
+  1970→            order=order,
+  1971→            mrc_code=mrc,
+  1972→            customer_name=order.customer_name,
+  1973→            items_detail=items_detail,
+  1974→            subtotal_ht=total_ht,
+  1975→            total_vat=total_vat,
+  1976→            total_ttc=total_ttc,
+  1977→            payment_method=order.payment_method,
+  1978→        )
+  1979→
+  1980→        order.ebm_receipt_no = receipt_no
+  1981→        order.mrc_code = mrc
+  1982→        order.save(update_fields=['ebm_receipt_no','mrc_code'])
+  1983→
+  1984→        return receipt
+  1985→
+  1986→    @classmethod
+  1987→    def export_vat_csv(cls, from_date, to_date):
+  1988→        """
+  1989→        Monthly VAT report for RRA submission.
+  1990→        Format compliant with RRA EBM requirements.
+  1991→        """
+  1992→        import csv, io
+  1993→        from .models import EBMReceipt
+  1994→
+  1995→        receipts = EBMReceipt.objects.filter(
+  1996→            created_at__date__gte=from_date,
+  1997→            created_at__date__lte=to_date
+  1998→        ).order_by('created_at')
+  1999→
+  2000→        output = io.StringIO()
+
+[showing lines 1-2000 of 2679; use offset=2001 with limit to continue reading]

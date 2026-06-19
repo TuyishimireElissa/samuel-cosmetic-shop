@@ -9,6 +9,10 @@ import type { Product, Category } from "@prisma/client";
 import { ShopHeader } from "./header";
 import { ProductCard, ProductCardSkeleton } from "./product-card";
 import { CartDrawer } from "./cart-drawer";
+import { QuickViewModal } from "./quick-view-modal";
+import { OrderTrackingModal, CustomerPortalModal, BookingModal, WholesaleModal } from "./modals";
+import { PhotoSearchModal } from "./photo-search";
+import { WishlistCompareBar } from "./wishlist-compare-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
@@ -20,6 +24,7 @@ import {
   Shield,
   Heart,
   Star,
+  TrendingUp,
   MapPin,
   Phone,
   Mail,
@@ -32,11 +37,20 @@ type ProductWithCat = Product & { category: Category | null };
 export function Storefront() {
   const { lang, currency, setCartOpen } = useUI();
   const [products, setProducts] = useState<ProductWithCat[]>([]);
+  const [featured, setFeatured] = useState<ProductWithCat[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [bundles, setBundles] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeCat, setActiveCat] = useState("all");
   const [sort, setSort] = useState("newest");
+  const [quickView, setQuickView] = useState<ProductWithCat | null>(null);
+  const [trackOpen, setTrackOpen] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [wholesaleOpen, setWholesaleOpen] = useState(false);
+  const [photoSearchOpen, setPhotoSearchOpen] = useState(false);
 
   const shopRef = useRef<HTMLDivElement>(null);
   const catsRef = useRef<HTMLDivElement>(null);
@@ -47,9 +61,15 @@ export function Storefront() {
     Promise.all([
       fetch("/api/products").then((r) => r.json()),
       fetch("/api/categories").then((r) => r.json()),
-    ]).then(([p, c]) => {
+      fetch("/api/products/featured").then((r) => r.json()),
+      fetch("/api/bundles").then((r) => r.json()),
+      fetch("/api/testimonials").then((r) => r.json()),
+    ]).then(([p, c, f, b, ts]) => {
       if (p.ok) setProducts(p.products);
       if (c.ok) setCategories(c.categories);
+      if (f?.ok) setFeatured(f.products);
+      if (b?.ok) setBundles(b.bundles);
+      if (ts?.ok) setTestimonials(ts.testimonials);
       setLoading(false);
     });
   }, []);
@@ -307,6 +327,87 @@ export function Storefront() {
         )}
       </section>
 
+      {/* FEATURED PRODUCTS */}
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 flex items-center gap-2" style={{ fontFamily: "var(--font-playfair)" }}>
+            <TrendingUp size={24} className="text-pink-600" /> Featured Products
+          </h2>
+          <div className="flex md:grid md:grid-cols-4 gap-3 sm:gap-4 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+            {featured.slice(0, 8).map((p) => (
+              <div key={p.id} className="shrink-0 w-60 sm:w-auto md:w-full">
+                <ProductCard product={p} currency={currency} onQuickView={(prod) => setQuickView(prod as any)} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* BUNDLES */}
+      {bundles.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>🎁 Special Bundles</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {bundles.map((b) => (
+              <div key={b.id} className="bg-white rounded-2xl border border-pink-100 overflow-hidden hover:shadow-lg transition-all">
+                <div className="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 grid place-items-center text-6xl">{b.emoji}</div>
+                <div className="p-4 space-y-2">
+                  <h3 className="font-bold text-pink-900 text-lg" style={{ fontFamily: "var(--font-playfair)" }}>{b.nameEn}</h3>
+                  <p className="text-sm text-muted-foreground">{b.descEn}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-pink-700">{formatPrice(b.bundlePrice, currency)}</span>
+                    <span className="text-sm text-muted-foreground line-through">{formatPrice(b.normalPrice, currency)}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">-{b.savingsPct}%</span>
+                  </div>
+                  <Button className="w-full bg-pink-600 hover:bg-pink-700 h-10" onClick={() => {
+                    b.items?.forEach((item: any) => { if (item.product) useCart.getState().add({ id: item.product.id, priceTTC: item.product.sellingPrice, name: item.product.nameEn, emoji: item.product.emoji }); });
+                    setCartOpen(true);
+                  }}>Add Bundle to Cart</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* SERVICES */}
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12 lg:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-pink-900 mb-5 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>Quick Services</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <button onClick={() => setTrackOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
+            <div className="text-4xl sm:text-5xl mb-2">📦</div><div className="font-semibold text-sm sm:text-base text-pink-800">Track Order</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Check status</div>
+          </button>
+          <button onClick={() => setPortalOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
+            <div className="text-4xl sm:text-5xl mb-2">👤</div><div className="font-semibold text-sm sm:text-base text-pink-800">My Account</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Loyalty & history</div>
+          </button>
+          <button onClick={() => setBookingOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
+            <div className="text-4xl sm:text-5xl mb-2">📅</div><div className="font-semibold text-sm sm:text-base text-pink-800">Book</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Appointment</div>
+          </button>
+          <button onClick={() => setWholesaleOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
+            <div className="text-4xl sm:text-5xl mb-2">🏢</div><div className="font-semibold text-sm sm:text-base text-pink-800">Wholesale</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Bulk buyer</div>
+          </button>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      {testimonials.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-pink-900 mb-5 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>💬 What Our Customers Say</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {testimonials.map((tm) => (
+              <div key={tm.id} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-white font-bold">{tm.customerName.charAt(0)}</div>
+                  <div><div className="font-semibold text-sm">{tm.customerName}</div><div className="text-xs text-muted-foreground">{tm.district}</div></div>
+                </div>
+                <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={14} className={n <= tm.rating ? "text-amber-500 fill-amber-500" : "text-gray-300"} />)}</div>
+                <p className="text-sm text-foreground/80 italic">"{tm.messageEn}"</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ABOUT */}
       <section ref={aboutRef} className="mx-auto max-w-7xl px-3 sm:px-4 py-8 sm:py-16">
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
@@ -502,6 +603,15 @@ export function Storefront() {
       />
 
       <CartDrawer />
+
+      {/* Lazy modals */}
+      {quickView && <QuickViewModal product={quickView} onClose={() => setQuickView(null)} />}
+      {trackOpen && <OrderTrackingModal onClose={() => setTrackOpen(false)} />}
+      {portalOpen && <CustomerPortalModal onClose={() => setPortalOpen(false)} />}
+      {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} />}
+      {wholesaleOpen && <WholesaleModal onClose={() => setWholesaleOpen(false)} />}
+      {photoSearchOpen && <PhotoSearchModal onClose={() => setPhotoSearchOpen(false)} onMatch={(hint) => { setActiveCat(hint); shopRef.current?.scrollIntoView({ behavior: "smooth" }); }} />}
+      <WishlistCompareBar />
     </div>
   );
 }

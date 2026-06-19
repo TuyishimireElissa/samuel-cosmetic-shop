@@ -647,7 +647,7 @@ function MobileBottomNav({
   const { lang } = useUI();
   const cartItems = useCartItems();
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-pink-100 grid grid-cols-4 h-14">
+    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-pink-100 grid grid-cols-4 backdrop-blur-xl" style={{ height: "calc(3.75rem + env(safe-area-inset-bottom))", paddingBottom: "env(safe-area-inset-bottom)" }}>
       <button onClick={onHome} className="flex flex-col items-center justify-center text-[10px] text-pink-700">
         🏠 {t("nav.home", lang)}
       </button>

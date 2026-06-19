@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { cached, withCache } from "@/lib/cache";
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,12 +33,11 @@ export async function GET(req: NextRequest) {
     else if (sort === "rating") orderBy = { ratingAvg: "desc" };
     else if (sort === "popular") orderBy = { salesCount: "desc" };
 
-    const products = await db.product.findMany({
-      where,
-      orderBy,
-      include: { category: true, images: true },
-    });
-    return NextResponse.json({ ok: true, products });
+    const cacheKey = `/api/products:${category}:${search}:${sort}:${minPrice}:${maxPrice}`;
+    const products = await cached(cacheKey, () => db.product.findMany({
+      where, orderBy, include: { category: true, images: true },
+    }), 60);
+    return withCache(NextResponse.json({ ok: true, products }), 60);
   } catch (e: any) {
     return NextResponse.json(
       { ok: false, error: e?.message || "server_error" },

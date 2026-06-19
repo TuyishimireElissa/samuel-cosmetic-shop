@@ -1,0 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { verifyPassword, makeToken } from "@/lib/auth";
+export async function POST(req: NextRequest) { try { const { tin, password } = await req.json(); if (!tin || !password) return NextResponse.json({ ok: false, error: "missing" }, { status: 400 }); const user = await db.wholesaleUser.findUnique({ where: { tin } }); if (!user || !verifyPassword(password, user.passwordHash)) return NextResponse.json({ ok: false, error: "invalid" }, { status: 401 }); if (user.status !== "approved") return NextResponse.json({ ok: false, error: "status_" + user.status }); return NextResponse.json({ ok: true, token: makeToken(), user: { ...user, passwordHash: undefined } }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+export async function GET() { try { const now = new Date(); const sales = await db.flashSale.findMany({ where: { isActive: true, startTime: { lte: now }, endTime: { gte: now } }, include: { items: { include: { product: true } } }, orderBy: { endTime: "asc" } }); return NextResponse.json({ ok: true, sales }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

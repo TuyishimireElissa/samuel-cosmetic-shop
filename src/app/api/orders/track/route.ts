@@ -1,0 +1,3 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+export async function GET(req: NextRequest) { try { const url = new URL(req.url); const phone = url.searchParams.get("phone"); if (!phone) return NextResponse.json({ ok: false, error: "no_phone" }, { status: 400 }); const orders = await db.order.findMany({ where: { customerPhone: phone }, orderBy: { createdAt: "desc" }, take: 50 }); return NextResponse.json({ ok: true, orders }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

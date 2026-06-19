@@ -1,0 +1,3 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) { try { const { id } = await params; const { isActive } = await req.json(); const sub = await db.subscriber.update({ where: { id }, data: { isActive, unsubscribedAt: isActive ? null : new Date() } }); return NextResponse.json({ ok: true, subscriber: sub }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

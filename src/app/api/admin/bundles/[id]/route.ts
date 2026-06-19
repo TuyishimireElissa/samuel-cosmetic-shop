@@ -1,0 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) { try { const { id } = await params; const { productIds, ...data } = await req.json(); const bundle = await db.bundle.update({ where: { id }, data }); if (productIds) { await db.bundleItem.deleteMany({ where: { bundleId: id } }); for (const pid of productIds) await db.bundleItem.create({ data: { bundleId: id, productId: pid } }); } return NextResponse.json({ ok: true, bundle }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) { try { const { id } = await params; await db.bundle.delete({ where: { id } }); return NextResponse.json({ ok: true }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

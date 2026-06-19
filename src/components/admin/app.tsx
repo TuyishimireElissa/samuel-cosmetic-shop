@@ -46,7 +46,7 @@ import {
   Search,
   ExternalLink,
   Banknote,
-  Star, Tag, Gift, Zap, Calendar, Building, Megaphone, Quote, UserCog, Palette, Bell, Activity,
+  Star, Tag, Gift, Zap, Calendar, Building, Mail, Megaphone, Quote, UserCog, Palette, Bell, Activity,
 } from "lucide-react";
 import {
   BarChart,

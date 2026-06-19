@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { CustomersView, ReviewsView, StockView, CouponsView, BundlesView, FlashSalesView, BookingsView, WholesaleAdminView, MessagesView, SubscribersView, TestimonialsView, StaffView, BrandingView, NotificationsView, SiteHealthView } from "./views-extra";
 import {
   LayoutDashboard,
   Package,
@@ -45,6 +46,7 @@ import {
   Search,
   ExternalLink,
   Banknote,
+  Star, Tag, Gift, Zap, Calendar, Building, Megaphone, Quote, UserCog, Palette, Bell, Activity,
 } from "lucide-react";
 import {
   BarChart,
@@ -62,7 +64,7 @@ import {
   Legend,
 } from "recharts";
 
-type View = "dashboard" | "products" | "orders" | "vat" | "customers";
+type View = "dashboard" | "products" | "orders" | "vat" | "customers" | "reviews" | "stock" | "coupons" | "bundles" | "flash" | "bookings" | "wholesale" | "messages" | "subscribers" | "testimonials" | "staff" | "branding" | "notifications" | "health";
 
 export function AdminApp() {
   const { adminName, adminLogout, lang } = useUI();
@@ -84,13 +86,30 @@ export function AdminApp() {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto">
           {[
             { id: "dashboard", label: t("admin.dashboard", lang), icon: LayoutDashboard },
             { id: "products", label: t("admin.products", lang), icon: Package },
             { id: "orders", label: t("admin.orders", lang), icon: ShoppingCart },
+            { id: "customers", label: "Customers", icon: Users },
+            { id: "reviews", label: "Reviews", icon: Star },
+            { id: "stock", label: "Inventory", icon: Package },
+            { id: "coupons", label: "Coupons", icon: Tag },
+            { id: "bundles", label: "Bundles", icon: Gift },
+            { id: "flash", label: "Flash Sales", icon: Zap },
+            { id: "bookings", label: "Bookings", icon: Calendar },
+            { id: "wholesale", label: "Wholesale", icon: Building },
+            { id: "messages", label: "Messages", icon: Mail },
+            { id: "subscribers", label: "Subscribers", icon: Megaphone },
+            { id: "testimonials", label: "Testimonials", icon: Quote },
+            { id: "staff", label: "Staff", icon: UserCog },
+            { id: "branding", label: "Branding", icon: Palette },
+            { id: "notifications", label: "Notifications", icon: Bell },
             { id: "vat", label: t("admin.vatReport", lang), icon: FileSpreadsheet },
-          ].map((n) => (
+            { id: "health", label: "Site Health", icon: Activity },
+          ].map((n) => {
+            const Icon = n.icon;
+            return (
             <button
               key={n.id}
               onClick={() => setView(n.id as View)}
@@ -100,10 +119,11 @@ export function AdminApp() {
                   : "text-foreground/70 hover:bg-pink-50"
               }`}
             >
-              <n.icon size={16} />
+              <Icon size={16} />
               {n.label}
             </button>
-          ))}
+            );
+          })}
         </nav>
 
         <div className="pt-4 border-t border-pink-100 space-y-2">
@@ -160,6 +180,21 @@ export function AdminApp() {
           {view === "dashboard" && <DashboardView />}
           {view === "products" && <ProductsView />}
           {view === "orders" && <OrdersView />}
+          {view === "customers" && <CustomersView />}
+          {view === "reviews" && <ReviewsView />}
+          {view === "stock" && <StockView />}
+          {view === "coupons" && <CouponsView />}
+          {view === "bundles" && <BundlesView />}
+          {view === "flash" && <FlashSalesView />}
+          {view === "bookings" && <BookingsView />}
+          {view === "wholesale" && <WholesaleAdminView />}
+          {view === "messages" && <MessagesView />}
+          {view === "subscribers" && <SubscribersView />}
+          {view === "testimonials" && <TestimonialsView />}
+          {view === "staff" && <StaffView />}
+          {view === "branding" && <BrandingView />}
+          {view === "notifications" && <NotificationsView />}
+          {view === "health" && <SiteHealthView />}
           {view === "vat" && <VatView />}
         </div>
       </main>

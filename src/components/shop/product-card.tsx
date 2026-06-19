@@ -18,6 +18,7 @@ interface Props {
 export function ProductCard({ product, currency, onQuickView }: Props) {
   const lang = useUI((s) => s.lang);
   const add = useCart((s) => s.add);
+  const setCartOpen = useUI((s) => s.setCartOpen);
   const [added, setAdded] = useState(false);
   const [bump, setBump] = useState(false);
 
@@ -42,6 +43,8 @@ export function ProductCard({ product, currency, onQuickView }: Props) {
     }
     setTimeout(() => setAdded(false), 2000);
     setTimeout(() => setBump(false), 350);
+    // Open cart drawer immediately — same as "Add Bundle to Cart"
+    setCartOpen(true);
   }
 
   const badgeColors: Record<string, string> = {

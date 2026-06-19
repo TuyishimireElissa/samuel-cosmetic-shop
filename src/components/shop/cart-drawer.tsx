@@ -648,13 +648,23 @@ export function CartDrawer() {
                   </Button>
                 )}
                 {step === "review" && (
-                  <Button
-                    onClick={() => setStep("delivery")}
-                    className="flex-1 h-11 bg-pink-600 hover:bg-pink-700"
-                  >
-                    {t("cart.checkout", lang)}
-                    <ArrowRight size={16} className="ml-1" />
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={closeAndReset}
+                      className="flex-1 h-11 border-pink-200 text-pink-700"
+                    >
+                      <ArrowLeft size={16} className="mr-1" />
+                      {t("cart.continue", lang)}
+                    </Button>
+                    <Button
+                      onClick={() => setStep("delivery")}
+                      className="flex-1 h-11 bg-pink-600 hover:bg-pink-700"
+                    >
+                      {t("cart.checkout", lang)}
+                      <ArrowRight size={16} className="ml-1" />
+                    </Button>
+                  </>
                 )}
                 {step === "delivery" && (
                   <Button

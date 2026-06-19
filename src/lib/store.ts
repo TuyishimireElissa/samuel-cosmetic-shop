@@ -61,6 +61,78 @@ export const useCart = create<CartState>()(
 );
 
 // ────────────────────────────────────────────────────────────
+// Wishlist store
+// ────────────────────────────────────────────────────────────
+interface WishlistState {
+  ids: string[];
+  toggle: (id: string) => void;
+  has: (id: string) => boolean;
+  clear: () => void;
+}
+export const useWishlist = create<WishlistState>()(
+  persist(
+    (set, get) => ({
+      ids: [],
+      toggle: (id) => set((s) => ({ ids: s.ids.includes(id) ? s.ids.filter((x) => x !== id) : [...s.ids, id] })),
+      has: (id) => get().ids.includes(id),
+      clear: () => set({ ids: [] }),
+    }),
+    { name: "sc_wishlist", storage: createJSONStorage(() => localStorage) }
+  )
+);
+
+// ────────────────────────────────────────────────────────────
+// Compare store (max 3)
+// ────────────────────────────────────────────────────────────
+interface CompareState {
+  ids: string[];
+  toggle: (id: string) => void;
+  remove: (id: string) => void;
+  clear: () => void;
+}
+export const useCompare = create<CompareState>()(
+  persist(
+    (set) => ({
+      ids: [],
+      toggle: (id) => set((s) => {
+        if (s.ids.includes(id)) return { ids: s.ids.filter((x) => x !== id) };
+        if (s.ids.length >= 3) return s;
+        return { ids: [...s.ids, id] };
+      }),
+      remove: (id) => set((s) => ({ ids: s.ids.filter((x) => x !== id) })),
+      clear: () => set({ ids: [] }),
+    }),
+    { name: "sc_compare", storage: createJSONStorage(() => localStorage) }
+  )
+);
+
+// ────────────────────────────────────────────────────────────
+// Recently Viewed store (max 8, 24h expiry)
+// ────────────────────────────────────────────────────────────
+interface RecentlyViewedState {
+  items: { id: string; at: number }[];
+  add: (id: string) => void;
+  clear: () => void;
+}
+const RECENTLY_TTL = 24 * 60 * 60 * 1000;
+export const useRecentlyViewed = create<RecentlyViewedState>()(
+  persist(
+    (set) => ({
+      items: [],
+      add: (id) => {
+        const now = Date.now();
+        set((s) => {
+          const filtered = s.items.filter((i) => i.id !== id && now - i.at < RECENTLY_TTL);
+          return { items: [{ id, at: now }, ...filtered].slice(0, 8) };
+        });
+      },
+      clear: () => set({ items: [] }),
+    }),
+    { name: "sc_recently", storage: createJSONStorage(() => localStorage) }
+  )
+);
+
+// ────────────────────────────────────────────────────────────
 // UI store: language, currency, admin session, view
 // ────────────────────────────────────────────────────────────
 interface UIState {

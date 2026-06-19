@@ -97,8 +97,8 @@ export function Storefront() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-pink-50 to-purple-100" />
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-pink-300/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-purple-300/30 rounded-full blur-3xl" />
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-pink-300/30 rounded-full blur-3xl overflow-hidden pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-purple-300/30 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:py-24 grid lg:grid-cols-2 gap-10 items-center">
           <div className="space-y-5 text-center lg:text-left">
@@ -308,20 +308,17 @@ export function Storefront() {
       </section>
 
       {/* ABOUT */}
-      <section ref={aboutRef} className="mx-auto max-w-7xl px-4 py-12 sm:py-16">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+      <section ref={aboutRef} className="mx-auto max-w-7xl px-3 sm:px-4 py-8 sm:py-16">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
           <div className="space-y-4">
-            <h2
-              className="text-3xl sm:text-4xl font-bold text-pink-900"
-              style={{ fontFamily: "var(--font-playfair)" }}
-            >
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
               {SHOP_NAME}
             </h2>
-            <p className="text-pink-800/80 leading-relaxed">
+            <p className="text-sm sm:text-base text-pink-800/80 leading-relaxed">
               {t("footer.about", lang)}
             </p>
-            <div className="grid grid-cols-3 gap-3 pt-2">
-              <div className="bg-pink-50 rounded-xl p-3 text-center">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-2">
+              <div className="bg-pink-50 rounded-xl p-2 sm:p-3 text-center">
                 <div className="text-2xl font-bold text-pink-700">2,400+</div>
                 <div className="text-xs text-muted-foreground">Happy customers</div>
               </div>
@@ -346,44 +343,44 @@ export function Storefront() {
       </section>
 
       {/* CONTACT */}
-      <section ref={contactRef} className="mx-auto max-w-7xl px-4 py-12 sm:py-16">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-3xl border border-pink-100 p-6 space-y-4">
-            <h3 className="text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
+      <section ref={contactRef} className="mx-auto max-w-7xl px-3 sm:px-4 py-8 sm:py-16">
+        <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-pink-100 p-4 sm:p-6 space-y-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
               {t("footer.contact", lang)}
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 rounded-xl bg-green-50 hover:bg-green-100 transition-colors"
+                className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl bg-green-50 hover:bg-green-100 transition-colors"
               >
-                <WhatsAppIcon size={20} className="text-[#25D366]" />
-                <div>
+                <WhatsAppIcon size={20} className="text-[#25D366] shrink-0" />
+                <div className="min-w-0">
                   <div className="text-xs text-muted-foreground">WhatsApp</div>
                   <div className="font-semibold">+250 790 215 965</div>
                 </div>
               </a>
               <a
                 href={`mailto:${SHOP_EMAIL}`}
-                className="flex items-center gap-3 p-3 rounded-xl bg-pink-50 hover:bg-pink-100 transition-colors"
+                className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl bg-pink-50 hover:bg-pink-100 transition-colors"
               >
-                <Mail size={20} className="text-pink-600" />
-                <div>
+                <Mail size={20} className="text-pink-600 shrink-0" />
+                <div className="min-w-0">
                   <div className="text-xs text-muted-foreground">Email</div>
-                  <div className="font-semibold">{SHOP_EMAIL}</div>
+                  <div className="font-semibold text-sm break-all">{SHOP_EMAIL}</div>
                 </div>
               </a>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-50">
-                <MapPin size={20} className="text-purple-600" />
-                <div>
+              <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl bg-purple-50">
+                <MapPin size={20} className="text-purple-600 shrink-0" />
+                <div className="min-w-0">
                   <div className="text-xs text-muted-foreground">Address</div>
-                  <div className="font-semibold">{SHOP_LOCATION}</div>
+                  <div className="font-semibold text-sm">{SHOP_LOCATION}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50">
-                <Clock size={20} className="text-amber-600" />
+              <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl bg-amber-50">
+                <Clock size={20} className="text-amber-600 shrink-0" />
                 <div>
                   <div className="text-xs text-muted-foreground">{t("footer.hours", lang)}</div>
                   <div className="font-semibold">Mon–Sat: 8AM – 8PM</div>
@@ -411,9 +408,9 @@ export function Storefront() {
               form.reset();
               alert("Message sent! We will reply on WhatsApp.");
             }}
-            className="bg-white rounded-3xl border border-pink-100 p-6 space-y-3"
+            className="bg-white rounded-2xl sm:rounded-3xl border border-pink-100 p-4 sm:p-6 space-y-3"
           >
-            <h3 className="text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
+            <h3 className="text-xl sm:text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
               Send us a message
             </h3>
             <div className="grid sm:grid-cols-2 gap-3">
@@ -438,7 +435,7 @@ export function Storefront() {
 
       {/* FOOTER */}
       <footer className="mt-auto bg-pink-900 text-pink-50">
-        <div className="mx-auto max-w-7xl px-4 py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 py-8 sm:py-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-300 to-pink-500 grid place-items-center text-lg">

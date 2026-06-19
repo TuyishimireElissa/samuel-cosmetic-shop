@@ -184,3 +184,43 @@
   nav, footer, button, .no-print { display: none !important; }
   body { background: white; color: black; }
 }
+
+/* CRITICAL: Prevent horizontal scroll on ALL screen sizes */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Better focus states */
+*:focus-visible {
+  outline: 2px solid #e75480;
+  outline-offset: 2px;
+}
+
+/* Better text selection */
+::selection {
+  background: #f8d7e3;
+  color: #c9406a;
+}
+
+/* Line clamp utilities */
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.line-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
+/* Responsive helpers */
+@media (max-width: 360px) {
+  html { font-size: 14px; }
+  .text-4xl { font-size: 1.75rem !important; }
+  .text-5xl { font-size: 2rem !important; }
+  .text-6xl { font-size: 2.25rem !important; }
+}
+
+/* Better scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #f8d7e3; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #e75480; }

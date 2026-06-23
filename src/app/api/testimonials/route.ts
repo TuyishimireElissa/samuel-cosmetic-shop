@@ -1,0 +1,5 @@
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { cached, withCache } from "@/lib/cache";
+export async function GET() { try { const testimonials = await cached("/api/testimonials", () => db.testimonial.findMany({ where: { isApproved: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], take: 20 }), 300); return withCache(NextResponse.json({ ok: true, testimonials }), 300); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }
+export async function POST(req: Request) { try { const body = await req.json(); const { customerName, customerPhone, district, messageEn, rating } = body; if (!customerName || !messageEn) return NextResponse.json({ ok: false, error: "missing" }, { status: 400 }); const t = await db.testimonial.create({ data: { customerName, customerPhone: customerPhone || "", district: district || "", messageEn, rating: rating || 5, isApproved: false } }); return NextResponse.json({ ok: true, testimonial: t }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

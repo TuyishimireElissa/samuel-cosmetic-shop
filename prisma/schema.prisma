@@ -1,0 +1,538 @@
+// Samuel Cosmetic Shop - Prisma Schema (FULL 32 models)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  email        String    @default("samuelcosmeticshop@gmail.com")
+  fullName     String    @default("Administrator")
+  avatar       String?
+  isActive     Boolean   @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  auditLogs    AuditLog[]
+  @@map("admin_users")
+}
+
+model StaffAccount {
+  id           String   @id @default(cuid())
+  name         String
+  username     String   @unique
+  passwordHash String
+  role         String   @default("viewer")
+  permissions  String   @default("[]")
+  isActive     Boolean  @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  auditLogs    AuditLog[]
+  @@map("staff_accounts")
+}
+
+model Category {
+  id        String    @id
+  nameEn    String
+  nameFr    String
+  nameRw    String
+  emoji     String
+  slug      String    @unique
+  isActive  Boolean   @default(true)
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+  @@map("categories")
+}
+
+model Product {
+  id               String   @id
+  nameEn           String
+  nameFr           String
+  nameRw           String
+  descEn           String
+  descFr           String
+  descRw           String
+  categoryId       String
+  emoji            String
+  sku              String   @unique
+  costPrice        Float    @default(0)
+  sellingPrice     Float
+  wholesalePrice   Float    @default(0)
+  moq              Int      @default(1)
+  stockQty         Int      @default(0)
+  lowStockThreshold Int     @default(5)
+  badge            String   @default("")
+  isActive         Boolean  @default(true)
+  ratingAvg        Float    @default(0)
+  ratingCount      Int      @default(0)
+  salesCount       Int      @default(0)
+  viewCount        Int      @default(0)
+  tier1Discount    Float    @default(2)
+  tier2Discount    Float    @default(3)
+  tier3Discount    Float    @default(5)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  category         Category         @relation(fields: [categoryId], references: [id])
+  images           ProductImage[]
+  reviews          Review[]
+  bundleItems      BundleItem[]
+  flashSaleItems   FlashSaleItem[]
+  priceAlerts      PriceAlert[]
+  stockAdjustments StockAdjustment[]
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([sellingPrice])
+  @@index([stockQty])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  url       String
+  altText   String   @default("")
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  @@map("product_images")
+}
+
+model Customer {
+  id            String   @id @default(cuid())
+  name          String
+  phone         String   @unique
+  email         String   @default("")
+  district      String   @default("")
+  loyaltyPoints Int      @default(0)
+  totalSpent    Float    @default(0)
+  totalOrders   Int      @default(0)
+  tier          String   @default("bronze")
+  isActive      Boolean  @default(true)
+  lastOrderAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  orders        Order[]
+  reviews       Review[]
+  bookings      Booking[]
+  priceAlerts   PriceAlert[]
+  loyaltyTxns   LoyaltyTransaction[]
+  @@map("customers")
+}
+
+model LoyaltyTransaction {
+  id         String   @id @default(cuid())
+  customerId String
+  type       String   @default("earn")
+  points     Int
+  balance    Int      @default(0)
+  orderId    String?
+  reason     String   @default("")
+  createdBy  String   @default("")
+  createdAt  DateTime @default(now())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  @@map("loyalty_transactions")
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  orderNumber   String   @unique
+  customerId    String?
+  customerName  String
+  customerPhone String
+  customerEmail String   @default("")
+  district      String
+  address       String   @default("")
+  subtotalHT    Float    @default(0)
+  vatAmount     Float    @default(0)
+  deliveryFee   Float    @default(0)
+  discount      Float    @default(0)
+  totalTTC      Float    @default(0)
+  paymentMethod String   @default("whatsapp")
+  paymentStatus String   @default("pending")
+  paymentRef    String?
+  status        String   @default("pending")
+  notes         String   @default("")
+  loyaltyEarned Int      @default(0)
+  loyaltyUsed   Int      @default(0)
+  couponCode    String   @default("")
+  mrcCode       String?
+  receiptNumber String?
+  isWholesale   Boolean  @default(false)
+  wholesaleUserId String?
+  notified      Boolean  @default(false)
+  itemsJson     String   @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  customer      Customer?      @relation(fields: [customerId], references: [id])
+  wholesaleUser WholesaleUser? @relation(fields: [wholesaleUserId], references: [id])
+  @@index([customerPhone])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model DeliveryZone {
+  id        String   @id @default(cuid())
+  name      String
+  nameEn    String
+  nameFr    String
+  nameRw    String
+  district  String
+  province  String   @default("")
+  fee       Float    @default(2000)
+  etaHours  Int      @default(24)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  @@map("delivery_zones")
+}
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  description String    @default("")
+  type        String    @default("percent")
+  value       Float     @default(0)
+  minOrder    Float     @default(0)
+  maxDiscount Float?
+  maxUses     Int       @default(0)
+  usesCount   Int       @default(0)
+  validFrom   DateTime  @default(now())
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+  isPublic    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  @@map("coupons")
+}
+
+model FlashSale {
+  id            String   @id @default(cuid())
+  titleEn       String
+  titleFr       String   @default("")
+  titleRw       String   @default("")
+  discountType  String   @default("percent")
+  discountValue Float    @default(0)
+  bannerTextEn  String   @default("")
+  bannerColor   String   @default("#ff4757")
+  startTime     DateTime
+  endTime       DateTime
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  items         FlashSaleItem[]
+  @@map("flash_sales")
+}
+
+model FlashSaleItem {
+  id          String   @id @default(cuid())
+  flashSaleId String
+  productId   String
+  createdAt   DateTime @default(now())
+  flashSale FlashSale @relation(fields: [flashSaleId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  @@map("flash_sale_items")
+}
+
+model Bundle {
+  id          String   @id @default(cuid())
+  nameEn      String
+  nameFr      String   @default("")
+  nameRw      String   @default("")
+  descEn      String   @default("")
+  normalPrice Float    @default(0)
+  bundlePrice Float    @default(0)
+  savingsPct  Float    @default(0)
+  emoji       String   @default("🎁")
+  stockQty    Int      @default(0)
+  salesCount  Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  items       BundleItem[]
+  @@map("bundles")
+}
+
+model BundleItem {
+  id        String @id @default(cuid())
+  bundleId  String
+  productId String
+  qty       Int    @default(1)
+  bundle  Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  @@map("bundle_items")
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  productId     String
+  customerId    String?
+  customerName  String
+  customerPhone String
+  rating        Int      @default(5)
+  title         String   @default("")
+  body          String
+  images        String   @default("[]")
+  isApproved    Boolean  @default(false)
+  isHidden      Boolean  @default(false)
+  adminReply    String   @default("")
+  helpfulCount  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  product  Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer Customer? @relation(fields: [customerId], references: [id])
+  @@index([productId])
+  @@index([isApproved])
+  @@map("reviews")
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  customerId    String?
+  customerName  String
+  customerPhone String
+  customerEmail String   @default("")
+  service       String
+  date          DateTime
+  timeSlot      String
+  notes         String   @default("")
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  customer Customer? @relation(fields: [customerId], references: [id])
+  @@map("bookings")
+}
+
+model BlockedDate {
+  id        String   @id @default(cuid())
+  date      DateTime
+  reason    String   @default("")
+  createdAt DateTime @default(now())
+  @@map("blocked_dates")
+}
+
+model WholesaleUser {
+  id              String   @id @default(cuid())
+  businessName    String
+  ownerName       String
+  tin             String   @unique
+  phone           String
+  email           String   @default("")
+  district        String   @default("")
+  businessType    String   @default("retailer")
+  expectedVolume  Float    @default(0)
+  tier            String   @default("bronze")
+  status          String   @default("pending")
+  rejectionReason String   @default("")
+  passwordHash    String
+  approvedAt      DateTime?
+  approvedBy      String?
+  lastOrderAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orders Order[]
+  @@map("wholesale_users")
+}
+
+model Subscriber {
+  id             String    @id @default(cuid())
+  phone          String    @unique
+  name           String    @default("")
+  source         String    @default("manual")
+  isActive       Boolean   @default(true)
+  totalReceived  Int       @default(0)
+  lastMessageAt  DateTime?
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  @@map("subscribers")
+}
+
+model PriceAlert {
+  id            String   @id @default(cuid())
+  productId     String
+  customerId    String?
+  customerName  String
+  customerPhone String
+  targetPrice   Float
+  notified      Boolean  @default(false)
+  notifiedAt    DateTime?
+  createdAt     DateTime @default(now())
+  product  Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer Customer? @relation(fields: [customerId], references: [id])
+  @@map("price_alerts")
+}
+
+model WhatsAppTemplate {
+  id         String   @id @default(cuid())
+  key        String   @unique
+  title      String
+  message    String
+  category   String   @default("general")
+  usageCount Int      @default(0)
+  updatedAt  DateTime @updatedAt
+  @@map("whatsapp_templates")
+}
+
+model NotificationLog {
+  id             String   @id @default(cuid())
+  recipientPhone  String   @default("")
+  recipientEmail  String   @default("")
+  type            String   @default("whatsapp")
+  templateKey     String   @default("")
+  message         String
+  status          String   @default("sent")
+  errorMsg        String   @default("")
+  createdAt       DateTime @default(now())
+  @@map("notification_logs")
+}
+
+model AdminNotification {
+  id        String   @id @default(cuid())
+  type      String   @default("order")
+  title     String
+  body      String   @default("")
+  link      String   @default("")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  @@map("admin_notifications")
+}
+
+model MoMoTransaction {
+  id           String   @id @default(cuid())
+  orderId      String?
+  phoneNumber  String
+  amount       Float
+  status       String   @default("pending")
+  providerRef  String?
+  externalId   String?
+  errorMessage String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@map("momo_transactions")
+}
+
+model StockAdjustment {
+  id        String   @id @default(cuid())
+  productId String
+  oldQty    Int
+  newQty    Int
+  delta     Int
+  reason    String   @default("")
+  createdBy String   @default("admin")
+  createdAt DateTime @default(now())
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  @@map("stock_adjustments")
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String   @default("")
+  userAgent String   @default("")
+  ip        String   @default("")
+  sessionId String   @default("")
+  createdAt DateTime @default(now())
+  @@map("page_views")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String?
+  staffId   String?
+  staffName String   @default("")
+  action    String
+  modelName String   @default("")
+  objectId  String   @default("")
+  details   String   @default("{}")
+  ipAddress String   @default("")
+  createdAt DateTime @default(now())
+  admin AdminUser?    @relation(fields: [adminId], references: [id])
+  staff StaffAccount? @relation(fields: [staffId], references: [id])
+  @@map("audit_logs")
+}
+
+model ContactMessage {
+  id         String   @id @default(cuid())
+  name       String
+  phone      String
+  email      String   @default("")
+  subject    String
+  message    String
+  isRead     Boolean  @default(false)
+  adminReply String   @default("")
+  createdAt  DateTime @default(now())
+  @@map("contact_messages")
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  customerName String
+  customerPhone String  @default("")
+  district     String   @default("")
+  messageEn    String
+  messageFr    String   @default("")
+  messageRw    String   @default("")
+  rating       Int      @default(5)
+  isApproved   Boolean  @default(false)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  @@map("testimonials")
+}
+
+model SiteSetting {
+  id            String   @id @default("singleton")
+  shopName      String   @default("Samuel Cosmetic Shop")
+  shopTaglineEn String   @default("Beauty for Every Rwandan")
+  shopTaglineFr String   @default("Beauté pour chaque rwandais")
+  shopTaglineRw String   @default("Ubwiza ku buri Munyarwanda")
+  logoEmoji     String   @default("✿")
+  logoUrl       String?
+  whatsappNumber String  @default("250790215965")
+  email         String   @default("samuelcosmeticshop@gmail.com")
+  address       String   @default("Kigali, Rwanda")
+  tin           String   @default("102345678")
+  sdcId         String   @default("SCS-EBM-001")
+  vatRate       Float    @default(18)
+  primaryColor  String   @default("#e75480")
+  openingHours  String   @default("Mon-Sat: 8AM - 8PM")
+  maintenanceMode Boolean @default(false)
+  updatedAt     DateTime @updatedAt
+  enableLoyalty            Boolean @default(true)
+  enableFlashSales         Boolean @default(true)
+  enableBundles            Boolean @default(true)
+  enableReviews            Boolean @default(true)
+  enableBookings           Boolean @default(true)
+  enableWholesale          Boolean @default(true)
+  enableMomoApi            Boolean @default(false)
+  enableWhatsappApi        Boolean @default(false)
+  @@map("site_settings")
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  valueEn   String
+  valueFr   String   @default("")
+  valueRw   String   @default("")
+  updatedAt DateTime @updatedAt
+  updatedBy String   @default("")
+  @@map("site_content")
+}
+
+model AutoReplyTemplate {
+  id        String   @id @default(cuid())
+  trigger   String   @unique
+  replyEn   String
+  replyFr   String   @default("")
+  replyRw   String   @default("")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  @@map("auto_reply_templates")
+}

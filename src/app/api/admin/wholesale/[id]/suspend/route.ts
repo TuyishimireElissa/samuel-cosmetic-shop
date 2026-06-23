@@ -1,0 +1,3 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+export async function PATCH(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) { try { const { id } = await params; const user = await db.wholesaleUser.update({ where: { id }, data: { status: "suspended" } }); return NextResponse.json({ ok: true, user }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

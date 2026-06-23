@@ -1,0 +1,226 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-poppins);
+  --font-heading: var(--font-playfair);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.75rem;
+  /* Samuel Cosmetic Shop — pink palette */
+  --background: oklch(0.99 0.005 350);
+  --foreground: oklch(0.18 0.01 350);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.01 350);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.01 350);
+  --primary: #e75480;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: #fef0f5;
+  --secondary-foreground: #c9406a;
+  --muted: #fdf5f8;
+  --muted-foreground: oklch(0.5 0.02 350);
+  --accent: #f8d7e3;
+  --accent-foreground: #c9406a;
+  --destructive: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --purple: #8b5cf6;
+  --purple-dark: #6d28d9;
+  --momo: #ffcc00;
+  --whatsapp: #25d366;
+  --whatsapp-dark: #128c7e;
+  --bronze: #cd7f32;
+  --silver: #71717a;
+  --gold: #d97706;
+  --platinum: #7c3aed;
+  --border: oklch(0.92 0.01 350);
+  --input: oklch(0.94 0.01 350);
+  --ring: #e75480;
+  --chart-1: #e75480;
+  --chart-2: #8b5cf6;
+  --chart-3: #22c55e;
+  --chart-4: #f59e0b;
+  --chart-5: #3b82f6;
+  --sidebar: oklch(0.99 0.005 350);
+  --sidebar-foreground: oklch(0.18 0.01 350);
+  --sidebar-primary: #e75480;
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: #fef0f5;
+  --sidebar-accent-foreground: #c9406a;
+  --sidebar-border: oklch(0.92 0.01 350);
+  --sidebar-ring: #e75480;
+}
+
+.dark {
+  --background: oklch(0.16 0.01 350);
+  --foreground: oklch(0.97 0.005 350);
+  --card: oklch(0.21 0.015 350);
+  --card-foreground: oklch(0.97 0.005 350);
+  --popover: oklch(0.21 0.015 350);
+  --popover-foreground: oklch(0.97 0.005 350);
+  --primary: #e75480;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.27 0.02 350);
+  --secondary-foreground: oklch(0.97 0.005 350);
+  --muted: oklch(0.27 0.02 350);
+  --muted-foreground: oklch(0.7 0.02 350);
+  --accent: oklch(0.32 0.05 350);
+  --accent-foreground: oklch(0.97 0.005 350);
+  --destructive: oklch(0.7 0.19 22);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #e75480;
+  --sidebar: oklch(0.21 0.015 350);
+  --sidebar-foreground: oklch(0.97 0.005 350);
+  --sidebar-primary: #e75480;
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.27 0.02 350);
+  --sidebar-accent-foreground: oklch(0.97 0.005 350);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: #e75480;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-poppins), system-ui, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), serif;
+  }
+}
+
+/* Shimmer skeleton */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #f4f4f4 0%, #e9e9e9 50%, #f4f4f4 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Pulse for low stock badges */
+@keyframes pulse-warn {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+.pulse-warn { animation: pulse-warn 1.5s ease-in-out infinite; }
+
+/* WhatsApp pulse ring */
+@keyframes wa-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); }
+  70% { box-shadow: 0 0 0 14px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+.wa-pulse { animation: wa-pulse 2s infinite; }
+
+/* Cart badge bounce */
+@keyframes bounce-once {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.bounce-once { animation: bounce-once 0.35s ease-out; }
+
+/* Fade-in for product cards */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fade-in-up 0.4s ease-out both; }
+
+/* Hide scrollbar on mobile bottom nav */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Print-friendly */
+@media print {
+  nav, footer, button, .no-print { display: none !important; }
+  body { background: white; color: black; }
+}
+
+/* CRITICAL: Prevent horizontal scroll on ALL screen sizes */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Better focus states */
+*:focus-visible {
+  outline: 2px solid #e75480;
+  outline-offset: 2px;
+}
+
+/* Better text selection */
+::selection {
+  background: #f8d7e3;
+  color: #c9406a;
+}
+
+/* Line clamp utilities */
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.line-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
+/* Responsive helpers */
+@media (max-width: 360px) {
+  html { font-size: 14px; }
+  .text-4xl { font-size: 1.75rem !important; }
+  .text-5xl { font-size: 2rem !important; }
+  .text-6xl { font-size: 2.25rem !important; }
+}
+
+/* Better scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #f8d7e3; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #e75480; }

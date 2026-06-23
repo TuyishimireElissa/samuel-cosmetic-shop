@@ -1,0 +1,3 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+export async function PATCH(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) { try { const { id } = await params; const s = await db.staffAccount.findUnique({ where: { id } }); if (!s) return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 }); const updated = await db.staffAccount.update({ where: { id }, data: { isActive: !s.isActive } }); return NextResponse.json({ ok: true, staff: updated }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }

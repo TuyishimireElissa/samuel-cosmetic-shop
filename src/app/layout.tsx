@@ -3,6 +3,7 @@ import { Playfair_Display, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -52,6 +53,7 @@ export default function RootLayout({
         {children}
         <Toaster />
         <SonnerToaster richColors position="top-right" />
+        <Analytics />
       </body>
     </html>
   );

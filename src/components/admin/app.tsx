@@ -6,6 +6,17 @@ import { t, pickLang } from "@/lib/i18n";
 import { formatPrice, priceHT, vatAmount, profitMarginPct, grossProfitHT } from "@/lib/format";
 import { WHATSAPP_LINK, shopWhatsappUrl, buildOrderMessage } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
+
+function adminFetch(url: string, options?: RequestInit): Promise<Response> {
+  let token = "";
+  try { if (typeof window !== "undefined") { const s = localStorage.getItem("sc_ui"); if (s) token = JSON.parse(s)?.state?.adminToken || ""; } } catch {}
+  if (token && url.startsWith("/api/admin") && url !== "/api/admin/login") {
+    if (options?.body instanceof FormData) return fetch(url, { ...options, headers: { "x-admin-token": token } });
+    const headers = new Headers(options?.headers); headers.set("x-admin-token", token);
+    return fetch(url, { ...options, headers });
+  }
+  return fetch(url, options);
+}
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -210,7 +221,7 @@ function DashboardView() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/api/admin/analytics")
+    adminFetch("/api/admin/analytics")
       .then((r) => r.json())
       .then((d) => d.ok && setData(d.analytics));
   }, []);
@@ -415,7 +426,7 @@ function ProductsView() {
 
   const load = useCallback(() => {
     Promise.all([
-      fetch("/api/admin/products").then((r) => r.json()),
+      adminFetch("/api/admin/products").then((r) => r.json()),
       fetch("/api/categories").then((r) => r.json()),
     ]).then(([p, c]) => {
       if (p.ok) setProducts(p.products);
@@ -432,7 +443,7 @@ function ProductsView() {
 
   async function handleDelete(p: any) {
     if (!confirm(`Delete ${p.nameEn}?`)) return;
-    const res = await fetch(`/api/admin/products/${p.id}`, { method: "DELETE" });
+    const res = await adminFetch(`/api/admin/products/${p.id}`, { method: "DELETE" });
     if (res.ok) {
       toast.success("Product deleted");
       load();
@@ -733,6 +744,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             {saving ? t("common.loading", lang) : t("admin.products.save", lang)}
           </Button>
         </DialogFooter>
+        {product.id && <ProductImageManager productId={product.id} />}
       </DialogContent>
     </Dialog>
   );
@@ -750,7 +762,7 @@ function OrdersView() {
 
   const load = useCallback(() => {
     const params = statusFilter !== "all" ? `?status=${statusFilter}` : "";
-    fetch(`/api/admin/orders${params}`)
+    adminFetch(`/api/admin/orders${params}`)
       .then((r) => r.json())
       .then((d) => {
         if (d.ok) {
@@ -764,7 +776,7 @@ function OrdersView() {
   useEffect(() => { load(); }, [load]);
 
   async function updateStatus(orderId: string, status: string) {
-    const res = await fetch(`/api/admin/orders/${orderId}`, {
+    const res = await adminFetch(`/api/admin/orders/${orderId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -964,6 +976,7 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
             Close
           </Button>
         </DialogFooter>
+        {product.id && <ProductImageManager productId={product.id} />}
       </DialogContent>
     </Dialog>
   );
@@ -978,7 +991,7 @@ function VatView() {
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
   useEffect(() => {
-    fetch(`/api/admin/vat-report?month=${month}`)
+    adminFetch(`/api/admin/vat-report?month=${month}`)
       .then((r) => r.json())
       .then((d) => d.ok && setData(d));
   }, [month]);
@@ -1139,6 +1152,64 @@ function VatView() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// Product Image Manager
+function ProductImageManager({ productId }: { productId: string }) {
+  const [images, setImages] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    if (!productId) return;
+    adminFetch(`/api/admin/products/${productId}`).then(r => r.json()).then(d => { if (d.ok && d.product?.images) setImages(d.product.images); }).catch(() => {});
+  }, [productId]);
+  async function handleUpload(files: FileList | null) {
+    if (!files || files.length === 0) return; setError("");
+    const toUpload = Array.from(files).slice(0, 5 - images.length);
+    if (toUpload.length === 0) { setError("Max 5 images."); return; }
+    setUploading(true);
+    for (let i = 0; i < toUpload.length; i++) {
+      const file = toUpload[i];
+      try {
+        if (!file.type.startsWith("image/")) { setError(`${file.name} is not an image.`); continue; }
+        if (file.size > 5*1024*1024) { setError(`${file.name} too large (max 5MB).`); continue; }
+        const fd = new FormData(); fd.append("file", file);
+        const ur = await adminFetch("/api/admin/upload", { method: "POST", body: fd }); const ud = await ur.json();
+        if (!ud.ok) { setError(`Upload: ${ud.error}`); continue; }
+        const ar = await adminFetch(`/api/admin/products/${productId}/images`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: ud.url, altText: file.name, isPrimary: images.length === 0 && i === 0 }) });
+        const ad = await ar.json();
+        if (ad.ok) setImages(prev => [...prev, ad.image]); else setError(`Attach: ${ad.error}`);
+      } catch (e: any) { setError(e?.message || "error"); }
+    }
+    setUploading(false);
+  }
+  async function deleteImage(imgId: string) {
+    if (!confirm("Delete?")) return;
+    const r = await adminFetch(`/api/admin/products/${productId}/images?imgId=${imgId}`, { method: "DELETE" });
+    if (r.ok) setImages(prev => prev.filter(i => i.id !== imgId));
+  }
+  return (
+    <div className="space-y-3 pt-4 border-t border-pink-100">
+      <Label className="text-sm font-semibold">Product Photos ({images.length}/5)</Label>
+      {error && <div className="p-2 rounded bg-red-50 text-red-700 text-xs">{error}</div>}
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+        {images.map(img => (
+          <div key={img.id} className={`relative aspect-square rounded-xl overflow-hidden border-2 ${img.isPrimary ? "border-pink-500" : "border-pink-100"}`}>
+            <img src={img.url} alt="" className="w-full h-full object-cover" />
+            {img.isPrimary && <div className="absolute bottom-0 left-0 right-0 bg-pink-500 text-white text-[9px] text-center py-0.5">PRIMARY</div>}
+            <button onClick={() => deleteImage(img.id)} className="absolute top-1 right-1 w-5 h-5 rounded-full bg-white/90 text-red-500 text-xs">×</button>
+          </div>
+        ))}
+        {images.length < 5 && (
+          <label className="aspect-square rounded-xl border-2 border-dashed border-pink-200 grid place-items-center cursor-pointer hover:bg-pink-50/50">
+            <input type="file" accept="image/*" multiple className="hidden" onChange={e => handleUpload(e.target.files)} disabled={uploading} />
+            {uploading ? <div className="text-[9px] text-pink-600">Uploading...</div> : <div className="text-center text-pink-400"><div className="text-2xl">+</div><div className="text-[10px]">Add Photo</div></div>}
+          </label>
+        )}
+      </div>
+      <p className="text-[11px] text-muted-foreground">JPG, PNG, WEBP — max 5MB. Photos stored on Cloudinary.</p>
     </div>
   );
 }

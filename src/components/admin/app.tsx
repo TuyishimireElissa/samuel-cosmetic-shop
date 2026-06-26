@@ -471,7 +471,7 @@ function ProductsView() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name or SKU..."
+          placeholder={lang === "rw" ? "Shakisha izina cyangwa SKU..." : lang === "fr" ? "Rechercher par nom ou SKU..." : "Search by name or SKU..."}
           className="pl-9 h-10 bg-white border-pink-100"
         />
       </div>
@@ -612,24 +612,24 @@ function ProductForm({ product, categories, onClose, onSaved }: {
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit Product" : "Add Product"}</DialogTitle>
+          <DialogTitle>{isEdit ? t("admin.products.edit", lang) : t("admin.products.add", lang)}</DialogTitle>
         </DialogHeader>
 
         <div className="grid sm:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <Label>Name (EN)</Label>
+            <Label>{t("admin.staff.name", lang)} (EN)</Label>
             <Input value={form.nameEn} onChange={(e) => setForm({ ...form, nameEn: e.target.value })} className="bg-pink-50/50" />
           </div>
           <div className="space-y-1">
-            <Label>Name (FR)</Label>
+            <Label>{t("admin.staff.name", lang)} (FR)</Label>
             <Input value={form.nameFr} onChange={(e) => setForm({ ...form, nameFr: e.target.value })} className="bg-pink-50/50" />
           </div>
           <div className="space-y-1">
-            <Label>Name (RW)</Label>
+            <Label>{t("admin.staff.name", lang)} (RW)</Label>
             <Input value={form.nameRw} onChange={(e) => setForm({ ...form, nameRw: e.target.value })} className="bg-pink-50/50" />
           </div>
           <div className="space-y-1">
-            <Label>Category</Label>
+            <Label>{t("admin.products.category", lang) || t("admin.bundle.products", lang)}</Label>
             <Select value={form.categoryId} onValueChange={(v) => setForm({ ...form, categoryId: v })}>
               <SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -644,11 +644,11 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} className="bg-pink-50/50 font-mono" />
           </div>
           <div className="space-y-1">
-            <Label>Emoji</Label>
+            <Label>{t("admin.bundle.emoji", lang)}</Label>
             <Input value={form.emoji} onChange={(e) => setForm({ ...form, emoji: e.target.value })} className="bg-pink-50/50" maxLength={4} />
           </div>
           <div className="space-y-1">
-            <Label>{t("admin.products.cost", lang)} (HT)</Label>
+            <Label>{t("admin.products.cost", lang)}</Label>
             <Input
               type="number"
               value={form.costPrice}
@@ -657,7 +657,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             />
           </div>
           <div className="space-y-1">
-            <Label>{t("admin.products.price", lang)} (TTC)</Label>
+            <Label>{t("admin.products.price", lang)}</Label>
             <Input
               type="number"
               value={form.sellingPrice}
@@ -688,11 +688,11 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             <Select value={form.badge || "__none__"} onValueChange={(v) => setForm({ ...form, badge: v === "__none__" ? "" : v })}>
               <SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="__none__">None</SelectItem>
-                <SelectItem value="bestseller">Best Seller</SelectItem>
-                <SelectItem value="new">New</SelectItem>
-                <SelectItem value="hot">Hot</SelectItem>
-                <SelectItem value="popular">Popular</SelectItem>
+                <SelectItem value="__none__">{lang === "rw" ? "Nta na kimwe" : lang === "fr" ? "Aucun" : "None"}</SelectItem>
+                <SelectItem value="bestseller">{t("product.bestseller", lang)}</SelectItem>
+                <SelectItem value="new">{t("product.new", lang)}</SelectItem>
+                <SelectItem value="hot">{t("product.hot", lang)}</SelectItem>
+                <SelectItem value="popular">{t("product.popular", lang)}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -811,13 +811,13 @@ function OrdersView() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="processing">Processing</SelectItem>
-            <SelectItem value="shipped">Shipped</SelectItem>
-            <SelectItem value="delivered">Delivered</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="all">{lang === "rw" ? "Byose" : lang === "fr" ? "Tous" : "All statuses"}</SelectItem>
+            <SelectItem value="pending">{t("admin.pending", lang)}</SelectItem>
+            <SelectItem value="confirmed">{t("admin.confirm", lang)}</SelectItem>
+            <SelectItem value="processing">{lang === "rw" ? "Mu gukora" : lang === "fr" ? "En cours" : "Processing"}</SelectItem>
+            <SelectItem value="shipped">{lang === "rw" ? "Byoherejwe" : lang === "fr" ? "Expédié" : "Shipped"}</SelectItem>
+            <SelectItem value="delivered">{lang === "rw" ? "Byageze" : lang === "fr" ? "Livré" : "Delivered"}</SelectItem>
+            <SelectItem value="cancelled">{t("admin.cancel", lang)}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -827,7 +827,7 @@ function OrdersView() {
       ) : orders.length === 0 ? (
         <div className="bg-white rounded-2xl border border-pink-100 p-10 text-center">
           <div className="text-6xl mb-2">📦</div>
-          <p className="text-muted-foreground">No orders found.</p>
+          <p className="text-muted-foreground">{lang === "rw" ? "Nta oridere zabonetse." : lang === "fr" ? "Aucune commande trouvée." : "No orders found."}</p>
         </div>
       ) : (
         <div className="space-y-2">

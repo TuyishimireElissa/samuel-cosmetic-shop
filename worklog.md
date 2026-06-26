@@ -121,3 +121,47 @@ Stage Summary:
 - All 8 public API endpoints return 200.
 - All admin endpoints work with correct HTTP methods.
 - Total bugs fixed across 3 rounds: 19.
+
+---
+Task ID: round-4-fixes
+Agent: main (Super Z)
+Task: Continue testing and fixing without destroying previous work. Translate admin views-extra.tsx and app.tsx form labels.
+
+Work Log:
+- Added 100+ new i18n keys for admin views (admin.new, admin.add, admin.edit, admin.save, admin.cancel, admin.delete, admin.saving, admin.loading, admin.active, admin.off, admin.send, admin.approve, admin.reject, admin.suspend, admin.confirm, admin.complete, admin.pending, admin.approved, admin.rejected, admin.suspended, admin.all, admin.deleteConfirm, admin.saved, admin.broadcast, admin.markAllRead, admin.csv, admin.coupon.*, admin.bundle.*, admin.flash.*, admin.booking.*, admin.wholesale.*, admin.messages.*, admin.subscribers.*, admin.testimonials.noItems, admin.staff.*, admin.branding.*, admin.notifications.*, admin.health.*)
+- Fixed syntax error in i18n.ts (line 380 had invalid key format)
+- Updated CouponsView: heading, New button, Loading, Active/Off badges, off label, Min Order, Used, Edit button
+- Updated BundlesView: heading, New button, Loading, Edit button
+- Updated FlashSalesView: heading, New button, Loading, LIVE badge, off label, noSales message
+- Updated BookingsView: heading, Loading, noBookings message, at label, status dropdown (Pending/Confirm/Complete/Cancel)
+- Updated WholesaleAdminView: heading, filter dropdown (All/Pending/Approved/Rejected/Suspended), Loading, noApps message, Owner label, Approve/Reject/Suspend buttons
+- Updated MessagesView: heading, Loading, noMsgs message, replyTo label, Send via WhatsApp button, Cancel button
+- Updated SubscribersView: heading, active count, CSV button, Broadcast button, table headers (Phone/Name/Active), broadcast dialog title, Cancel/Send buttons
+- Updated TestimonialsView: heading, Loading, Approve button
+- Updated StaffView: heading, Add button, Loading, permissions count, Edit button
+- Updated BrandingView: heading, Shop Identity card title, all form labels (Shop Name, Logo Emoji, WhatsApp Number, Email, TIN, Hours), Save button
+- Updated NotificationsView: heading, Mark all read button, Loading, noNotifs message
+- Updated SiteHealthView: heading, Services card title, Database card title, Loading
+- Updated CustomersView (was missed in round 3): heading, customers count, search placeholder, Loading
+- Updated ReviewsView (was missed in round 3): heading, reviews count, filter dropdown (Pending/Approved/Hidden/All), Loading, noReviews message, Approve/Reply buttons, reply dialog
+- Updated StockView (was missed in round 3): heading
+- Updated app.tsx OrdersView: status filter dropdown (All statuses/Pending/Confirmed/Processing/Shipped/Delivered/Cancelled), no orders message, search placeholder
+- Updated app.tsx ProductForm: dialog title (Edit/Add Product), Name (EN/FR/RW) labels, Category label, Emoji label, badge dropdown (None/Best Seller/New/Hot/Popular)
+- Fixed duplicate suffix bug: ProductForm had "{t('admin.products.cost', lang)} (HT)" but the i18n key already includes "(HT)", producing "Igiciro cyo kugura (HT) (HT)". Removed the extra suffix.
+
+Bugs fixed (this round):
+20. views-extra.tsx: 11 admin views (Coupons, Bundles, FlashSales, Bookings, Wholesale, Messages, Subscribers, Testimonials, Staff, Branding, Notifications, SiteHealth) had hardcoded English headings, buttons, labels, status messages. Added i18n for all.
+21. views-extra.tsx: 3 admin views (Customers, Reviews, Inventory) were missed in round 3 — still had English headings. Now translated.
+22. app.tsx OrdersView: status filter dropdown had 7 English options (All statuses, Pending, Confirmed, Processing, Shipped, Delivered, Cancelled). Now translated.
+23. app.tsx ProductForm: dialog title, 3 Name labels, Category label, Emoji label, and 5 badge options were hardcoded English. Now translated.
+24. app.tsx ProductForm: duplicate suffix bug — "{t('admin.products.cost', lang)} (HT)" produced "Igiciro cyo kugura (HT) (HT)" because the i18n key already includes "(HT)". Removed extra suffix from Cost and Price labels.
+
+Stage Summary:
+- 5 additional bugs fixed (i18n completeness + duplicate suffix).
+- All 17 admin views now show translated headings in Kinyarwanda.
+- All admin form labels, buttons, status messages, and dropdowns translated.
+- Product form fully translated (Name EN/FR/RW, Category, SKU, Emoji, Cost, Price, Wholesale, Stock, Badge, descriptions).
+- Orders status filter translated (7 options).
+- 0 console errors.
+- 8/8 public API endpoints return 200.
+- Total bugs fixed across 4 rounds: 24.

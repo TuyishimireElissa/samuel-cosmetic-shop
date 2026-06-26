@@ -304,6 +304,116 @@ const dict: Dict = {
   "modal.wholesale.status": { rw: "Imiterere:", en: "Status:", fr: "Statut :" },
 
   "bundle.addToCart": { rw: "Ongera Imibonano mu Gikoni", en: "Add Bundle to Cart", fr: "Ajouter l'Ensemble au Panier" },
+
+  // Admin common
+  "admin.new": { rw: "Gishya", en: "New", fr: "Nouveau" },
+  "admin.add": { rw: "Ongera", en: "Add", fr: "Ajouter" },
+  "admin.edit": { rw: "Hindura", en: "Edit", fr: "Modifier" },
+  "admin.save": { rw: "Bika", en: "Save", fr: "Enregistrer" },
+  "admin.cancel": { rw: "Hakana", en: "Cancel", fr: "Annuler" },
+  "admin.delete": { rw: "Siba", en: "Delete", fr: "Supprimer" },
+  "admin.saving": { rw: "Mu kubika...", en: "Saving...", fr: "Enregistrement..." },
+  "admin.loading": { rw: "Mu gutegura...", en: "Loading...", fr: "Chargement..." },
+  "admin.active": { rw: "Gikora", en: "Active", fr: "Actif" },
+  "admin.off": { rw: "Byacitse", en: "Off", fr: "Inactif" },
+  "admin.send": { rw: "Tumiza", en: "Send", fr: "Envoyer" },
+  "admin.approve": { rw: "Emeza", en: "Approve", fr: "Approuver" },
+  "admin.reject": { rw: "Hakana", en: "Reject", fr: "Rejeter" },
+  "admin.suspend": { rw: "Hagarika", en: "Suspend", fr: "Suspendre" },
+  "admin.confirm": { rw: "Emeza", en: "Confirm", fr: "Confirmer" },
+  "admin.complete": { rw: "Byarangiye", en: "Complete", fr: "Terminer" },
+  "admin.pending": { rw: "Bitegereje", en: "Pending", fr: "En attente" },
+  "admin.approved": { rw: "Byemejwe", en: "Approved", fr: "Approuvé" },
+  "admin.rejected": { rw: "Byanze", en: "Rejected", fr: "Rejeté" },
+  "admin.suspended": { rw: "Byahagaritswe", en: "Suspended", fr: "Suspendu" },
+  "admin.all": { rw: "Byose", en: "All", fr: "Tous" },
+  "admin.deleteConfirm": { rw: "Siba?", en: "Delete?", fr: "Supprimer ?" },
+  "admin.saved": { rw: "Byabitswe!", en: "Saved!", fr: "Enregistré !" },
+  "admin.broadcast": { rw: "Tangaza", en: "Broadcast", fr: "Diffuser" },
+  "admin.markAllRead": { rw: "Soma Byose", en: "Mark all read", fr: "Tout marquer lu" },
+  "admin.csv": { rw: "CSV", en: "CSV", fr: "CSV" },
+
+  // Admin coupons
+  "admin.coupon.code": { rw: "Kode", en: "Code", fr: "Code" },
+  "admin.coupon.type": { rw: "Ubwoko", en: "Type", fr: "Type" },
+  "admin.coupon.value": { rw: "Agaciro", en: "Value", fr: "Valeur" },
+  "admin.coupon.minOrder": { rw: "Oridere ntoya", en: "Min Order", fr: "Commande min." },
+  "admin.coupon.description": { rw: "Igisobanuro", en: "Description", fr: "Description" },
+  "admin.coupon.percent": { rw: "Ku ijana", en: "Percent", fr: "Pourcentage" },
+  "admin.coupon.fixed": { rw: "Fixe", en: "Fixed", fr: "Fixe" },
+  "admin.coupon.public": { rw: "By'rusange", en: "Public", fr: "Public" },
+  "admin.coupon.used": { rw: "Byakoreshejwe", en: "Used", fr: "Utilisé" },
+  "admin.coupon.off": { rw: "ku biciro", en: "off", fr: "de réduction" },
+
+  // Admin bundles
+  "admin.bundle.emoji": { rw: "Emojis", en: "Emoji", fr: "Emoji" },
+  "admin.bundle.name": { rw: "Izina", en: "Name", fr: "Nom" },
+  "admin.bundle.normalPrice": { rw: "Igiciro cyisanzwe", en: "Normal Price", fr: "Prix normal" },
+  "admin.bundle.bundlePrice": { rw: "Igiciro cy'umubonano", en: "Bundle Price", fr: "Prix ensemble" },
+  "admin.bundle.products": { rw: "Ibicuruzwa", en: "Products", fr: "Produits" },
+
+  // Admin flash sales
+  "admin.flash.title": { rw: "Umutwe", en: "Title", fr: "Titre" },
+  "admin.flash.start": { rw: "Gutangira", en: "Start", fr: "Début" },
+  "admin.flash.end": { rw: "Kurangiza", en: "End", fr: "Fin" },
+  "admin.flash.productsAll": { rw: "Ibicuruzwa (ubusa = byose)", en: "Products (empty = all)", fr: "Produits (vide = tous)" },
+  "admin.flash.live": { rw: "HOZWE", en: "LIVE", fr: "EN DIRECT" },
+  "admin.flash.noSales": { rw: "Nta cyiciro cyihuse", en: "No flash sales", fr: "Aucune vente flash" },
+
+  // Admin bookings
+  "admin.booking.noBookings": { rw: "Nta bibanza", en: "No bookings", fr: "Aucune réservation" },
+  "admin.booking.at": { rw: "ku", en: "at", fr: "à" },
+
+  // Admin wholesale
+  "admin.wholesale.owner": { rw: "Nyir'ubucuruzi:", en: "Owner:", fr: "Propriétaire :" },
+  "admin.wholesale.noApps": { rw: "Nta bisabwa", en: "No applications", fr: "Aucune demande" },
+
+  // Admin messages
+  "admin.messages.noMsgs": { rw: "Nta butumwa", en: "No messages", fr: "Aucun message" },
+  "admin.messages.replyTo": { rw: "Subira kuri", en: "Reply to", fr: "Répondre à" },
+  "admin.messages.sendWA": { rw: "Tumiza kuri WhatsApp", en: "Send via WhatsApp", fr: "Envoyer via WhatsApp" },
+
+  // Admin subscribers
+  "admin.subscribers.active": { rw: "bikora", en: "active", fr: "actifs" },
+  "admin.subscribers.broadcastTitle": { rw: "Ubutumwa bwa Tangaza", en: "Broadcast Message", fr: "Message Diffusion" },
+  "admin.subscribers.broadcastConfirm": { rw: "Tumiza kuri", en: "Send to", fr: "Envoyer à" },
+  "admin.subscribers.subscribers": { rw: "abiyandikishije?", en: "subscribers?", fr: "abonnés ?" },
+
+  // Admin testimonials
+  "admin.testimonials.noItems": { rw: "Nta byabaye", en: "No testimonials", fr: "Aucun témoignage" },
+
+  // Admin staff
+  "admin.staff.name": { rw: "Amazina", en: "Name", fr: "Nom" },
+  "admin.staff.username": { rw: "Izina ryo gukoresha", en: "Username", fr: "Nom d'utilisateur" },
+  "admin.staff.password": { rw: "Ijambo ry'ibanga", en: "Password", fr: "Mot de passe" },
+  "admin.staff.newPassword": { rw: "Ijambo ry'ibanga rishya", en: "New Password", fr: "Nouveau mot de passe" },
+  "admin.staff.role": { rw: "Inshingano", en: "Role", fr: "Rôle" },
+  "admin.staff.permissions": { rw: "Uburyo", en: "Permissions", fr: "Permissions" },
+  "admin.staff.permissionsCount": { rw: "uburyo", en: "permissions", fr: "permissions" },
+  "admin.staff.sales": { rw: "Icuruza", en: "Sales", fr: "Ventes" },
+  "admin.staff.inventory": { rw: "Ibyari mu stock", en: "Inventory", fr: "Inventaire" },
+  "admin.staff.viewer": { rw: "Mureba", en: "Viewer", fr: "Spectateur" },
+  "admin.staff.custom": { rw: "Bisanzwe", en: "Custom", fr: "Personnalisé" },
+
+  // Admin branding
+  "admin.branding.title": { rw: "Ibidukikije", en: "Branding", fr: "Marque" },
+  "admin.branding.identity": { rw: "Ikiranga Iduka", en: "Shop Identity", fr: "Identité du Magasin" },
+  "admin.branding.shopName": { rw: "Izina ry'Iduka", en: "Shop Name", fr: "Nom du Magasin" },
+  "admin.branding.logoEmoji": { rw: "Emojis y'Ikirango", en: "Logo Emoji", fr: "Emoji du Logo" },
+  "admin.branding.whatsapp": { rw: "Nimero ya WhatsApp", en: "WhatsApp Number", fr: "Numéro WhatsApp" },
+  "admin.branding.email": { rw: "Imeyili", en: "Email", fr: "Email" },
+  "admin.branding.tin": { rw: "TIN", en: "TIN", fr: "TIN" },
+  "admin.branding.hours": { rw: "Amasaha", en: "Hours", fr: "Heures" },
+  "admin.branding.uploaded": { rw: "Byohererejwe — kanda Bika", en: "Uploaded — click Save", fr: "Téléversé — cliquer Enregistrer" },
+
+  // Admin notifications
+  "admin.notifications.title": { rw: "Ibyerekeye", en: "Notifications", fr: "Notifications" },
+  "admin.notifications.noNotifs": { rw: "Nta byerekeye", en: "No notifications", fr: "Aucune notification" },
+
+  // Admin site health
+  "admin.health.title": { rw: "Imiterere y'urubuga", en: "Site Health", fr: "Santé du Site" },
+  "admin.health.services": { rw: "Serivisi", en: "Services", fr: "Services" },
+  "admin.health.database": { rw: "Ububiko", en: "Database", fr: "Base de données" },
 };
 
 export function t(key: string, lang: Lang): string {

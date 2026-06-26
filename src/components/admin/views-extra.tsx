@@ -29,7 +29,7 @@ async function adminFetch(url: string, options?: RequestInit): Promise<Response>
   return fetch(url, options);
 }
 
-function safeFetch(url: string, options?: RequestInit): Promise<{ ok: boolean; data?: any; error?: string }> {
+async function safeFetch(url: string, options?: RequestInit): Promise<{ ok: boolean; data?: any; error?: string }> {
   try {
     let token = ""; try { const s = localStorage.getItem("sc_ui"); if (s) token = JSON.parse(s)?.state?.adminToken || ""; } catch {}
     const headers = new Headers(options?.headers);

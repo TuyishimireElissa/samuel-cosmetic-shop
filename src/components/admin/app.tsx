@@ -593,7 +593,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
     setSaving(true);
     const url = isEdit ? `/api/admin/products/${form.id}` : "/api/admin/products";
     const method = isEdit ? "PUT" : "POST";
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),

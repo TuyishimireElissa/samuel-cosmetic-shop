@@ -1,19 +1,17 @@
-// Shared password hash (must match scripts/seed.ts)
-// NOTE: This is a demo-grade hash. Use bcrypt/argon2 in production.
-
-export function hashPassword(s: string): string {
+import bcrypt from "bcryptjs";
+import { randomBytes } from "crypto";
+const BCRYPT_ROUNDS = 10;
+const LEGACY_PREFIX = "sc$";
+function legacyHash(s: string): string {
   let h = 5381;
-  for (let i = 0; i < s.length; i++) {
-    h = (h * 33) ^ s.charCodeAt(i);
-  }
-  return `sc$${(h >>> 0).toString(16)}$${s.length}`;
+  for (let i = 0; i < s.length; i++) h = (h * 33) ^ s.charCodeAt(i);
+  return `${LEGACY_PREFIX}${(h >>> 0).toString(16)}$${s.length}`;
 }
-
+export function hashPassword(s: string): string { return bcrypt.hashSync(s, BCRYPT_ROUNDS); }
 export function verifyPassword(raw: string, hash: string): boolean {
-  return hashPassword(raw) === hash;
+  if (!hash) return false;
+  if (hash.startsWith(LEGACY_PREFIX)) return legacyHash(raw) === hash;
+  try { return bcrypt.compareSync(raw, hash); } catch { return false; }
 }
-
-// Simple session token (demo only)
-export function makeToken(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
+export function isLegacyHash(hash: string): boolean { return hash.startsWith(LEGACY_PREFIX); }
+export function makeToken(): string { return randomBytes(32).toString("base64url"); }

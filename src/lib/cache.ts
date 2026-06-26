@@ -13,3 +13,8 @@ export async function cached<T>(key: string, fetcher: () => Promise<T>, ttlSecon
 export function invalidate(prefix: string) { for (const k of store.keys()) if (k.startsWith(prefix)) store.delete(k); }
 export function cacheKey(route: string, params: Record<string, any> = {}): string { const qs = Object.keys(params).sort().map((k) => `${k}=${params[k]}`).join("&"); return qs ? `${route}?${qs}` : route; }
 export function withCache(res: Response, ttl = 60): Response { res.headers.set("Cache-Control", `public, s-maxage=${ttl}, stale-while-revalidate=${ttl * 2}`); return res; }
+
+export function bustCache(key: string) {
+  store.delete(key);
+  for (const k of store.keys()) if (k.startsWith(key)) store.delete(k);
+}

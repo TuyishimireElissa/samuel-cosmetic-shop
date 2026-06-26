@@ -976,7 +976,6 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
             Close
           </Button>
         </DialogFooter>
-        {product.id && <ProductImageManager productId={product.id} />}
       </DialogContent>
     </Dialog>
   );

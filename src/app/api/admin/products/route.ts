@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const products = await db.product.findMany({
       orderBy: { createdAt: "desc" },
-      include: { category: true },
+      include: { category: true, images: { orderBy: { sortOrder: "asc" } } },
     });
     return NextResponse.json({ ok: true, products });
   } catch (e: any) {

@@ -9,7 +9,7 @@ export async function GET(
     const { id } = await params;
     const product = await db.product.findUnique({
       where: { id },
-      include: { category: true },
+      include: { category: true, images: { orderBy: { sortOrder: "asc" } } },
     });
     if (!product)
       return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });

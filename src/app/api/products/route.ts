@@ -6,42 +6,44 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const category = url.searchParams.get("category") || "";
-    const search = url.searchParams.get("search") || "";
+    const search = (url.searchParams.get("search") || "").trim().toLowerCase();
     const sort = url.searchParams.get("sort") || "newest";
-    const minPrice = Number(url.searchParams.get("minPrice") || 0);
-    const maxPrice = Number(url.searchParams.get("maxPrice") || 0);
 
-    const where: any = { isActive: true };
-    if (category && category !== "all") where.categoryId = category;
-    if (search) {
-      where.OR = [
-        { nameEn: { contains: search } },
-        { nameFr: { contains: search } },
-        { nameRw: { contains: search } },
-        { sku: { contains: search } },
-      ];
-    }
-    if (minPrice > 0 || maxPrice > 0) {
-      where.sellingPrice = {};
-      if (minPrice > 0) where.sellingPrice.gte = minPrice;
-      if (maxPrice > 0) where.sellingPrice.lte = maxPrice;
-    }
-
-    let orderBy: any = { createdAt: "desc" };
-    if (sort === "priceLow") orderBy = { sellingPrice: "asc" };
-    else if (sort === "priceHigh") orderBy = { sellingPrice: "desc" };
-    else if (sort === "rating") orderBy = { ratingAvg: "desc" };
-    else if (sort === "popular") orderBy = { salesCount: "desc" };
-
-    const cacheKey = `/api/products:${category}:${search}:${sort}:${minPrice}:${maxPrice}`;
-    const products = await cached(cacheKey, () => db.product.findMany({
-      where, orderBy, include: { category: true, images: true },
+    const allProducts = await cached("/api/products:all", () => db.product.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: "desc" },
+      include: { category: true, images: { orderBy: { sortOrder: "asc" } } },
     }), 60);
-    return withCache(NextResponse.json({ ok: true, products }), 60);
+
+    let products = allProducts;
+
+    if (category && category !== "all") {
+      products = products.filter((p) => p.categoryId === category);
+    }
+
+    if (search) {
+      products = products.filter((p) => {
+        const haystack = [
+          p.nameEn, p.nameFr, p.nameRw, p.sku,
+          p.descEn, p.descFr, p.descRw,
+          p.emoji, p.badge,
+          p.category?.nameEn || "", p.category?.nameFr || "", p.category?.nameRw || "", p.category?.emoji || "",
+        ].join(" ").toLowerCase();
+        return haystack.includes(search);
+      });
+    }
+
+    const sorters: Record<string, (a: any, b: any) => number> = {
+      newest: (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
+      priceLow: (a, b) => a.sellingPrice - b.sellingPrice,
+      priceHigh: (a, b) => b.sellingPrice - a.sellingPrice,
+      rating: (a, b) => (b.ratingAvg || 0) - (a.ratingAvg || 0),
+      popular: (a, b) => (b.salesCount || 0) - (a.salesCount || 0),
+    };
+    products = [...products].sort(sorters[sort] || sorters.newest);
+
+    return withCache(NextResponse.json({ ok: true, products }), 30);
   } catch (e: any) {
-    return NextResponse.json(
-      { ok: false, error: e?.message || "server_error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: e?.message || "server_error" }, { status: 500 });
   }
 }

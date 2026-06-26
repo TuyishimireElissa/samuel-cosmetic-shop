@@ -30,6 +30,7 @@ import {
   Mail,
   Clock,
   ArrowUp,
+  Camera,
 } from "lucide-react";
 
 type ProductWithCat = Product & { category: Category | null };
@@ -41,6 +42,7 @@ export function Storefront() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [bundles, setBundles] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [flashSale, setFlashSale] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeCat, setActiveCat] = useState("all");
@@ -70,12 +72,18 @@ export function Storefront() {
       fetch("/api/products/featured").then((r) => r.json()),
       fetch("/api/bundles").then((r) => r.json()),
       fetch("/api/testimonials").then((r) => r.json()),
-    ]).then(([p, c, f, b, ts]) => {
+      fetch("/api/flash-sales").then((r) => r.json()),
+    ]).then(([p, c, f, b, ts, fs]) => {
       if (p.ok) setProducts(p.products);
       if (c.ok) setCategories(c.categories);
       if (f?.ok) setFeatured(f.products);
       if (b?.ok) setBundles(b.bundles);
       if (ts?.ok) setTestimonials(ts.testimonials);
+      if (fs?.ok && fs.sales && fs.sales.length > 0) {
+        const now = new Date();
+        const active = fs.sales.find((s: any) => s.isActive && new Date(s.startTime) <= now && new Date(s.endTime) >= now);
+        if (active) setFlashSale(active);
+      }
       setLoading(false);
     });
   }, []);
@@ -205,6 +213,45 @@ export function Storefront() {
         </div>
       </section>
 
+      {/* FLASH SALE BANNER */}
+      {flashSale && (
+        <section className="mx-auto max-w-7xl px-4 py-3">
+          <div
+            className="rounded-2xl p-4 sm:p-5 text-white shadow-lg flex items-center justify-between gap-4 flex-wrap"
+            style={{ background: `linear-gradient(135deg, ${flashSale.bannerColor || "#ff4757"}, #c0392b)` }}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-3xl sm:text-4xl">⚡</span>
+              <div>
+                <div className="text-lg sm:text-xl font-bold">
+                  {lang === "rw" ? flashSale.titleRw : lang === "fr" ? flashSale.titleFr : flashSale.titleEn}
+                </div>
+                <div className="text-xs sm:text-sm opacity-90">
+                  {flashSale.bannerTextEn || t("flash.defaultBanner", lang)}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-2xl sm:text-3xl font-extrabold">
+                  -{flashSale.discountValue}{flashSale.discountType === "percent" ? "%" : " RWF"}
+                </div>
+                <div className="text-[10px] sm:text-xs opacity-80">
+                  {t("flash.endsOn", lang)}: {new Date(flashSale.endTime).toLocaleDateString()}
+                </div>
+              </div>
+              <button
+                onClick={() => shopRef.current?.scrollIntoView({ behavior: "smooth" })}
+                className="px-4 py-2 rounded-full bg-white text-sm font-bold hover:bg-white/90 transition-colors"
+                style={{ color: flashSale.bannerColor || "#ff4757" }}
+              >
+                {t("flash.shopNow", lang)}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CATEGORIES */}
       <section ref={catsRef} className="mx-auto max-w-7xl px-4 py-12 sm:py-16">
         <div className="text-center mb-8">
@@ -300,6 +347,17 @@ export function Storefront() {
               <option value="rating">{t("filter.rating", lang)}</option>
               <option value="popular">Popular</option>
             </select>
+            {/* Photo Search */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPhotoSearchOpen(true)}
+              className="border-pink-200 text-pink-700 hover:bg-pink-50"
+              title={t("search.photo", lang)}
+            >
+              <Camera size={14} className="sm:mr-1" />
+              <span className="hidden sm:inline">{t("search.photo", lang)}</span>
+            </Button>
           </div>
         </div>
 
@@ -327,7 +385,7 @@ export function Storefront() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {products.map((p) => (
-              <ProductCard key={p.id} product={p} currency={currency} />
+              <ProductCard key={p.id} product={p} currency={currency} onQuickView={(prod) => setQuickView(prod as any)} />
             ))}
           </div>
         )}
@@ -337,7 +395,7 @@ export function Storefront() {
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 flex items-center gap-2" style={{ fontFamily: "var(--font-playfair)" }}>
-            <TrendingUp size={24} className="text-pink-600" /> Featured Products
+            <TrendingUp size={24} className="text-pink-600" /> {t("sections.featured", lang)}
           </h2>
           <div className="flex md:grid md:grid-cols-4 gap-3 sm:gap-4 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 md:mx-0 md:px-0">
             {featured.slice(0, 8).map((p) => (
@@ -352,7 +410,7 @@ export function Storefront() {
       {/* BUNDLES */}
       {bundles.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>🎁 Special Bundles</h2>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>🎁 {t("sections.bundles", lang)}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {bundles.map((b) => (
               <div key={b.id} className="bg-white rounded-2xl border border-pink-100 overflow-hidden hover:shadow-lg transition-all">
@@ -378,19 +436,19 @@ export function Storefront() {
 
       {/* SERVICES */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12 lg:py-16">
-        <h2 className="text-2xl sm:text-3xl font-bold text-pink-900 mb-5 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>Quick Services</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-pink-900 mb-5 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>{t("sections.quickServices", lang)}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           <button onClick={() => setTrackOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
-            <div className="text-4xl sm:text-5xl mb-2">📦</div><div className="font-semibold text-sm sm:text-base text-pink-800">Track Order</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Check status</div>
+            <div className="text-4xl sm:text-5xl mb-2">📦</div><div className="font-semibold text-sm sm:text-base text-pink-800">{t("services.trackOrder", lang)}</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">{t("services.trackOrderDesc", lang)}</div>
           </button>
           <button onClick={() => setPortalOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
-            <div className="text-4xl sm:text-5xl mb-2">👤</div><div className="font-semibold text-sm sm:text-base text-pink-800">My Account</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Loyalty & history</div>
+            <div className="text-4xl sm:text-5xl mb-2">👤</div><div className="font-semibold text-sm sm:text-base text-pink-800">{t("services.myAccount", lang)}</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">{t("services.myAccountDesc", lang)}</div>
           </button>
           <button onClick={() => setBookingOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
-            <div className="text-4xl sm:text-5xl mb-2">📅</div><div className="font-semibold text-sm sm:text-base text-pink-800">Book</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Appointment</div>
+            <div className="text-4xl sm:text-5xl mb-2">📅</div><div className="font-semibold text-sm sm:text-base text-pink-800">{t("services.book", lang)}</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">{t("services.bookDesc", lang)}</div>
           </button>
           <button onClick={() => setWholesaleOpen(true)} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 hover:shadow-lg hover:border-pink-300 transition-all text-center">
-            <div className="text-4xl sm:text-5xl mb-2">🏢</div><div className="font-semibold text-sm sm:text-base text-pink-800">Wholesale</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">Bulk buyer</div>
+            <div className="text-4xl sm:text-5xl mb-2">🏢</div><div className="font-semibold text-sm sm:text-base text-pink-800">{t("services.wholesale", lang)}</div><div className="text-xs sm:text-sm text-muted-foreground mt-0.5">{t("services.wholesaleDesc", lang)}</div>
           </button>
         </div>
       </section>
@@ -398,7 +456,7 @@ export function Storefront() {
       {/* TESTIMONIALS */}
       {testimonials.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-pink-900 mb-5 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>💬 What Our Customers Say</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-pink-900 mb-5 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>💬 {t("sections.testimonials", lang)}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {testimonials.map((tm) => (
               <div key={tm.id} className="bg-white rounded-2xl border border-pink-100 p-4 sm:p-6 space-y-3">

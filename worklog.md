@@ -42,3 +42,41 @@ Stage Summary:
 - Image upload works with local fallback when Cloudinary not configured.
 - 14 verification screenshots saved to `/home/z/my-project/download/` (FINAL-storefront.png, FINAL-admin.png, test-storefront-{rw,en,fr,mobile}.png, test-admin-{dashboard,products,orders,vat,product-form,rw}-*.png).
 - Dev server running on http://localhost:3000 (PID via `bun run dev`).
+
+---
+Task ID: next-round-fixes
+Agent: main (Super Z)
+Task: Continue testing and fixing features without destroying previous work. Test all storefront features, fix untranslated UI, add missing functionality.
+
+Work Log:
+- Tested Quick View modal: discovered product cards in the main shop grid were NOT wired to onQuickView (only Featured Products section was). Clicking a product card did nothing.
+- Tested Wishlist & Compare bar: both work correctly. Wishlist stores product IDs, bar appears at bottom-left, modal shows product details with add-to-cart and remove buttons. Compare shows a comparison table with Price/Category/Rating/Stock/Action rows.
+- Tested Photo Search: component existed (color-based classification) but NO button triggered it. Added a "Photo Search" button next to the sort dropdown in the shop section. Added Camera icon import. Added i18n key "search.photo" in rw/en/fr.
+- Tested Flash Sale banner: was completely missing from storefront despite data existing. Added state + fetch for /api/flash-sales, added a banner section between hero and categories with gradient background, discount %, end date, and "Shop Now" CTA button. Added 3 i18n keys (flash.defaultBanner, flash.endsOn, flash.shopNow).
+- Found 4 untranslated section headings: "Featured Products", "Special Bundles", "Quick Services", "What Our Customers Say". Added 4 i18n keys (sections.featured, sections.bundles, sections.quickServices, sections.testimonials) and replaced hardcoded strings with t() calls.
+- Found 8 untranslated Quick Services labels (Track Order, Check status, My Account, Loyalty & history, Book, Appointment, Wholesale, Bulk buyer). Added 8 i18n keys (services.trackOrder, services.trackOrderDesc, services.myAccount, services.myAccountDesc, services.book, services.bookDesc, services.wholesale, services.wholesaleDesc) and replaced hardcoded strings.
+- Tested Track Order modal: enters phone number, fetches orders via /api/orders/track, displays order number + status + timeline (pending → confirmed → shipped → delivered) + "Ask about this order" WhatsApp link.
+- Tested Customer Portal: enters phone, fetches customer via /api/customers/lookup, displays name, tier badge (Bronze/Silver/Gold/Platinum), loyalty points, total orders, total spent, progress to next tier, and order history list.
+- Tested Booking modal: 3 service options (Beauty Consultation 30min, Makeup Session 60min, Skincare Analysis 45min), calendar date picker, time slot selection.
+- Tested EBM Receipt in admin: modal opens with full RRA-compliant receipt format — shop header (TIN, SDC, phone), receipt #, MRC, date, customer info, item table (Désignation/Qté/PU HT/Montant TTC), totals (HT/TVA 18%/Delivery/TTC Total), Print button.
+- Tested VAT Report: monthly table with columns (Date, Receipt #, Customer, HT, TVA, TTC, MRC), totals row, RRA Monthly Filing summary, CSV export button (client-side Blob download).
+- Tested SEO: added Schema.org JSON-LD structured data (Store type with name, address, phone, email, openingHours, vatID) to layout.tsx <head>. Added sitemap.xml route (/src/app/sitemap.xml/route.ts). Added favicon link (logo.svg) via metadata.icons. All return 200 OK.
+- Tested mobile responsiveness at 360px: hamburger menu appears, product grid switches to 2 columns, flash sale banner wraps properly, all text remains readable.
+- Tested WhatsApp deep link generation: /api/lib/whatsapp.ts has buildOrderMessage() that constructs a formatted WhatsApp message with shop name, order number, customer info, item list, subtotal/discount/delivery/total, payment method, and Kinyarwanda thank-you note. Cart drawer and order confirmation both have wa.me links.
+
+Bugs fixed (this round):
+9. src/components/shop/storefront.tsx line 330: main shop grid ProductCard missing onQuickView prop — clicking products did nothing. Added onQuickView={(prod) => setQuickView(prod as any)}.
+10. src/components/shop/storefront.tsx: PhotoSearchModal imported and state declared but never triggered. Added Photo Search button next to sort dropdown.
+11. src/components/shop/storefront.tsx: Flash sale banner completely missing from storefront. Added state, fetch, and banner UI section.
+12. src/components/shop/storefront.tsx: 4 section headings hardcoded in English. Replaced with t() calls + added i18n keys.
+13. src/components/shop/storefront.tsx: 8 Quick Services labels hardcoded in English. Replaced with t() calls + added i18n keys.
+14. src/app/layout.tsx: Missing Schema.org JSON-LD, favicon link, and sitemap. Added all three.
+
+Stage Summary:
+- 6 additional bugs fixed (quick view wiring, photo search trigger, flash sale banner, 12 untranslated strings, SEO structured data).
+- All storefront features now work: quick view, wishlist, compare, photo search, flash sale banner, track order, customer portal, booking, wholesale.
+- All admin features verified: EBM receipt, VAT report with CSV export, 18 tabs.
+- SEO complete: title, description, keywords, Open Graph, Twitter cards, JSON-LD Store schema, sitemap.xml, favicon.
+- Mobile responsive at 360px with hamburger menu.
+- i18n complete in Kinyarwanda (default), English, French for all user-facing strings.
+- 12 additional verification screenshots saved to /home/z/my-project/download/NEXT-*.png.

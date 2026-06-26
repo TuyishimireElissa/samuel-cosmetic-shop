@@ -96,6 +96,7 @@ export async function POST(req: NextRequest) {
 
     // Upsert customer
     let customer = await db.customer.findUnique({ where: { phone: customerPhone } });
+    const earnedPoints = Math.floor(totals.totalTTC / 100);
     if (!customer) {
       customer = await db.customer.create({
         data: {
@@ -105,9 +106,23 @@ export async function POST(req: NextRequest) {
           district,
           totalOrders: 1,
           totalSpent: totals.totalTTC,
+          loyaltyPoints: earnedPoints,
           lastOrderAt: new Date(),
         },
       });
+      // Record loyalty earn txn
+      if (earnedPoints > 0) {
+        await db.loyaltyTransaction.create({
+          data: {
+            customerId: customer.id,
+            type: "earn",
+            points: earnedPoints,
+            balance: earnedPoints,
+            reason: "first_order",
+            createdBy: "system",
+          },
+        });
+      }
     } else {
       const newTotal = customer.totalSpent + totals.totalTTC;
       const newOrders = customer.totalOrders + 1;
@@ -117,7 +132,8 @@ export async function POST(req: NextRequest) {
       else if (newTotal >= 200000) tier = "gold";
       else if (newTotal >= 50000) tier = "silver";
       // 1 loyalty point per 100 RWF
-      const newPoints = customer.loyaltyPoints + Math.floor(totals.totalTTC / 100);
+      const earnedPts = Math.floor(totals.totalTTC / 100);
+      const newPoints = customer.loyaltyPoints + earnedPts;
       customer = await db.customer.update({
         where: { id: customer.id },
         data: {
@@ -131,6 +147,18 @@ export async function POST(req: NextRequest) {
           lastOrderAt: new Date(),
         },
       });
+      if (earnedPts > 0) {
+        await db.loyaltyTransaction.create({
+          data: {
+            customerId: customer.id,
+            type: "earn",
+            points: earnedPts,
+            balance: newPoints,
+            reason: "order_placed",
+            createdBy: "system",
+          },
+        });
+      }
     }
 
     const order = await db.order.create({

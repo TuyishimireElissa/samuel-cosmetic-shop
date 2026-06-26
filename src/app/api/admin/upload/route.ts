@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
-cloudinary.config({ cloud_name: process.env.CLOUDINARY_CLOUD_NAME, api_key: process.env.CLOUDINARY_API_KEY, api_secret: process.env.CLOUDINARY_API_SECRET });
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
+import crypto from "crypto";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const HAS_CLOUDINARY = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -8,13 +19,46 @@ export async function POST(req: NextRequest) {
     if (!file) return NextResponse.json({ ok: false, error: "no_file" }, { status: 400 });
     if (!file.type.startsWith("image/")) return NextResponse.json({ ok: false, error: "not_image" }, { status: 400 });
     if (file.size > 5 * 1024 * 1024) return NextResponse.json({ ok: false, error: "too_large" }, { status: 400 });
+
     const bytes = Buffer.from(await file.arrayBuffer());
-    const result = await new Promise<any>((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: "samuel-cosmetic/products", resource_type: "image", transformation: [{ width: 800, height: 800, crop: "limit" }, { quality: "auto" }, { fetch_format: "auto" }] },
-        (error, result) => { if (error) reject(new Error(error.message || "Upload failed")); else resolve(result); }
-      ).end(bytes);
-    });
-    return NextResponse.json({ ok: true, url: result.secure_url, filename: file.name, size: file.size });
-  } catch (e: any) { return NextResponse.json({ ok: false, error: e?.message || "server_error" }, { status: 500 }); }
+
+    // Cloudinary upload (production)
+    if (HAS_CLOUDINARY) {
+      try {
+        const result = await new Promise<any>((resolve, reject) => {
+          cloudinary.uploader.upload_stream(
+            {
+              folder: "samuel-cosmetic/products",
+              resource_type: "image",
+              transformation: [
+                { width: 800, height: 800, crop: "limit" },
+                { quality: "auto" },
+                { fetch_format: "auto" },
+              ],
+            },
+            (error, result) => {
+              if (error) reject(new Error(error.message || "Upload failed"));
+              else resolve(result);
+            }
+          ).end(bytes);
+        });
+        return NextResponse.json({ ok: true, url: result.secure_url, filename: file.name, size: file.size });
+      } catch (cloudErr: any) {
+        console.warn("Cloudinary upload failed, falling back to local:", cloudErr?.message);
+      }
+    }
+
+    // Local fallback - save to /public/uploads/
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadsDir, { recursive: true });
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const safeExt = ["jpg", "jpeg", "png", "webp", "gif"].includes(ext) ? ext : "jpg";
+    const fname = `${crypto.randomUUID()}.${safeExt}`;
+    const fpath = path.join(uploadsDir, fname);
+    await writeFile(fpath, bytes);
+    const url = `/uploads/${fname}`;
+    return NextResponse.json({ ok: true, url, filename: file.name, size: file.size, local: true });
+  } catch (e: any) {
+    return NextResponse.json({ ok: false, error: e?.message || "server_error" }, { status: 500 });
+  }
 }

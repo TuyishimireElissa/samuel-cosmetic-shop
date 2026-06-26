@@ -102,22 +102,22 @@ export function AdminApp() {
             { id: "dashboard", label: t("admin.dashboard", lang), icon: LayoutDashboard },
             { id: "products", label: t("admin.products", lang), icon: Package },
             { id: "orders", label: t("admin.orders", lang), icon: ShoppingCart },
-            { id: "customers", label: "Customers", icon: Users },
-            { id: "reviews", label: "Reviews", icon: Star },
-            { id: "stock", label: "Inventory", icon: Package },
-            { id: "coupons", label: "Coupons", icon: Tag },
-            { id: "bundles", label: "Bundles", icon: Gift },
-            { id: "flash", label: "Flash Sales", icon: Zap },
-            { id: "bookings", label: "Bookings", icon: Calendar },
-            { id: "wholesale", label: "Wholesale", icon: Building },
-            { id: "messages", label: "Messages", icon: Mail },
-            { id: "subscribers", label: "Subscribers", icon: Megaphone },
-            { id: "testimonials", label: "Testimonials", icon: Quote },
-            { id: "staff", label: "Staff", icon: UserCog },
-            { id: "branding", label: "Branding", icon: Palette },
-            { id: "notifications", label: "Notifications", icon: Bell },
+            { id: "customers", label: t("admin.customers", lang), icon: Users },
+            { id: "reviews", label: t("admin.reviews", lang), icon: Star },
+            { id: "stock", label: t("admin.inventory", lang), icon: Package },
+            { id: "coupons", label: t("admin.coupons", lang), icon: Tag },
+            { id: "bundles", label: t("admin.bundles", lang), icon: Gift },
+            { id: "flash", label: t("admin.flashSales", lang), icon: Zap },
+            { id: "bookings", label: t("admin.bookings", lang), icon: Calendar },
+            { id: "wholesale", label: t("admin.wholesale", lang), icon: Building },
+            { id: "messages", label: t("admin.messages", lang), icon: Mail },
+            { id: "subscribers", label: t("admin.subscribers", lang), icon: Megaphone },
+            { id: "testimonials", label: t("admin.testimonials", lang), icon: Quote },
+            { id: "staff", label: t("admin.staff", lang), icon: UserCog },
+            { id: "branding", label: t("admin.branding", lang), icon: Palette },
+            { id: "notifications", label: t("admin.notifications", lang), icon: Bell },
             { id: "vat", label: t("admin.vatReport", lang), icon: FileSpreadsheet },
-            { id: "health", label: "Site Health", icon: Activity },
+            { id: "health", label: t("admin.siteHealth", lang), icon: Activity },
           ].map((n) => {
             const Icon = n.icon;
             return (
@@ -685,10 +685,10 @@ function ProductForm({ product, categories, onClose, onSaved }: {
           </div>
           <div className="space-y-1">
             <Label>{t("admin.products.badge", lang)}</Label>
-            <Select value={form.badge} onValueChange={(v) => setForm({ ...form, badge: v })}>
+            <Select value={form.badge || "__none__"} onValueChange={(v) => setForm({ ...form, badge: v === "__none__" ? "" : v })}>
               <SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="__none__">None</SelectItem>
                 <SelectItem value="bestseller">Best Seller</SelectItem>
                 <SelectItem value="new">New</SelectItem>
                 <SelectItem value="hot">Hot</SelectItem>
@@ -744,7 +744,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             {saving ? t("common.loading", lang) : t("admin.products.save", lang)}
           </Button>
         </DialogFooter>
-        {product.id && <ProductImageManager productId={product.id} />}
+        {product?.id && <ProductImageManager productId={product.id} />}
       </DialogContent>
     </Dialog>
   );

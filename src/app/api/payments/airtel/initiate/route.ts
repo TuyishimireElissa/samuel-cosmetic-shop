@@ -1,3 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-export async function POST(req: NextRequest) { try { const { orderId, phoneNumber, amount } = await req.json(); if (!phoneNumber || !amount) return NextResponse.json({ ok: false, error: "missing" }, { status: 400 }); const txn = await db.moMoTransaction.create({ data: { orderId: orderId || null, phoneNumber, amount, status: "pending", providerRef: "AIRTEL-" + Date.now() } }); setTimeout(async () => { try { await db.moMoTransaction.update({ where: { id: txn.id }, data: { status: "success" } }); if (orderId) await db.order.update({ where: { id: orderId }, data: { paymentStatus: "paid", paymentRef: txn.providerRef } }); } catch {} }, 3000); return NextResponse.json({ ok: true, transactionId: txn.id, providerRef: txn.providerRef, status: "pending" }); } catch (e) { return NextResponse.json({ ok: false, error: e.message }, { status: 500 }); } }
+export async function POST(req: NextRequest) {
+  try {
+    const { orderId, phoneNumber, amount } = await req.json();
+    if (!phoneNumber || !amount) return NextResponse.json({ ok: false, error: "missing" }, { status: 400 });
+    const txn = await db.moMoTransaction.create({ data: { orderId: orderId || null, phoneNumber, amount, status: "pending", providerRef: "AIRTEL-" + Date.now() } });
+    setTimeout(async () => {
+      try {
+        await db.moMoTransaction.update({ where: { id: txn.id }, data: { status: "success" } });
+        if (orderId) {
+          const orderExists = await db.order.findUnique({ where: { id: orderId }, select: { id: true } });
+          if (orderExists) {
+            await db.order.update({ where: { id: orderId }, data: { paymentStatus: "paid", paymentRef: txn.providerRef } });
+          }
+        }
+      } catch {}
+    }, 3000);
+    return NextResponse.json({ ok: true, transactionId: txn.id, providerRef: txn.providerRef, status: "pending" });
+  } catch (e) {
+    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  }
+}

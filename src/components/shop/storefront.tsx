@@ -58,6 +58,12 @@ export function Storefront() {
   const contactRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
+
+  useEffect(() => {
     Promise.all([
       fetch("/api/products").then((r) => r.json()),
       fetch("/api/categories").then((r) => r.json()),

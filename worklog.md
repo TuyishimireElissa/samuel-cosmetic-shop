@@ -80,3 +80,44 @@ Stage Summary:
 - Mobile responsive at 360px with hamburger menu.
 - i18n complete in Kinyarwanda (default), English, French for all user-facing strings.
 - 12 additional verification screenshots saved to /home/z/my-project/download/NEXT-*.png.
+
+---
+Task ID: round-3-fixes
+Agent: main (Super Z)
+Task: Continue testing and fixing without destroying previous work. Test remaining features, fix i18n in modals, fix bundle pricing bug.
+
+Work Log:
+- Tested coupon validation: WELCOME5 (5% off, min 15000), SUMMER10 (10% off, min 20000), invalid coupon, below-min-order — all work correctly.
+- Tested contact form: storefront form submits, saves to DB, admin can view in Messages tab. Missing required fields returns 400 error.
+- Tested currency switching: RWF → USD → EUR → KES → UGX all work. Prices convert correctly (95000 RWF → $69.35 USD).
+- Tested wholesale modal: registration form (business name, owner name, TIN, phone, password), login form, dashboard with approved status and bulk order WhatsApp link.
+- Tested booking modal: 3 services (Beauty Consultation, Makeup Session, Skincare Analysis), date picker, time slots (8 slots available), customer info form, confirmation. Booking API creates record + subscriber + admin notification.
+- Tested track order modal: phone lookup, order status timeline (pending → confirmed → processing → shipped → delivered), WhatsApp ask link.
+- Tested customer portal: phone lookup, loyalty points, tier badge, order history, progress to next tier.
+- Tested admin staff management: 3 staff members shown, toggle active/inactive works (PATCH), create/edit form with permissions.
+- Tested admin inventory: 20 products with stock levels, low-stock warnings (2 items), total value RWF 9,221,000, adjust functionality.
+- Tested admin coupons: 4 coupons shown, create/delete works.
+- Tested admin flash sales: 1 active sale shown, create/delete works.
+- Tested admin messages: 3 messages shown, mark-as-read works, delete works.
+- Tested admin notifications: 3 notifications (booking, wholesale application, booking), mark-all-read works.
+- Tested wholesale suspend (PATCH) and subscriber toggle (PATCH with body) — both work correctly with right HTTP methods.
+- Tested admin CRUD for coupons, flash sales, bundles — all create+delete cycles work.
+
+Bugs fixed (this round):
+15. src/components/shop/modals.tsx: All 4 modals (OrderTracking, CustomerPortal, Booking, Wholesale) had hardcoded English strings. Added i18n for 60+ strings across all modals (titles, labels, buttons, service names, status messages).
+16. src/components/shop/quick-view-modal.tsx: Hardcoded "Reviews", "Write a Review", "No reviews yet", "Shop reply:", "Out of Stock", "In stock", "Only X left", "Added!", "Submit Review", "Submitting...", "Select a rating", "Fill all fields", "Rating *", "Name *", "Phone *", "Title", "Review *" — all replaced with i18n t() calls or inline ternary translations.
+17. src/components/shop/storefront.tsx: Bundle cards used hardcoded nameEn/descEn instead of pickLang(). Fixed to use lang-aware name/description.
+18. src/components/shop/storefront.tsx: "Add Bundle to Cart" button was hardcoded English. Added i18n key "bundle.addToCart".
+19. src/components/shop/storefront.tsx: Bundle add-to-cart BUG — added each product at its full sellingPrice instead of the bundle discount price. Fixed to use proportional pricing (bundlePrice / items.length) so cart total matches bundle price. For bundles without items, adds as single cart item at bundlePrice.
+
+Stage Summary:
+- 5 additional bugs fixed (4 i18n + 1 pricing logic).
+- All 4 storefront modals now fully translated (rw/en/fr).
+- Quick View modal now fully translated including review form.
+- Bundle cards now use pickLang for names/descriptions.
+- Bundle add-to-cart pricing fixed (proportional pricing for bundles with items).
+- All admin CRUD operations verified working (staff, messages, wholesale, subscribers, coupons, flash sales, bundles, inventory, reviews, testimonials, branding, content, broadcast, EBM, VAT).
+- 0 console errors on storefront.
+- All 8 public API endpoints return 200.
+- All admin endpoints work with correct HTTP methods.
+- Total bugs fixed across 3 rounds: 19.

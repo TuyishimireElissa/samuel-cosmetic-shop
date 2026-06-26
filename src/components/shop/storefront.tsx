@@ -416,17 +416,27 @@ export function Storefront() {
               <div key={b.id} className="bg-white rounded-2xl border border-pink-100 overflow-hidden hover:shadow-lg transition-all">
                 <div className="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 grid place-items-center text-6xl">{b.emoji}</div>
                 <div className="p-4 space-y-2">
-                  <h3 className="font-bold text-pink-900 text-lg" style={{ fontFamily: "var(--font-playfair)" }}>{b.nameEn}</h3>
-                  <p className="text-sm text-muted-foreground">{b.descEn}</p>
+                  <h3 className="font-bold text-pink-900 text-lg" style={{ fontFamily: "var(--font-playfair)" }}>{lang === "rw" ? b.nameRw || b.nameEn : lang === "fr" ? b.nameFr || b.nameEn : b.nameEn}</h3>
+                  <p className="text-sm text-muted-foreground">{lang === "rw" ? b.descRw || b.descEn || "" : lang === "fr" ? b.descFr || b.descEn || "" : b.descEn || ""}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-pink-700">{formatPrice(b.bundlePrice, currency)}</span>
                     <span className="text-sm text-muted-foreground line-through">{formatPrice(b.normalPrice, currency)}</span>
                     <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">-{b.savingsPct}%</span>
                   </div>
                   <Button className="w-full bg-pink-600 hover:bg-pink-700 h-10" onClick={() => {
-                    b.items?.forEach((item: any) => { if (item.product) useCart.getState().add({ id: item.product.id, priceTTC: item.product.sellingPrice, name: item.product.nameEn, emoji: item.product.emoji }); });
+                    if (b.items && b.items.length > 0) {
+                      b.items.forEach((item: any) => {
+                        if (item.product) {
+                          const prod = item.product;
+                          const perItemPrice = Math.round(b.bundlePrice / b.items.length);
+                          useCart.getState().add({ id: prod.id, priceTTC: perItemPrice, name: pickLang(prod, lang), emoji: prod.emoji });
+                        }
+                      });
+                    } else {
+                      useCart.getState().add({ id: b.id, priceTTC: b.bundlePrice, name: lang === "rw" ? b.nameRw || b.nameEn : lang === "fr" ? b.nameFr || b.nameEn : b.nameEn, emoji: b.emoji || "🎁" });
+                    }
                     setCartOpen(true);
-                  }}>Add Bundle to Cart</Button>
+                  }}>{t("bundle.addToCart", lang)}</Button>
                 </div>
               </div>
             ))}

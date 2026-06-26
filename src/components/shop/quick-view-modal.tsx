@@ -77,13 +77,19 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
             <div>
               <div className="text-xs uppercase tracking-wider text-pink-500 font-semibold mb-1">{product.category ? pickLang(product.category, lang) : ""}</div>
               <h2 className="text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{name}</h2>
-              <div className="flex items-center gap-2 mt-2"><StarRating value={product.ratingAvg} readOnly size={16} lang={lang} /><span className="text-sm text-muted-foreground">{product.ratingAvg > 0 ? `${product.ratingAvg.toFixed(1)} (${product.ratingCount})` : "No reviews"}</span></div>
+              <div className="flex items-center gap-2 mt-2"><StarRating value={product.ratingAvg} readOnly size={16} lang={lang} /><span className="text-sm text-muted-foreground">{product.ratingAvg > 0 ? `${product.ratingAvg.toFixed(1)} (${product.ratingCount})` : t("product.noReviews", lang)}</span></div>
             </div>
             <div><div className="text-3xl font-bold text-pink-700">{formatPrice(product.sellingPrice, currency)}</div><div className="text-xs text-muted-foreground mt-1">HT: {formatPrice(priceHT(product.sellingPrice), currency)} · VAT 18%: {formatPrice(vatAmount(product.sellingPrice), currency)}</div></div>
             <p className="text-sm text-foreground/80 leading-relaxed">{desc}</p>
-            {product.stockQty <= 0 ? <Badge variant="destructive">Out of Stock</Badge> : product.stockQty <= 5 ? <Badge className="bg-red-100 text-red-700 pulse-warn">⚡ Only {product.stockQty} left!</Badge> : <Badge className="bg-green-100 text-green-700">✓ In stock ({product.stockQty})</Badge>}
+            {product.stockQty <= 0 ? (
+              <Badge variant="destructive">{t("product.outOfStock", lang)}</Badge>
+            ) : product.stockQty <= 5 ? (
+              <Badge className="bg-red-100 text-red-700 pulse-warn">⚡ {t("product.only", lang)} {product.stockQty} {t("product.left", lang)}!</Badge>
+            ) : (
+              <Badge className="bg-green-100 text-green-700">✓ {lang === "rw" ? "Biri mu stock" : lang === "fr" ? "En stock" : "In stock"} ({product.stockQty})</Badge>
+            )}
             <div className="flex gap-2 flex-wrap">
-              <Button onClick={handleAddToCart} disabled={product.stockQty <= 0} className={`flex-1 h-12 ${added ? "bg-green-600" : "bg-pink-600 hover:bg-pink-700"}`}>{added ? <><Check size={18} className="mr-2" /> Added!</> : <><ShoppingCart size={18} className="mr-2" /> {t("product.addToCart", lang)}</>}</Button>
+              <Button onClick={handleAddToCart} disabled={product.stockQty <= 0} className={`flex-1 h-12 ${added ? "bg-green-600" : "bg-pink-600 hover:bg-pink-700"}`}>{added ? <><Check size={18} className="mr-2" /> {t("product.added", lang)}</> : <><ShoppingCart size={18} className="mr-2" /> {t("product.addToCart", lang)}</>}</Button>
               <Button onClick={toggleWishlist} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Heart size={18} className={inWishlist ? "fill-pink-500 text-pink-500" : "text-pink-500"} /></Button>
               <Button onClick={toggleCompare} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><GitCompare size={18} className={inCompare ? "fill-purple-500 text-purple-500" : "text-purple-500"} /></Button>
               <Button onClick={share} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Share2 size={18} className="text-pink-500" /></Button>
@@ -94,19 +100,19 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
         </div>
         <div className="mt-4 border-t border-pink-100 pt-4">
           <Tabs defaultValue="reviews">
-            <TabsList><TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger><TabsTrigger value="write">Write a Review</TabsTrigger></TabsList>
+            <TabsList><TabsTrigger value="reviews">{t("product.reviews", lang)} ({reviews.length})</TabsTrigger><TabsTrigger value="write">{t("product.writeReview", lang)}</TabsTrigger></TabsList>
             <TabsContent value="reviews" className="space-y-3 mt-3">
-              {reviews.length === 0 ? <div className="text-center py-8 text-muted-foreground"><div className="text-5xl mb-2">⭐</div><p>No reviews yet.</p></div> : reviews.map((r) => (
+              {reviews.length === 0 ? <div className="text-center py-8 text-muted-foreground"><div className="text-5xl mb-2">⭐</div><p>{t("product.noReviews", lang)}</p></div> : reviews.map((r) => (
                 <div key={r.id} className="p-3 rounded-xl border border-pink-100 bg-pink-50/30">
                   <div className="flex items-center justify-between mb-1"><div className="font-semibold text-sm">{r.customerName}</div><div className="text-xs text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</div></div>
                   <StarRating value={r.rating} readOnly size={14} />
                   {r.title && <div className="font-medium text-sm mt-1">{r.title}</div>}
                   <p className="text-sm mt-1 text-foreground/80">{r.body}</p>
-                  {r.adminReply && <div className="mt-2 p-2 rounded bg-pink-100 text-xs"><div className="font-semibold text-pink-700">Shop reply:</div>{r.adminReply}</div>}
+                  {r.adminReply && <div className="mt-2 p-2 rounded bg-pink-100 text-xs"><div className="font-semibold text-pink-700">{t("product.shopReply", lang)}</div>{r.adminReply}</div>}
                 </div>
               ))}
             </TabsContent>
-            <TabsContent value="write" className="mt-3"><ReviewForm productId={product.id} lang={lang} onSubmitted={() => toast.success("Review submitted!")} /></TabsContent>
+            <TabsContent value="write" className="mt-3"><ReviewForm productId={product.id} lang={lang} onSubmitted={() => toast.success(t("product.reviewSubmitted", lang))} /></TabsContent>
           </Tabs>
         </div>
       </DialogContent>
@@ -123,10 +129,10 @@ function ReviewForm({ productId, lang, onSubmitted }: { productId: string; lang:
   const [submitting, setSubmitting] = useState(false);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (rating === 0) { toast.error("Select a rating"); return; }
-    if (!name || !phone || !body) { toast.error("Fill all fields"); return; }
+    if (rating === 0) { toast.error(lang === "rw" ? "Hitamo amanota" : lang === "fr" ? "Choisir une note" : "Select a rating"); return; }
+    if (!name || !phone || !body) { toast.error(lang === "rw" ? "Uzuza imyanya yose" : lang === "fr" ? "Remplir tous les champs" : "Fill all fields"); return; }
     setSubmitting(true);
     try { const res = await fetch(`/api/products/${productId}/reviews`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerName: name, customerPhone: phone, rating, title, body }) }); const data = await res.json(); if (data.ok) { onSubmitted(); setRating(0); setName(""); setPhone(""); setTitle(""); setBody(""); } else toast.error(data.error || "Failed"); } finally { setSubmitting(false); }
   }
-  return <form onSubmit={submit} className="space-y-3"><div><Label>Rating *</Label><div className="mt-1"><StarRating value={rating} onChange={setRating} lang={lang} size={32} /></div></div><div className="grid sm:grid-cols-2 gap-3"><div><Label>Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="bg-pink-50/50" /></div><div><Label>Phone *</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+250 7XX XXX XXX" required className="bg-pink-50/50" /></div></div><div><Label>Title</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-pink-50/50" /></div><div><Label>Review *</Label><Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={4} required className="bg-pink-50/50" /></div><Button type="submit" disabled={submitting} className="bg-pink-600 hover:bg-pink-700">{submitting ? "Submitting..." : "Submit Review"}</Button></form>;
+  return <form onSubmit={submit} className="space-y-3"><div><Label>{lang === "rw" ? "Amanota *" : lang === "fr" ? "Note *" : "Rating *"}</Label><div className="mt-1"><StarRating value={rating} onChange={setRating} lang={lang} size={32} /></div></div><div className="grid sm:grid-cols-2 gap-3"><div><Label>{lang === "rw" ? "Amazina *" : lang === "fr" ? "Nom *" : "Name *"}</Label><Input value={name} onChange={(e) => setName(e.target.value)} required className="bg-pink-50/50" /></div><div><Label>{lang === "rw" ? "Telefone *" : lang === "fr" ? "Téléphone *" : "Phone *"}</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+250 7XX XXX XXX" required className="bg-pink-50/50" /></div></div><div><Label>{lang === "rw" ? "Umutwe" : lang === "fr" ? "Titre" : "Title"}</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-pink-50/50" /></div><div><Label>{lang === "rw" ? "Ibyatoranyijwe *" : lang === "fr" ? "Avis *" : "Review *"}</Label><Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={4} required className="bg-pink-50/50" /></div><Button type="submit" disabled={submitting} className="bg-pink-600 hover:bg-pink-700">{submitting ? (lang === "rw" ? "Kohereza..." : lang === "fr" ? "Envoi..." : "Submitting...") : (lang === "rw" ? "Tumiza Icyatoranyijwe" : lang === "fr" ? "Soumettre l'Avis" : "Submit Review")}</Button></form>;
 }

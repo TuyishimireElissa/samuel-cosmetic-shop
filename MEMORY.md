@@ -315,3 +315,43 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 - ✅ Broadcast to 5 subscribers works
 
 **Total bugs fixed: 40 (across 6 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 7 - Admin Login & Permissions)
+
+### Round 7 (2 bugs - June 28):
+41. Staff1 account was inactive (active=False) - activated via toggle API. Staff1 can now login with staff1/staff123.
+42. Staff permission system not enforced in UI - staff saw ALL admin tabs (same as admin). Fixed by:
+    - Added `adminType` and `adminPermissions` to Zustand store
+    - Updated login component to pass `type` and `permissions` to store
+    - Added `TAB_PERMISSIONS` mapping in AdminApp component
+    - Nav tabs now filtered by `hasPermission()` check
+    - Admin (type="admin" or permissions=["*"]) sees all 19 tabs
+    - Staff sees only tabs matching their permissions
+    - Header shows "Administrator" for admin, "Staff (N perms)" for staff
+
+### Permission Mapping:
+- dashboard → view_dashboard
+- products → view_products
+- orders → view_orders
+- customers → view_customers
+- reviews → manage_reviews
+- stock → manage_stock
+- coupons/bundles/flash → view_products
+- bookings → manage_bookings
+- wholesale → view_wholesale
+- messages/subscribers → view_messages
+- testimonials → manage_reviews
+- staff → admin only (null permission)
+- branding → admin only (null permission)
+- notifications → view_dashboard
+- vat → view_analytics
+- health → view_dashboard
+
+### Staff Accounts:
+- staff1 / staff123 (manager, 3 perms: view_dashboard, view_orders, view_products) → sees 8 tabs
+- stock / (inventory role, 6 perms) → sees tabs with inventory permission
+- sales / (sales role, 9 perms) → sees tabs with sales permission
+
+**Total bugs fixed: 42 (across 7 rounds)**

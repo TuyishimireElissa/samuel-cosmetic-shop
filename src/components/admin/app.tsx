@@ -78,8 +78,38 @@ import {
 type View = "dashboard" | "products" | "orders" | "vat" | "customers" | "reviews" | "stock" | "coupons" | "bundles" | "flash" | "bookings" | "wholesale" | "messages" | "subscribers" | "testimonials" | "staff" | "branding" | "notifications" | "health";
 
 export function AdminApp() {
-  const { adminName, adminLogout, lang } = useUI();
+  const { adminName, adminLogout, lang, adminType, adminPermissions } = useUI();
   const [view, setView] = useState<View>("dashboard");
+
+  // Permission mapping: which tab requires which permission
+  const TAB_PERMISSIONS: Record<string, string | null> = {
+    dashboard: "view_dashboard",
+    products: "view_products",
+    orders: "view_orders",
+    customers: "view_customers",
+    reviews: "manage_reviews",
+    stock: "manage_stock",
+    coupons: "view_products",
+    bundles: "view_products",
+    flash: "view_products",
+    bookings: "manage_bookings",
+    wholesale: "view_wholesale",
+    messages: "view_messages",
+    subscribers: "view_messages",
+    testimonials: "manage_reviews",
+    staff: null, // admin only
+    branding: null, // admin only
+    notifications: "view_dashboard",
+    vat: "view_analytics",
+    health: "view_dashboard",
+  };
+
+  const isAdmin = adminType === "admin" || (adminPermissions || []).includes("*");
+  const hasPermission = (perm: string | null) => {
+    if (isAdmin) return true;
+    if (!perm) return false;
+    return (adminPermissions || []).includes(perm);
+  };
 
   return (
     <div className="min-h-screen flex bg-pink-50/30">
@@ -118,7 +148,7 @@ export function AdminApp() {
             { id: "notifications", label: t("admin.notifications", lang), icon: Bell },
             { id: "vat", label: t("admin.vatReport", lang), icon: FileSpreadsheet },
             { id: "health", label: t("admin.siteHealth", lang), icon: Activity },
-          ].map((n) => {
+          ].filter((n) => hasPermission(TAB_PERMISSIONS[n.id])).map((n) => {
             const Icon = n.icon;
             return (
             <button
@@ -140,7 +170,10 @@ export function AdminApp() {
         <div className="pt-4 border-t border-pink-100 space-y-2">
           <div className="px-2 text-xs">
             <div className="font-semibold text-pink-800">{adminName}</div>
-            <div className="text-muted-foreground">Administrator</div>
+            <div className="text-muted-foreground">
+              {isAdmin ? "Administrator" : "Staff"}
+              {!isAdmin && adminPermissions && adminPermissions.length > 0 && ` (${adminPermissions.length} perms)`}
+            </div>
           </div>
           <Button
             variant="outline"

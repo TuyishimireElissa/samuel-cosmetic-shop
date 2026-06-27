@@ -142,12 +142,14 @@ interface UIState {
   adminView: "storefront" | "admin-login" | "admin-app";
   adminToken: string | null;
   adminName: string | null;
+  adminType: "admin" | "staff" | null;
+  adminPermissions: string[];
   setLang: (l: Lang) => void;
   setCurrency: (c: Currency) => void;
   setCartOpen: (v: boolean) => void;
   enterAdmin: () => void;
   exitAdmin: () => void;
-  adminLogin: (token: string, name: string) => void;
+  adminLogin: (token: string, name: string, type: "admin" | "staff", permissions: string[]) => void;
   adminLogout: () => void;
 }
 
@@ -160,6 +162,8 @@ export const useUI = create<UIState>()(
       adminView: "storefront",
       adminToken: null,
       adminName: null,
+      adminType: null,
+      adminPermissions: [],
       setLang: (l) => {
         if (typeof window !== "undefined") localStorage.setItem("sc_language", l);
         set({ lang: l });
@@ -168,8 +172,8 @@ export const useUI = create<UIState>()(
       setCartOpen: (v) => set({ cartOpen: v }),
       enterAdmin: () => set({ adminView: "admin-login" }),
       exitAdmin: () => set({ adminView: "storefront" }),
-      adminLogin: (token, name) => set({ adminView: "admin-app", adminToken: token, adminName: name }),
-      adminLogout: () => set({ adminView: "storefront", adminToken: null, adminName: null }),
+      adminLogin: (token, name, type, permissions) => set({ adminView: "admin-app", adminToken: token, adminName: name, adminType: type, adminPermissions: permissions }),
+      adminLogout: () => set({ adminView: "storefront", adminToken: null, adminName: null, adminType: null, adminPermissions: [] }),
     }),
     {
       name: "sc_ui",
@@ -179,6 +183,8 @@ export const useUI = create<UIState>()(
         currency: state.currency,
         adminToken: state.adminToken,
         adminName: state.adminName,
+        adminType: state.adminType,
+        adminPermissions: state.adminPermissions,
         adminView: state.adminView,
       }),
       onRehydrateStorage: () => (state) => {

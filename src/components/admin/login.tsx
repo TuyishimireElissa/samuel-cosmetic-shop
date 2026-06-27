@@ -32,7 +32,7 @@ export function AdminLogin() {
         setError(t("admin.login.error", lang));
         return;
       }
-      adminLogin(data.token, data.user.fullName);
+      adminLogin(data.token, data.user.fullName, data.user.type, data.user.permissions || ["*"]);
       toast.success("Welcome back, " + data.user.fullName);
     } catch {
       setError("Network error. Try again.");

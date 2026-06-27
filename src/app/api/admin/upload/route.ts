@@ -10,7 +10,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const HAS_CLOUDINARY = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+const HAS_CLOUDINARY = !!(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+);
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +26,6 @@ export async function POST(req: NextRequest) {
 
     const bytes = Buffer.from(await file.arrayBuffer());
 
-    // Cloudinary upload (production)
     if (HAS_CLOUDINARY) {
       try {
         const result = await new Promise<any>((resolve, reject) => {
@@ -42,22 +45,31 @@ export async function POST(req: NextRequest) {
             }
           ).end(bytes);
         });
-        return NextResponse.json({ ok: true, url: result.secure_url, filename: file.name, size: file.size });
+        return NextResponse.json({
+          ok: true,
+          url: result.secure_url,
+          filename: file.name,
+          size: file.size,
+          provider: "cloudinary",
+        });
       } catch (cloudErr: any) {
         console.warn("Cloudinary upload failed, falling back to local:", cloudErr?.message);
       }
     }
 
-    // Local fallback - save to /public/uploads/
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadsDir, { recursive: true });
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
     const safeExt = ["jpg", "jpeg", "png", "webp", "gif"].includes(ext) ? ext : "jpg";
     const fname = `${crypto.randomUUID()}.${safeExt}`;
-    const fpath = path.join(uploadsDir, fname);
-    await writeFile(fpath, bytes);
-    const url = `/uploads/${fname}`;
-    return NextResponse.json({ ok: true, url, filename: file.name, size: file.size, local: true });
+    await writeFile(path.join(uploadsDir, fname), bytes);
+    return NextResponse.json({
+      ok: true,
+      url: `/uploads/${fname}`,
+      filename: file.name,
+      size: file.size,
+      provider: "local",
+    });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message || "server_error" }, { status: 500 });
   }

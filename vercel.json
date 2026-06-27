@@ -1,0 +1,11 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "bun install",
+  "outputDirectory": ".next",
+  "regions": ["fra1"],
+  "env": {
+    "DATABASE_URL": "@database-url"
+  }
+}

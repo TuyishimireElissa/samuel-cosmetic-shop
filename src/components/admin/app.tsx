@@ -57,7 +57,7 @@ import {
   Search,
   ExternalLink,
   Banknote,
-  Star, Tag, Gift, Zap, Calendar, Building, Mail, Megaphone, Quote, UserCog, Palette, Bell, Activity,
+  Star, Tag, Gift, Zap, Calendar, Building, Mail, Megaphone, Quote, UserCog, Palette, Bell, Activity, ImageIcon,
 } from "lucide-react";
 import {
   BarChart,
@@ -383,7 +383,7 @@ function DashboardView() {
                   <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 grid place-items-center text-xs font-bold">
                     {i + 1}
                   </div>
-                  <div className="text-xl">{p.emoji}</div>
+                  {p.images && p.images.length > 0 ? <img src={p.images[0].url} alt={p.name} className="w-8 h-8 rounded-full object-cover" /> : <ImageIcon size={20} className="text-pink-300" />}
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">{p.name}</div>
                     <div className="text-xs text-muted-foreground">{p.salesCount} sold</div>
@@ -409,7 +409,7 @@ function DashboardView() {
               )}
               {data.lowStockProducts.map((p: any) => (
                 <div key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-red-50/50">
-                  <div className="text-xl">{p.emoji}</div>
+                  <ImageIcon size={20} className="text-pink-300 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">{p.name}</div>
                     <div className="text-xs text-red-600">
@@ -556,7 +556,7 @@ function ProductsView() {
                     <tr key={p.id} className="border-t border-pink-50 hover:bg-pink-50/30">
                       <td className="p-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-2xl">{p.emoji}</span>
+                          {p.images && p.images.length > 0 ? <img src={p.images[0].url} alt={p.nameEn} className="w-8 h-8 rounded-lg object-cover" /> : <ImageIcon size={20} className="text-pink-300" />}
                           <div className="min-w-0">
                             <div className="font-medium truncate max-w-[180px]">{p.nameEn}</div>
                             <div className="text-xs text-muted-foreground">{p.category?.nameEn}</div>
@@ -699,10 +699,8 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             <Label>SKU</Label>
             <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} className="bg-pink-50/50 font-mono" />
           </div>
-          <div className="space-y-1">
-            <Label>{t("admin.bundle.emoji", lang)}</Label>
-            <Input value={form.emoji} onChange={(e) => setForm({ ...form, emoji: e.target.value })} className="bg-pink-50/50" maxLength={4} />
-          </div>
+          {/* Emoji field removed — product photo is used instead. Emoji kept as hidden default in DB. */}
+          <input type="hidden" value={form.emoji} onChange={() => {}} />
           <div className="space-y-1">
             <Label>{t("admin.products.cost", lang)}</Label>
             <Input
@@ -800,7 +798,14 @@ function ProductForm({ product, categories, onClose, onSaved }: {
             {saving ? t("common.loading", lang) : t("admin.products.save", lang)}
           </Button>
         </DialogFooter>
-        {product?.id && <ProductImageManager productId={product.id} />}
+        {product?.id ? (
+          <ProductImageManager productId={product.id} />
+        ) : (
+          <div className="pt-4 border-t border-pink-100">
+            <Label className="text-sm font-semibold">Product Photos</Label>
+            <p className="text-xs text-muted-foreground mt-1">Save the product first, then upload photos.</p>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { ShoppingCart, Check, Heart, Share2, Bell, GitCompare } from "lucide-react";
+import { ShoppingCart, Check, Heart, Share2, Bell, GitCompare, ImageIcon } from "lucide-react";
 import type { Product } from "@prisma/client";
 
 interface Review { id: string; customerName: string; rating: number; title: string; body: string; adminReply: string; helpfulCount: number; createdAt: string; }
@@ -69,7 +69,7 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50 grid place-items-center">
-              {images.length > 0 ? <img src={images[activeImage]?.url} alt={name} className="w-full h-full object-cover" /> : <div className="text-9xl">{product.emoji}</div>}
+              {images.length > 0 ? <img src={images[activeImage]?.url} alt={name} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center justify-center text-pink-300 p-4 text-center"><ImageIcon size={64} className="mb-2 opacity-50" strokeWidth={1.5} /><span className="text-xs font-medium text-pink-400 uppercase tracking-wide">Photo Coming Soon</span></div>}
             </div>
             {images.length > 1 && <div className="mt-2 grid grid-cols-5 gap-2">{images.map((img: any, i: number) => <button key={img.id} onClick={() => setActiveImage(i)} className={`aspect-square rounded-lg overflow-hidden border-2 ${i === activeImage ? "border-pink-500" : "border-pink-100"}`}><img src={img.url} alt="" className="w-full h-full object-cover" /></button>)}</div>}
           </div>

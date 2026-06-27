@@ -80,6 +80,21 @@ type View = "dashboard" | "products" | "orders" | "vat" | "customers" | "reviews
 export function AdminApp() {
   const { adminName, adminLogout, lang, adminType, adminPermissions } = useUI();
   const [view, setView] = useState<View>("dashboard");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoEmoji, setLogoEmoji] = useState<string>("✿");
+
+  // Fetch logo from settings
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && d.settings) {
+          if (d.settings.logoUrl) setLogoUrl(d.settings.logoUrl);
+          if (d.settings.logoEmoji) setLogoEmoji(d.settings.logoEmoji);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Permission mapping: which tab requires which permission
   const TAB_PERMISSIONS: Record<string, string | null> = {
@@ -116,9 +131,13 @@ export function AdminApp() {
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-60 bg-white border-r border-pink-100 p-4 sticky top-0 h-screen">
         <div className="flex items-center gap-2 mb-6 px-2">
-          <span className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-white">
-            ✿
-          </span>
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="w-9 h-9 rounded-full object-cover" />
+          ) : (
+            <span className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-white">
+              {logoEmoji}
+            </span>
+          )}
           <div className="leading-tight">
             <div className="font-bold text-pink-900 text-sm" style={{ fontFamily: "var(--font-playfair)" }}>
               Samuel Cosmetic
@@ -190,9 +209,13 @@ export function AdminApp() {
       <main className="flex-1 min-w-0 pb-16 md:pb-4">
         {/* Top bar (mobile) */}
         <header className="md:hidden sticky top-0 z-10 bg-white border-b border-pink-100 p-3 flex items-center gap-2">
-          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-white text-sm">
-            ✿
-          </span>
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="w-8 h-8 rounded-full object-cover" />
+          ) : (
+            <span className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-white text-sm">
+              {logoEmoji}
+            </span>
+          )}
           <span className="font-bold text-pink-900 text-sm flex-1">Admin Panel</span>
           <Button variant="ghost" size="sm" onClick={adminLogout}>
             <LogOut size={14} />
@@ -954,7 +977,11 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
         {/* Receipt-style display */}
         <div className="bg-white border-2 border-dashed border-pink-200 rounded-xl p-4 font-mono text-sm">
           <div className="text-center mb-3 pb-3 border-b border-pink-200">
-            <div className="text-2xl">✿</div>
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="w-12 h-12 mx-auto rounded-full object-cover mb-1" />
+            ) : (
+              <div className="text-2xl">{logoEmoji}</div>
+            )}
             <div className="font-bold text-pink-900">SAMUEL COSMETIC SHOP</div>
             <div className="text-xs">Kigali, Rwanda</div>
             <div className="text-xs">TIN: 102345678 · SDC: SCS-EBM-001</div>

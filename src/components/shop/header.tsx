@@ -32,6 +32,20 @@ export function ShopHeader({
 }) {
   const { lang, setLang, currency, setCurrency, setCartOpen, enterAdmin } = useUI();
   const count = useCart((s) => s.items.reduce((a, i) => a + i.qty, 0));
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoEmoji, setLogoEmoji] = useState<string>("✿");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && d.settings) {
+          if (d.settings.logoUrl) setLogoUrl(d.settings.logoUrl);
+          if (d.settings.logoEmoji) setLogoEmoji(d.settings.logoEmoji);
+        }
+      })
+      .catch(() => {});
+  }, []);
   const [bounce, setBounce] = useState(false);
   const [searchVal, setSearchVal] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -63,9 +77,13 @@ export function ShopHeader({
           className="flex items-center gap-2 shrink-0"
           aria-label="Samuel Cosmetic Shop home"
         >
-          <span className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white grid place-items-center text-xl shadow-md">
-            ✿
-          </span>
+          {logoUrl ? (
+            <img src={logoUrl} alt="Samuel Cosmetic Shop" className="w-10 h-10 rounded-full object-cover shadow-md" />
+          ) : (
+            <span className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white grid place-items-center text-xl shadow-md">
+              {logoEmoji}
+            </span>
+          )}
           <div className="hidden sm:block leading-tight text-left">
             <div className="font-bold text-[15px]" style={{ fontFamily: "var(--font-playfair)" }}>
               Samuel Cosmetic

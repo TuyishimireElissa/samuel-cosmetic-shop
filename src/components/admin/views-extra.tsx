@@ -355,7 +355,34 @@ export function BrandingView() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.branding.title", lang)}</h1>
-      <Card><CardHeader><CardTitle>{t("admin.branding.identity", lang)}</CardTitle></CardHeader><CardContent className="space-y-3"><div className="grid sm:grid-cols-2 gap-3"><div><Label>{t("admin.branding.shopName", lang)}</Label><Input value={settings.shopName} onChange={(e) => setSettings({ ...settings, shopName: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.logoEmoji", lang)}</Label><Input value={settings.logoEmoji} onChange={(e) => setSettings({ ...settings, logoEmoji: e.target.value })} maxLength={4} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.whatsapp", lang)}</Label><Input value={settings.whatsappNumber} onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.email", lang)}</Label><Input value={settings.email} onChange={(e) => setSettings({ ...settings, email: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.tin", lang)}</Label><Input value={settings.tin} onChange={(e) => setSettings({ ...settings, tin: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.hours", lang)}</Label><Input value={settings.openingHours} onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })} className="bg-pink-50/50" /></div></div></CardContent></Card>
+      
+      {/* Logo Upload Section */}
+      <Card><CardHeader><CardTitle>Logo Photo</CardTitle></CardHeader><CardContent className="space-y-3">
+        <div className="flex items-center gap-4">
+          {settings.logoUrl ? (
+            <img src={settings.logoUrl} alt="Current logo" className="w-20 h-20 rounded-full object-cover border-2 border-pink-200" />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 grid place-items-center text-3xl border-2 border-pink-200">
+              {settings.logoEmoji || "✿"}
+            </div>
+          )}
+          <div className="flex-1">
+            <Label>Upload Logo Photo (PNG/JPG, max 5MB)</Label>
+            <input type="file" accept="image/*" className="hidden" id="logo-upload" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogo(f); }} />
+            <Button variant="outline" onClick={() => document.getElementById("logo-upload")?.click()} disabled={uploadingLogo} className="border-pink-200 text-pink-700 mt-1">
+              {uploadingLogo ? "Uploading..." : "Choose Photo"}
+            </Button>
+            {settings.logoUrl && (
+              <Button variant="ghost" size="sm" onClick={() => setSettings({ ...settings, logoUrl: null })} className="text-red-600 ml-2">
+                Remove
+              </Button>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">If no photo is uploaded, the emoji below will be used as the logo.</p>
+      </CardContent></Card>
+      
+      <Card><CardHeader><CardTitle>{t("admin.branding.identity", lang)}</CardTitle></CardHeader><CardContent className="space-y-3"><div className="grid sm:grid-cols-2 gap-3"><div><Label>{t("admin.branding.shopName", lang)}</Label><Input value={settings.shopName} onChange={(e) => setSettings({ ...settings, shopName: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.logoEmoji", lang)} (fallback if no photo)</Label><Input value={settings.logoEmoji} onChange={(e) => setSettings({ ...settings, logoEmoji: e.target.value })} maxLength={4} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.whatsapp", lang)}</Label><Input value={settings.whatsappNumber} onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.email", lang)}</Label><Input value={settings.email} onChange={(e) => setSettings({ ...settings, email: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.tin", lang)}</Label><Input value={settings.tin} onChange={(e) => setSettings({ ...settings, tin: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.hours", lang)}</Label><Input value={settings.openingHours} onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })} className="bg-pink-50/50" /></div></div></CardContent></Card>
       <Button onClick={save} disabled={saving} className="bg-pink-600 hover:bg-pink-700">{saving ? t("admin.saving", lang) : t("admin.save", lang)}</Button>
     </div>
   );

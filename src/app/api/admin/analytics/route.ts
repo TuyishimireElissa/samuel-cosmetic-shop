@@ -8,41 +8,24 @@ export async function GET() {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfYear = new Date(now.getFullYear(), 0, 1);
 
-    const [
-      todayOrders,
-      monthOrders,
-      yearOrders,
-      allOrders,
-      products,
-      customers,
-      lowStockProducts,
-    ] = await Promise.all([
-      db.order.findMany({
-        where: { createdAt: { gte: startOfDay } },
-        select: { totalTTC: true, paymentMethod: true },
-      }),
-      db.order.findMany({
-        where: { createdAt: { gte: startOfMonth } },
-        select: { totalTTC: true, createdAt: true, status: true },
-      }),
-      db.order.findMany({
-        where: { createdAt: { gte: startOfYear } },
-        select: { totalTTC: true, createdAt: true },
-      }),
-      db.order.findMany({
-        select: { totalTTC: true, createdAt: true, status: true, district: true },
-        orderBy: { createdAt: "desc" },
-        take: 500,
-      }),
-      db.product.findMany({
-        select: { id: true, nameEn: true, stockQty: true, lowStockThreshold: true, salesCount: true, sellingPrice: true },
-      }),
-      db.customer.count(),
-      db.product.findMany({
-        where: { stockQty: { lte: 5 }, isActive: true },
-        select: { id: true, nameEn: true, emoji: true, stockQty: true },
-      }),
-    ]);
+    // Run queries SEQUENTIALLY to avoid exhausting Supabase connection pool (max 15)
+    const allOrders = await db.order.findMany({
+      select: { totalTTC: true, createdAt: true, status: true, district: true, paymentMethod: true },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    });
+
+    const products = await db.product.findMany({
+      select: { id: true, nameEn: true, emoji: true, stockQty: true, lowStockThreshold: true, salesCount: true, sellingPrice: true },
+    });
+
+    const customers = await db.customer.count();
+
+    // Calculate stats from the already-fetched data (no extra DB queries)
+    const todayOrders = allOrders.filter((o) => o.createdAt >= startOfDay);
+    const monthOrders = allOrders.filter((o) => o.createdAt >= startOfMonth);
+    const yearOrders = allOrders.filter((o) => o.createdAt >= startOfYear);
+    const lowStockProducts = products.filter((p) => p.stockQty <= 5 && p.stockQty > 0);
 
     const revenueToday = todayOrders.reduce((s, o) => s + o.totalTTC, 0);
     const revenueMonth = monthOrders.reduce((s, o) => s + o.totalTTC, 0);

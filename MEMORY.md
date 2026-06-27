@@ -376,3 +376,28 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 - ✅ Database: PostgreSQL (Supabase) with PgBouncer pooling
 
 **Total bugs fixed: 45 (across 8 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 9 - Logo Photo Upload)
+
+### Round 9 (2 bugs - June 28):
+46. Admin panel and storefront used hardcoded emoji (✿) as logo instead of uploaded logo photo. Fixed:
+    - Admin sidebar: uses logoUrl (uploaded photo) if set, falls back to logoEmoji
+    - Admin mobile header: same dynamic logo
+    - EBM Receipt: uses uploaded photo if available
+    - Storefront header: uses uploaded photo if set, falls back to emoji
+    - Branding page: added dedicated "Logo Photo" upload card with preview, Choose Photo button, Remove button
+    - Logo emoji field relabeled as "(fallback if no photo)"
+
+47. Branding PUT route didn't bust the settings cache, so uploaded logo photo didn't appear immediately. Fixed by adding bustCache("/api/settings") after saving.
+
+### How to change the logo:
+1. Login to admin → Branding tab
+2. See "Logo Photo" card at top with current logo preview
+3. Click "Choose Photo" → select PNG/JPG image → uploads to Cloudinary
+4. Preview shows the uploaded photo
+5. Click "Save" → logo appears in: admin sidebar, admin mobile header, EBM receipts, storefront header
+6. To remove: click "Remove" then "Save" → falls back to emoji
+
+**Total bugs fixed: 47 (across 9 rounds)**

@@ -279,3 +279,39 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 
 **THIS FILE MUST BE READ AT THE START OF EVERY NEW CONVERSATION.**
 **DO NOT FORGET ANY OF THIS INFORMATION.**
+
+---
+
+## 🐛 BUGS FIXED (Round 6 - Admin Audit)
+
+### Round 6 (9 bugs - June 28):
+32. Site Health route had hardcoded "Local uploads" for Cloudinary - now dynamically checks env vars and shows "Connected (dohoc0tmp)" when credentials present
+33. whatsapp-api.ts library was lost during git operations - recreated with all 5 send functions (sendWhatsAppText, sendWhatsAppTemplate, sendOrderConfirmation, sendOrderShipped, sendPaymentReceived)
+34. CouponForm translations lost during git pull - re-applied all 13 i18n strings (title, Code, Type, Percent, Fixed, Value, Min Order, Description, Public, Active, Cancel, Save, Saving)
+35. BundleForm translations lost - re-applied all 8 i18n strings (title, Emoji, Name, Normal Price, Bundle Price, Products, Cancel, Save)
+36. FlashSaleForm translations lost - re-applied all 11 i18n strings (title, Title, Type, Percent, Fixed, Value, Start, End, Products, Cancel, Save)
+37. StaffForm translations lost - re-applied all 13 i18n strings (title, Name, Username, Password, New Password, Role, Sales, Inventory, Viewer, Custom, Permissions, Cancel, Save)
+38. CustomerModal translations lost - re-applied all 9 i18n strings (Spent, Orders, Points, Tier, Adjust Points, Reason, Apply, Order History, No orders)
+39. CustomersView table headers lost - re-applied all 6 i18n strings (Name, Phone, Orders, Spent, Tier, View)
+40. StockView translations lost - re-applied all 9 i18n strings (Loading, Total, Out, Low, Value, Product, Stock, Adjust, Current/New Quantity/Reason)
+
+### Admin Test Results (June 28):
+- ✅ 20/20 admin API endpoints return 200
+- ✅ All 14 CRUD operations tested and working
+- ✅ All 19 admin tabs render with 0 console errors
+- ✅ All admin forms fully translated to Kinyarwanda
+- ✅ Cloudinary shows as "Connected (dohoc0tmp)" in Site Health
+- ✅ Image upload works (provider=cloudinary)
+- ✅ EBM receipt generation works
+- ✅ VAT report with CSV export works
+- ✅ Order status updates work
+- ✅ Customer points adjustment works
+- ✅ Staff toggle works
+- ✅ Message mark-read works
+- ✅ Notifications mark-all-read works
+- ✅ Inventory adjustment works
+- ✅ Testimonial approval works
+- ✅ Branding update works
+- ✅ Broadcast to 5 subscribers works
+
+**Total bugs fixed: 40 (across 6 rounds)**

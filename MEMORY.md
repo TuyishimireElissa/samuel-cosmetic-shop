@@ -355,3 +355,24 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 - sales / (sales role, 9 perms) → sees tabs with sales permission
 
 **Total bugs fixed: 42 (across 7 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 8 - Vercel Deployment Fixes)
+
+### Round 8 (3 bugs - June 28):
+43. Admin endpoints returned "unauthorized" on Vercel - middleware had its own verifyToken() using Web Crypto API (crypto.subtle) which was incompatible with session.ts's Node.js crypto (createHmac). Fixed by importing verifyToken from session.ts and setting middleware runtime to "nodejs".
+44. Admin dashboard showed "Loading..." forever on Vercel - analytics endpoint failed because of the unauthorized error from bug #43.
+45. Analytics endpoint failed with "EMAXCONNSESSION max clients reached" - Supabase free tier has max 15 connections. Analytics ran 7 parallel queries via Promise.all(). Fixed by running 3 queries sequentially and calculating stats in memory. Also added PgBouncer connection pooling to Prisma client config.
+
+### Vercel Deployment Status (June 28 - FINAL):
+- ✅ Admin login works (admin/admin123)
+- ✅ All 20 admin API endpoints pass
+- ✅ Analytics loads with data (revenue, orders, products, charts)
+- ✅ Dashboard renders fully (no more "Loading..." stuck)
+- ✅ Cloudinary upload works
+- ✅ Storefront loads with 29 product cards
+- ✅ 0 console errors
+- ✅ Database: PostgreSQL (Supabase) with PgBouncer pooling
+
+**Total bugs fixed: 45 (across 8 rounds)**

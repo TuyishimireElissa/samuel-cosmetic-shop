@@ -460,3 +460,35 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 - ✅ Cloudinary: Connected (dohoc0tmp)
 
 **Total bugs fixed: 59 (across 11 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 12 - Final Comprehensive Scan)
+
+### Round 12 (2 bugs - June 28):
+60. OrderDetailModal (EBM Receipt) crashed with "ReferenceError: logoUrl is not defined" — the modal used logoUrl from parent scope but it wasn't available in production build. Fixed by removing logoUrl reference and using ✿ emoji directly.
+61. Flash sale was missing on Vercel database — created new flash sale (Summer Flash Sale, 20% off, active until Dec 2026). Also cleaned up leftover test products.
+
+### Final Comprehensive Test Results (June 28 - ALL 18 CATEGORIES PASSING):
+1. ✅ Public APIs: 8/8
+2. ✅ Admin APIs: 20/20
+3. ✅ Product CRUD: Create, Update, Upload, Attach, Delete
+4. ✅ Order Flow: Create, Update, Track, EBM, VAT
+5. ✅ Logins: Admin, Staff, Wholesale
+6. ✅ Payments: MoMo (simulation), Airtel (simulation)
+7. ✅ WhatsApp Webhook: 200
+8. ✅ SEO: Sitemap, Robots
+9. ✅ Storefront: 200 (0.03s)
+10. ✅ Admin Tabs: 19/19 (0 errors)
+11. ✅ Product Form: No emoji, Photo section
+12. ✅ EBM Receipt: Shop, TIN, HT/TVA/TTC
+13. ✅ Language Switch: rw/en/fr
+14. ✅ Currency Switch: RWF/USD/EUR/KES/UGX
+15. ✅ Mobile: 360px, 2-col grid, Hamburger menu
+16. ✅ Logo Photo: Header, Sidebar
+17. ✅ No emoji in products
+18. ✅ Console Errors: 0
+
+Database: 20 products, 11 orders, 8 customers, 4 staff
+
+**Total bugs fixed: 61 (across 12 rounds)**

@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { ShoppingCart } from "lucide-react";
 import {
   X,
   Minus,
@@ -330,8 +331,8 @@ export function CartDrawer() {
                     key={item.id}
                     className="flex gap-3 p-3 rounded-xl border border-pink-100 hover:border-pink-200 transition-colors bg-white"
                   >
-                    <div className="w-16 h-16 rounded-lg grid place-items-center text-3xl bg-gradient-to-br from-pink-50 to-purple-50 shrink-0">
-                      {item.emoji}
+                    <div className="w-16 h-16 rounded-lg grid place-items-center bg-gradient-to-br from-pink-50 to-purple-50 shrink-0 overflow-hidden">
+                      <ShoppingCart size={24} className="text-pink-300" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm leading-tight line-clamp-2">
@@ -592,7 +593,7 @@ export function CartDrawer() {
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-xs">
                       <span>
-                        {item.emoji} {item.name} × {item.qty}
+                         {item.name} × {item.qty}
                       </span>
                       <span>{formatPrice(item.priceTTC * item.qty, currency)}</span>
                     </div>

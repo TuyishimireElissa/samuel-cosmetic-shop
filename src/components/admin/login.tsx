@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUI } from "@/lib/store";
 import { t } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,20 @@ export function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoEmoji, setLogoEmoji] = useState<string>("✿");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && d.settings) {
+          if (d.settings.logoUrl) setLogoUrl(d.settings.logoUrl);
+          if (d.settings.logoEmoji) setLogoEmoji(d.settings.logoEmoji);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,9 +67,13 @@ export function AdminLogin() {
 
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-pink-100">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-2xl text-white mb-3">
-              ✿
-            </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="w-16 h-16 mx-auto rounded-full object-cover mb-3" />
+            ) : (
+              <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-pink-400 to-pink-600 grid place-items-center text-2xl text-white mb-3">
+                {logoEmoji}
+              </div>
+            )}
             <h1 className="text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
               {t("admin.login.title", lang)}
             </h1>

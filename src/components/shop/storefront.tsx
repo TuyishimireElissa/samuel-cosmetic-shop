@@ -45,6 +45,8 @@ export function Storefront() {
   const [flashSale, setFlashSale] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoEmoji, setLogoEmoji] = useState<string>("✿");
   const [activeCat, setActiveCat] = useState("all");
   const [sort, setSort] = useState("newest");
   const [quickView, setQuickView] = useState<ProductWithCat | null>(null);
@@ -73,7 +75,8 @@ export function Storefront() {
       fetch("/api/bundles").then((r) => r.json()),
       fetch("/api/testimonials").then((r) => r.json()),
       fetch("/api/flash-sales").then((r) => r.json()),
-    ]).then(([p, c, f, b, ts, fs]) => {
+      fetch("/api/settings").then((r) => r.json()),
+    ]).then(([p, c, f, b, ts, fs, st]) => {
       if (p.ok) setProducts(p.products);
       if (c.ok) setCategories(c.categories);
       if (f?.ok) setFeatured(f.products);
@@ -83,6 +86,10 @@ export function Storefront() {
         const now = new Date();
         const active = fs.sales.find((s: any) => s.isActive && new Date(s.startTime) <= now && new Date(s.endTime) >= now);
         if (active) setFlashSale(active);
+      }
+      if (st?.ok && st.settings) {
+        if (st.settings.logoUrl) setLogoUrl(st.settings.logoUrl);
+        if (st.settings.logoEmoji) setLogoEmoji(st.settings.logoEmoji);
       }
       setLoading(false);
     });
@@ -508,7 +515,11 @@ export function Storefront() {
             </div>
           </div>
           <div className="relative aspect-video rounded-3xl bg-gradient-to-br from-pink-200 via-purple-100 to-pink-100 grid place-items-center overflow-hidden">
-            <div className="text-9xl">✿</div>
+            {logoUrl ? (
+              <img src={logoUrl} alt="Samuel Cosmetic Shop" className="w-32 h-32 rounded-full object-cover shadow-lg" />
+            ) : (
+              <div className="text-9xl">{logoEmoji}</div>
+            )}
             <div className="absolute bottom-4 left-4 right-4 bg-white/80 backdrop-blur rounded-xl p-3 text-sm">
               <div className="font-semibold text-pink-800">{SHOP_LOCATION}</div>
               <div className="text-xs text-muted-foreground">Serving all 30 districts of Rwanda</div>
@@ -613,9 +624,13 @@ export function Storefront() {
         <div className="mx-auto max-w-7xl px-3 sm:px-4 py-8 sm:py-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-300 to-pink-500 grid place-items-center text-lg">
-                ✿
-              </span>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" className="w-9 h-9 rounded-full object-cover" />
+              ) : (
+                <span className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-300 to-pink-500 grid place-items-center text-lg">
+                  {logoEmoji}
+                </span>
+              )}
               <span className="font-bold text-lg" style={{ fontFamily: "var(--font-playfair)" }}>
                 Samuel Cosmetic
               </span>

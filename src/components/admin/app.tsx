@@ -1011,7 +1011,7 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
             </div>
             {items.map((item: any, i: number) => (
               <div key={i} className="grid grid-cols-12 text-[11px] py-0.5">
-                <div className="col-span-6 truncate">{item.emoji} {item.nameEn || item.name}</div>
+                <div className="col-span-6 truncate">{item.nameEn || item.name}</div>
                 <div className="col-span-1 text-center">{item.qty}</div>
                 <div className="col-span-2 text-right">{formatPrice(item.priceHT || priceHT(item.priceTTC), currency)}</div>
                 <div className="col-span-3 text-right">{formatPrice(item.lineTTC || item.priceTTC * item.qty, currency)}</div>

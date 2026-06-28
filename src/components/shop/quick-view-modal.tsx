@@ -82,7 +82,7 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
 
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto">
+      <DialogContent aria-describedby={undefined} className="max-w-4xl max-h-[92vh] overflow-y-auto">
         <DialogHeader><DialogTitle className="sr-only">{name}</DialogTitle></DialogHeader>
         <div className="grid md:grid-cols-2 gap-6">
           <div>

@@ -32,7 +32,7 @@ export function PhotoSearchModal({ onMatch, onClose }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   async function handleFile(file: File) { setBusy(true); setPreview(URL.createObjectURL(file)); try { const rgb = await extractColor(file); const cls = classifyColor(rgb.r, rgb.g, rgb.b); setResult({ ...cls, rgb: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` }); } catch {} finally { setBusy(false); } }
   return (
-    <Dialog open onOpenChange={onClose}><DialogContent className="max-w-md"><DialogHeader><DialogTitle className="flex items-center gap-2"><Camera size={20} className="text-pink-600" /> Photo Search</DialogTitle></DialogHeader>
+    <Dialog open onOpenChange={onClose}><DialogContent aria-describedby={undefined} className="max-w-md"><DialogHeader><DialogTitle className="flex items-center gap-2"><Camera size={20} className="text-pink-600" /> Photo Search</DialogTitle></DialogHeader>
       <p className="text-sm text-muted-foreground">Upload a photo of a cosmetic product. We'll match its color to a category.</p>
       <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
       {preview && <div className="rounded-xl overflow-hidden border border-pink-100"><img src={preview} alt="Preview" className="w-full h-48 object-cover" /></div>}

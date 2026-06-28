@@ -693,7 +693,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent aria-describedby={undefined} className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? t("admin.products.edit", lang) : t("admin.products.add", lang)}</DialogTitle>
         </DialogHeader>
@@ -1009,7 +1009,7 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent aria-describedby={undefined} className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Receipt size={18} className="text-pink-600" />

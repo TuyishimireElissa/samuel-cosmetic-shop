@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { ShoppingCart, Check, Heart, Share2, Bell, GitCompare, ImageIcon } from "lucide-react";
 import type { Product } from "@prisma/client";
@@ -31,6 +31,10 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
   const [reviews, setReviews] = useState<Review[]>([]);
   const [added, setAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertPhone, setAlertPhone] = useState("");
+  const [alertName, setAlertName] = useState("");
+  const [alertSubmitting, setAlertSubmitting] = useState(false);
 
   // Reset per-product state when the product changes (SHOP-012 fix).
   // Without this, switching from a product with a broken image to one
@@ -68,12 +72,36 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
   function toggleWishlist() { wishlistToggle(product!.id); toast.success(inWishlist ? (lang === "rw" ? "Byakuwemo" : lang === "fr" ? "Retiré" : "Removed") : (lang === "rw" ? "Byongerewe mu byifuzo" : lang === "fr" ? "Ajouté aux favoris" : "Added to wishlist")); }
   function toggleCompare() { if (!inCompare && compareIds.length >= 3) { toast.error(lang === "rw" ? "Ushobora gusera 3 gusa" : lang === "fr" ? "Max 3" : "Max 3"); return; } compareToggle(product!.id); toast.success(inCompare ? (lang === "rw" ? "Byakuwemo" : "Removed") : (lang === "rw" ? "Byongerwe ku bigereranywa" : lang === "fr" ? "Ajouté à la comparaison" : "Added to compare")); }
   async function setPriceAlert() {
-    const phone = window.prompt(lang === "rw" ? "Andika nimero ya WhatsApp:" : lang === "fr" ? "Entrez votre numéro WhatsApp:" : "Enter WhatsApp number:", "+250 7XX XXX XXX"); if (!phone) return;
+    if (!alertPhone.trim()) {
+      toast.error(lang === "rw" ? "Andika nimero ya WhatsApp" : lang === "fr" ? "Entrez votre numéro WhatsApp" : "Enter WhatsApp number");
+      return;
+    }
+    setAlertSubmitting(true);
     try {
-      const res = await fetch("/api/price-alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: product!.id, customerName: "Customer", customerPhone: phone, targetPrice: Math.round(product!.sellingPrice * 0.9) }) });
+      const res = await fetch("/api/price-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product!.id,
+          customerName: alertName.trim() || "Customer",
+          customerPhone: alertPhone.trim(),
+          targetPrice: Math.round(product!.sellingPrice * 0.9),
+        }),
+      });
       const d = await res.json();
-      if (d.ok) toast.success(lang === "rw" ? "Menyesho y'igiciro cyashyizweho!" : lang === "fr" ? "Alerte de prix définie !" : "Price alert set!"); else toast.error(d.error || "Failed");
-    } catch { toast.error("Network error"); }
+      if (d.ok) {
+        toast.success(lang === "rw" ? "Menyesho y'igiciro cyashyizweho!" : lang === "fr" ? "Alerte de prix définie !" : "Price alert set!");
+        setAlertOpen(false);
+        setAlertPhone("");
+        setAlertName("");
+      } else {
+        toast.error(d.error || "Failed");
+      }
+    } catch {
+      toast.error(lang === "rw" ? "Ikibazo cy'urubuga" : lang === "fr" ? "Erreur réseau" : "Network error");
+    } finally {
+      setAlertSubmitting(false);
+    }
   }
   async function share() {
     const url = `${window.location.origin}/?product=${product!.id}`;
@@ -111,7 +139,7 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
               <Button onClick={toggleWishlist} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Heart size={18} className={inWishlist ? "fill-pink-500 text-pink-500" : "text-pink-500"} /></Button>
               <Button onClick={toggleCompare} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><GitCompare size={18} className={inCompare ? "fill-purple-500 text-purple-500" : "text-purple-500"} /></Button>
               <Button onClick={share} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Share2 size={18} className="text-pink-500" /></Button>
-              <Button onClick={setPriceAlert} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Bell size={18} className="text-pink-500" /></Button>
+              <Button onClick={() => setAlertOpen(true)} variant="outline" size="icon" className="h-12 w-12 border-pink-200" aria-label={lang === "rw" ? "Menyesho y'igiciro" : lang === "fr" ? "Alerte de prix" : "Price alert"}><Bell size={18} className="text-pink-500" /></Button>
             </div>
             <a href={shopWhatsappUrl(`Muraho! Ndashaka kugura: ${name} (${formatPrice(displayPrice, currency)})`)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-11 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold"><WhatsAppIcon size={18} /> {t("cart.orderWhatsapp", lang)}</a>
           </div>
@@ -133,6 +161,48 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
             <TabsContent value="write" className="mt-3"><ReviewForm productId={product.id} lang={lang} onSubmitted={() => toast.success(t("product.reviewSubmitted", lang))} /></TabsContent>
           </Tabs>
         </div>
+
+        {/* Price Alert Dialog — replaces native prompt() */}
+        {alertOpen && (
+          <Dialog open onOpenChange={(v) => !v && setAlertOpen(false)}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Bell size={18} className="text-pink-600" />
+                  {lang === "rw" ? "Menyesho y'Igiciro" : lang === "fr" ? "Alerte de Prix" : "Price Alert"}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  {lang === "rw"
+                    ? "Tugufashe kumenyesho igihe igiciro cya"
+                    : lang === "fr"
+                    ? "Nous vous informerons quand le prix de"
+                    : "We'll notify you when the price of"} <strong>{name}</strong> {lang === "rw" ? "cyamanutse" : lang === "fr" ? "baisse" : "drops"}.
+                </p>
+                <div>
+                  <Label>{lang === "rw" ? "Amazina" : lang === "fr" ? "Nom" : "Name"}</Label>
+                  <Input value={alertName} onChange={(e) => setAlertName(e.target.value)} className="bg-pink-50/50 mt-1" />
+                </div>
+                <div>
+                  <Label>{lang === "rw" ? "Nimero ya WhatsApp *" : lang === "fr" ? "Numéro WhatsApp *" : "WhatsApp Number *"}</Label>
+                  <Input value={alertPhone} onChange={(e) => setAlertPhone(e.target.value)} placeholder="+250 7XX XXX XXX" className="bg-pink-50/50 mt-1" required />
+                </div>
+                <div className="text-xs text-muted-foreground bg-pink-50 rounded-lg p-2">
+                  {lang === "rw" ? "Icyerekezo: " : lang === "fr" ? "Cible : " : "Target: "}<strong>{formatPrice(Math.round(product.sellingPrice * 0.9), currency)}</strong> (10% {lang === "rw" ? "kuruhande" : lang === "fr" ? "de réduction" : "off"})
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setAlertOpen(false)}>
+                  {lang === "rw" ? "Kuraho" : lang === "fr" ? "Annuler" : "Cancel"}
+                </Button>
+                <Button onClick={setPriceAlert} disabled={alertSubmitting} className="bg-pink-600 hover:bg-pink-700">
+                  {alertSubmitting ? (lang === "rw" ? "Kohereza..." : lang === "fr" ? "Envoi..." : "Submitting...") : (lang === "rw" ? "Shyiraho Menyesho" : lang === "fr" ? "Définir l'Alerte" : "Set Alert")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </DialogContent>
     </Dialog>
   );

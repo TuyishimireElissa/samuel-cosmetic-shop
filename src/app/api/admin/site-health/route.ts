@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 import { HAS_WHATSAPP_API } from "@/lib/whatsapp-api";
 

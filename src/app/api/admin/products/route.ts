@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
-import { hashPassword } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -18,6 +18,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const body = await req.json();
     // Generate id if not provided

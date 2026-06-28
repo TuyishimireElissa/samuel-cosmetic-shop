@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuth } from "@/lib/route-auth";
 import { v2 as cloudinary } from "cloudinary";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -13,6 +14,9 @@ cloudinary.config({
 const HAS_CLOUDINARY = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
 
 export async function POST(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

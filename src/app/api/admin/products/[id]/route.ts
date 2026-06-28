@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const { id } = await params;
     const product = await db.product.findUnique({
@@ -26,6 +30,9 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const { id } = await params;
     const body = await req.json();
@@ -45,6 +52,9 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const { id } = await params;
     await db.product.delete({ where: { id } });

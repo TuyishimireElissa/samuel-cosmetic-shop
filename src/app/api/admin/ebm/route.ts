@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 import { bustCache } from "@/lib/cache";
 export async function GET() {
@@ -9,6 +10,9 @@ export async function GET() {
   } catch (e: any) { return NextResponse.json({ ok: false, error: e?.message }, { status: 500 }); }
 }
 export async function PUT(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const body = await req.json(); const { apiUrl = "", apiToken = "", sdcId = "", tin = "" } = body;
     const s = await db.siteSetting.findUnique({ where: { id: "singleton" } });

@@ -738,6 +738,57 @@ export function Storefront() {
             </div>
           </div>
         </div>
+        {/* Newsletter subscription */}
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 pb-6">
+          <div className="bg-pink-800/50 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-3">
+            <div className="flex-1 text-center sm:text-left">
+              <h4 className="font-semibold text-pink-50">{lang === "rw" ? "Izonumva ibitangaza" : lang === "fr" ? "Newsletter" : "Newsletter"}</h4>
+              <p className="text-xs text-pink-200">{lang === "rw" ? "Andika nimero ya WhatsApp kugira ngo ubone ibyiciro byihuse n'amakuru." : lang === "fr" ? "Entrez votre numéro WhatsApp pour les offres et nouvelles." : "Enter your WhatsApp number for deals and updates."}</p>
+            </div>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const formEl = e.currentTarget;
+                const data = new FormData(formEl);
+                const phoneVal = data.get("subphone") as string;
+                const nameVal = data.get("subname") as string;
+                if (!phoneVal) return;
+                try {
+                  const res = await fetch("/api/subscribe", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone: phoneVal, name: nameVal }),
+                  });
+                  const d = await res.json();
+                  if (d.ok) {
+                    formEl.reset();
+                    toast.success(lang === "rw" ? "Byagenze neza! Ugeze mubayandikishije." : lang === "fr" ? "Inscription réussie !" : "Subscribed successfully!");
+                  } else {
+                    toast.error(d.error === "invalid_phone" ? (lang === "rw" ? "Nimero ntabwo ari nzima" : lang === "fr" ? "Numéro invalide" : "Invalid phone number") : (d.error || "Failed"));
+                  }
+                } catch {
+                  toast.error(lang === "rw" ? "Ikibazo cy'urubuga" : lang === "fr" ? "Erreur réseau" : "Network error");
+                }
+              }}
+              className="flex gap-2 w-full sm:w-auto"
+            >
+              <Input
+                name="subname"
+                placeholder={lang === "rw" ? "Amazina" : lang === "fr" ? "Nom" : "Name"}
+                className="bg-white/90 border-0 h-9 text-foreground sm:w-32"
+              />
+              <Input
+                name="subphone"
+                placeholder="+250 7XX XXX XXX"
+                required
+                className="bg-white/90 border-0 h-9 text-foreground sm:w-40"
+              />
+              <Button type="submit" className="bg-pink-600 hover:bg-pink-500 h-9 shrink-0">
+                {lang === "rw" ? "Iyandikishe" : lang === "fr" ? "S'inscrire" : "Subscribe"}
+              </Button>
+            </form>
+          </div>
+        </div>
         <div className="border-t border-pink-800 py-4 text-center text-xs text-pink-300">
           © {new Date().getFullYear()} {SHOP_NAME} · TIN: 102345678 · {t("footer.rights", lang)}
         </div>

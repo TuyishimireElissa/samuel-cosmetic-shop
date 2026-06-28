@@ -307,15 +307,35 @@ export function SubscribersView() {
   const [loading, setLoading] = useState(true);
   const [broadcast, setBroadcast] = useState(false);
   const [broadcastMsg, setBroadcastMsg] = useState("");
+  const [sending, setSending] = useState(false);
   useEffect(() => { adminFetch("/api/admin/subscribers").then(r => r.json()).then(d => d.ok && setSubs(d.subscribers)).finally(() => setLoading(false)); }, []);
-  async function toggle(id: string, current: boolean) { const r = await safeFetch(`/api/admin/subscribers/${id}/toggle`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isActive: !current }) }); if (r.ok) setSubs(prev => prev.map(s => s.id === id ? { ...s, isActive: !current } : s)); }
-  async function sendBroadcast() { if (!broadcastMsg) return; if (!confirm(`Send to ${subs.filter(s => s.isActive).length} subscribers?`)) return; const r = await safeFetch("/api/admin/broadcast", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: broadcastMsg }) }); if (r.ok) { toast.success("Sent"); setBroadcast(false); setBroadcastMsg(""); } }
-  function exportCSV() { const csv = "Phone,Name,Source,Active\n" + subs.map(s => `${s.phone},${s.name},${s.source},${s.isActive}`).join("\n"); const blob = new Blob([csv], { type: "text/csv" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "subscribers.csv"; a.click(); }
+  async function toggle(id: string, current: boolean) { const r = await safeFetch(`/api/admin/subscribers/${id}/toggle`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isActive: !current }) }); if (r.ok) setSubs(prev => prev.map(s => s.id === id ? { ...s, isActive: !current } : s)); else toast.error(r.error || "Failed"); }
+  async function sendBroadcast() {
+    if (!broadcastMsg.trim()) { toast.error(lang === "rw" ? "Andika ubutumwa" : lang === "fr" ? "Entrez un message" : "Enter a message"); return; }
+    const activeCount = subs.filter(s => s.isActive).length;
+    if (activeCount === 0) { toast.error(lang === "rw" ? "Nta mbonera ikora" : lang === "fr" ? "Aucun abonné actif" : "No active subscribers"); return; }
+    if (!confirm(lang === "rw" ? `Kohereza kuri ${activeCount} abayandikishije?` : lang === "fr" ? `Envoyer à ${activeCount} abonnés ?` : `Send to ${activeCount} subscribers?`)) return;
+    setSending(true);
+    const r = await safeFetch("/api/admin/broadcast", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: broadcastMsg }) });
+    setSending(false);
+    if (r.ok) { toast.success(lang === "rw" ? "Byoherejwe" : lang === "fr" ? "Envoyé" : "Sent"); setBroadcast(false); setBroadcastMsg(""); } else toast.error(r.error || "Failed");
+  }
+  function exportCSV() {
+    const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const csv = "Phone,Name,Source,Active\n" + subs.map(s => `${esc(s.phone)},${esc(s.name)},${esc(s.source)},${esc(s.isActive)}`).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `subscribers-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3"><div><h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.subscribers", lang)}</h1><p className="text-sm text-muted-foreground">{subs.filter(s => s.isActive).length} {t("admin.subscribers.active", lang)}</p></div><div className="flex gap-2"><Button variant="outline" onClick={exportCSV} className="border-pink-200 text-pink-700">{t("admin.csv", lang)}</Button><Button onClick={() => setBroadcast(true)} className="bg-pink-600 hover:bg-pink-700"><Send size={14} className="mr-1" /> {t("admin.broadcast", lang)}</Button></div></div>
       {loading ? <div className="text-center py-10">{t("admin.loading", lang)}</div> : <div className="bg-white rounded-2xl border border-pink-100 overflow-x-auto"><table className="w-full text-sm"><thead className="bg-pink-50/50 text-pink-800"><tr><th className="text-left p-3">{t("admin.staff.username", lang)}</th><th className="text-left p-3">{t("admin.staff.name", lang)}</th><th className="text-center p-3">{t("admin.active", lang)}</th></tr></thead><tbody>{subs.map(s => (<tr key={s.id} className="border-t border-pink-50"><td className="p-3 font-mono text-xs">{s.phone}</td><td className="p-3">{s.name || "—"}</td><td className="p-3 text-center"><Switch checked={s.isActive} onCheckedChange={() => toggle(s.id, s.isActive)} /></td></tr>))}</tbody></table></div>}
-      {broadcast && <Dialog open onOpenChange={() => setBroadcast(false)}><DialogContent><DialogHeader><DialogTitle>{t("admin.subscribers.broadcastTitle", lang)}</DialogTitle></DialogHeader><Textarea value={broadcastMsg} onChange={(e) => setBroadcastMsg(e.target.value)} rows={5} className="bg-pink-50/50" /><DialogFooter><Button variant="outline" onClick={() => setBroadcast(false)}>{t("admin.cancel", lang)}</Button><Button onClick={sendBroadcast} className="bg-pink-600 hover:bg-pink-700"><Send size={14} className="mr-1" /> {t("admin.send", lang)}</Button></DialogFooter></DialogContent></Dialog>}
+      {broadcast && <Dialog open onOpenChange={() => !sending && setBroadcast(false)}><DialogContent><DialogHeader><DialogTitle>{t("admin.subscribers.broadcastTitle", lang)}</DialogTitle></DialogHeader><p className="text-sm text-muted-foreground">{lang === "rw" ? `Ubutumwa buzoherezwaho kuri ${subs.filter(s => s.isActive).length} abayandikishije bakora.` : lang === "fr" ? `Le message sera envoyé à ${subs.filter(s => s.isActive).length} abonnés actifs.` : `Message will be sent to ${subs.filter(s => s.isActive).length} active subscribers.`}</p><Textarea value={broadcastMsg} onChange={(e) => setBroadcastMsg(e.target.value)} rows={5} className="bg-pink-50/50" placeholder={lang === "rw" ? "Andika ubutumwa hwano..." : lang === "fr" ? "Écrivez votre message ici..." : "Write your message here..."} /><DialogFooter><Button variant="outline" onClick={() => setBroadcast(false)} disabled={sending}>{t("admin.cancel", lang)}</Button><Button onClick={sendBroadcast} disabled={sending} className="bg-pink-600 hover:bg-pink-700">{sending ? (lang === "rw" ? "Kohereza..." : lang === "fr" ? "Envoi..." : "Sending...") : <><Send size={14} className="mr-1" /> {t("admin.send", lang)}</>}</Button></DialogFooter></DialogContent></Dialog>}
     </div>
   );
 }
@@ -438,6 +458,35 @@ export function BrandingView() {
       </CardContent></Card>
       
       <Card><CardHeader><CardTitle>{t("admin.branding.identity", lang)}</CardTitle></CardHeader><CardContent className="space-y-3"><div className="grid sm:grid-cols-2 gap-3"><div><Label>{t("admin.branding.shopName", lang)}</Label><Input value={settings.shopName} onChange={(e) => setSettings({ ...settings, shopName: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.logoEmoji", lang)} (fallback if no photo)</Label><Input value={settings.logoEmoji} onChange={(e) => setSettings({ ...settings, logoEmoji: e.target.value })} maxLength={4} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.whatsapp", lang)}</Label><Input value={settings.whatsappNumber} onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.email", lang)}</Label><Input value={settings.email} onChange={(e) => setSettings({ ...settings, email: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.tin", lang)}</Label><Input value={settings.tin} onChange={(e) => setSettings({ ...settings, tin: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.branding.hours", lang)}</Label><Input value={settings.openingHours} onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })} className="bg-pink-50/50" /></div></div></CardContent></Card>
+
+      {/* Feature Toggles */}
+      <Card><CardHeader><CardTitle>{lang === "rw" ? "Ibintu Bikora" : lang === "fr" ? "Fonctionnalités" : "Feature Toggles"}</CardTitle></CardHeader><CardContent className="space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            { key: "maintenanceMode", label: lang === "rw" ? "Hindura Ibikorwa" : lang === "fr" ? "Mode Maintenance" : "Maintenance Mode", desc: lang === "rw" ? "Hisha urubuga" : lang === "fr" ? "Masquer le site" : "Hide the storefront" },
+            { key: "enableLoyalty", label: lang === "rw" ? "Amanota y'Ukwizerwa" : lang === "fr" ? "Fidélité" : "Loyalty Points", desc: lang === "rw" ? "Amanota kuri buri gicuruzwa" : lang === "fr" ? "Points par achat" : "Points per purchase" },
+            { key: "enableFlashSales", label: lang === "rw" ? "Icyiciro Cyihuse" : lang === "fr" ? "Ventes Flash" : "Flash Sales", desc: lang === "rw" ? "Garagaza ibyiciro byihuse" : lang === "fr" ? "Afficher les ventes flash" : "Show flash sale banners" },
+            { key: "enableBundles", label: lang === "rw" ? "Imibonano" : lang === "fr" ? "Ensembles" : "Bundles", desc: lang === "rw" ? "Garagaza imibonano y'ibicuruzwa" : lang === "fr" ? "Afficher les ensembles" : "Show product bundles" },
+            { key: "enableReviews", label: lang === "rw" ? "Ibyatoranyijwe" : lang === "fr" ? "Avis" : "Reviews", desc: lang === "rw" ? "Emera abakiriya guhandika" : lang === "fr" ? "Permettre les avis" : "Allow customer reviews" },
+            { key: "enableBookings", label: lang === "rw" ? "Ibyifuzo" : lang === "fr" ? "Réservations" : "Bookings", desc: lang === "rw" ? "Emera kwiyandikisha" : lang === "fr" ? "Permettre les réservations" : "Allow appointment booking" },
+            { key: "enableWholesale", label: lang === "rw" ? "Igurisha Ryinshi" : lang === "fr" ? "Vente en Gros" : "Wholesale", desc: lang === "rw" ? "Emera kwiyandikisha ry'abaguzi winshi" : lang === "fr" ? "Permettre les acheteurs en gros" : "Allow wholesale buyers" },
+            { key: "enableMomoApi", label: "MTN MoMo API", desc: lang === "rw" ? "Fungura kwishyura kuri MoMo" : lang === "fr" ? "Activer le paiement MoMo" : "Enable MoMo payments" },
+            { key: "enableWhatsappApi", label: "WhatsApp API", desc: lang === "rw" ? "Fungura WhatsApp API" : lang === "fr" ? "Activer l'API WhatsApp" : "Enable WhatsApp API" },
+          ].map((f) => (
+            <div key={f.key} className="flex items-center justify-between p-3 rounded-lg border border-pink-100 bg-pink-50/30">
+              <div className="flex-1 min-w-0 mr-3">
+                <div className="font-medium text-sm text-pink-900">{f.label}</div>
+                <div className="text-xs text-muted-foreground">{f.desc}</div>
+              </div>
+              <Switch
+                checked={settings[f.key] ?? false}
+                onCheckedChange={(v) => setSettings({ ...settings, [f.key]: v })}
+              />
+            </div>
+          ))}
+        </div>
+      </CardContent></Card>
+
       <Button onClick={save} disabled={saving} className="bg-pink-600 hover:bg-pink-700">{saving ? t("admin.saving", lang) : t("admin.save", lang)}</Button>
     </div>
   );

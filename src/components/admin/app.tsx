@@ -790,6 +790,40 @@ function ProductForm({ product, categories, onClose, onSaved }: {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-1">
+            <Label>{lang === "rw" ? "Ubumwe bw'Igicuruzwa (MOQ)" : lang === "fr" ? "Qté Min. (MOQ)" : "Min Order Qty (MOQ)"}</Label>
+            <Input
+              type="number"
+              min={1}
+              value={form.moq}
+              onChange={(e) => setForm({ ...form, moq: Math.max(1, Number(e.target.value)) })}
+              className="bg-pink-50/50"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>{lang === "rw" ? "Ikipimo cy'Igiciro Kibanze" : lang === "fr" ? "Seuil Stock Bas" : "Low Stock Threshold"}</Label>
+            <Input
+              type="number"
+              min={0}
+              value={form.lowStockThreshold}
+              onChange={(e) => setForm({ ...form, lowStockThreshold: Math.max(0, Number(e.target.value)) })}
+              className="bg-pink-50/50"
+            />
+          </div>
+          <div className="space-y-1 flex flex-col justify-end">
+            <Label>{lang === "rw" ? "Gikora" : lang === "fr" ? "Actif" : "Active"}</Label>
+            <div className="flex items-center h-9">
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+                  className="w-4 h-4 rounded border-pink-300 text-pink-600 focus:ring-pink-500"
+                />
+                <span className="text-muted-foreground">{form.isActive ? (lang === "rw" ? "Iki gicuruzwa kiboneka" : lang === "fr" ? "Produit visible" : "Product is visible") : (lang === "rw" ? "Kihishe" : lang === "fr" ? "Masqué" : "Hidden")}</span>
+              </label>
+            </div>
+          </div>
         </div>
 
         {/* RRA Live calc */}

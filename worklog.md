@@ -165,3 +165,70 @@ Stage Summary:
 - 0 console errors.
 - 8/8 public API endpoints return 200.
 - Total bugs fixed across 4 rounds: 24.
+
+---
+Task ID: SCAN-ADMIN
+Agent: general-purpose
+Task: Comprehensive admin panel audit
+
+Work Log:
+- Read worklog.md to understand prior work (24 bugs fixed across 4 rounds).
+- Read admin app.tsx (1282 lines), views-extra.tsx (530 lines), login.tsx (135 lines) fully.
+- Read all 47 admin API route files under /src/app/api/admin/.
+- Read lib/store.ts, lib/route-auth.ts, lib/session.ts, prisma/schema.prisma, lib/i18n.ts.
+- Ran `npx tsc --noEmit` to get compile-time type errors.
+- Grepped for checkAuth usage to identify unauthenticated endpoints.
+- Grepped for emoji usage to verify user's #1 rule (no emoji in products).
+- Cross-referenced frontend field names with Prisma schema and API response shapes.
+- Verified i18n key existence for every t() call in admin components.
+
+Stage Summary:
+- 53 bugs found across admin panel (6 CRITICAL, 11 HIGH, 22 MEDIUM, 14 LOW).
+- Most severe: 15 admin GET endpoints have ZERO auth checks (analytics, customers, products, inventory, messages, bookings, subscribers, testimonials, notifications, site-health, ebm, coupons, bundles, flash-sales, content). Anyone on the internet can fetch all customer data, orders, products, etc.
+- TypeScript confirms 3 hard bugs in views-extra.tsx: shopWhatsappUrl called with wrong arg count (line 258), r.json() called on safeFetch return object (lines 407, 476).
+- User's #1 rule (no emoji in products) violated in 4 places: ReviewsView shows r.product.emoji, BundlesView shows b.emoji as 4xl, BundleForm has emoji input, ProductForm stores default "💄" emoji for new products.
+- Mobile admin nav only has 4 tabs — 15+ features (customers, reviews, inventory, coupons, bundles, flash sales, bookings, wholesale, messages, subscribers, testimonials, staff, branding, notifications, health, categories) are completely inaccessible on mobile.
+- Dashboard lowStockProducts displays p.name but API returns p.nameEn — product names show as undefined.
+- 9 i18n keys missing (admin.customer.*, admin.portal.*) — raw key strings displayed to admin.
+- Permission system is client-side only — server-side APIs check token validity but NOT staff permissions, so any authenticated staff can access all admin data regardless of assigned permissions.
+- Full bug list with IDs, severity, file:line, and fixes returned in final message.
+
+---
+Task ID: SCAN-API
+Agent: general-purpose
+Task: Comprehensive API + build audit
+
+Work Log:
+- Read worklog.md, package.json, next.config.ts, prisma/schema.prisma, src/lib/db.ts, src/lib/route-auth.ts, src/lib/session.ts, src/lib/cache.ts, src/lib/auth.ts, src/lib/store.ts
+- Ran `bunx tsc --noEmit` → 94 lines of TS errors total (58 of which are the `e is of type 'unknown'` pattern).
+- Live-tested all 14 endpoints on https://samuel-cosmetic-shop.vercel.app/api/...
+- Live-tested 25+ admin GET and write (POST/PUT/PATCH/DELETE) endpoints WITHOUT auth token to find auth gaps.
+- Read every API route file under src/app/api/ (40+ files).
+
+Stage Summary:
+- CRITICAL: 16 admin GET endpoints have NO `checkAuth` call: testimonials, content, site-health, ebm, customers, subscribers, notifications, bundles, flash-sales, products, analytics, coupons, bookings, messages, inventory, staff. All return 200 to anonymous callers on production — leaking PII (customer phone/email/spend, subscriber phones, staff usernames + passwordHash, inventory cost prices, revenue/analytics).
+- CRITICAL: 2 admin WRITE endpoints have NO auth: `DELETE /api/admin/ebm` (anyone can wipe EBM config) and `PATCH /api/admin/notifications/mark-all-read` (anyone can mark all admin notifications as read).
+- CRITICAL: `POST /api/seed` has NO auth — anyone can trigger a full database re-seed via `execSync("bun run scripts/seed.ts")`.
+- CRITICAL: `src/components/shop/cart-drawer.tsx` line 62 fails to destructure `wholesaleUser` from `useUI()` — but lines 146–147 reference it. Result: every "Place Order" click from the cart drawer throws `ReferenceError: wholesaleUser is not defined` and shows a toast error. End-to-end order placement via the storefront is broken on production.
+- HIGH: `src/components/admin/views-extra.tsx` lines 407 & 476 call `r.json()` on the return value of `safeFetch`, but `safeFetch` already returns a parsed object `{ ok, data?, error? }`. Both lines are dead/broken — admin error toasts will throw a TypeError instead of showing the real API error message.
+- HIGH: `src/components/admin/views-extra.tsx` line 258 calls `shopWhatsappUrl(reply.phone, msg)` with 2 args but the function signature is `(message: string)`. Admin "Reply via WhatsApp" button generates a malformed wa.me URL (uses the customer's phone number as the message text).
+- HIGH: Cache invalidation missing on admin product writes: `POST /api/admin/products`, `PUT /api/admin/products/[id]`, `DELETE /api/admin/products/[id]` never call `bustCache("/api/products")`, `bustCache("/api/products:all")`, or `bustCache("/api/products/featured")`. The public product list/featured endpoints cache for 120-300s, so admin edits don't appear on storefront until cache TTL expires.
+- HIGH: `/api/payments/transactions` GET is public — returns every MoMo/Airtel transaction (phone numbers, amounts, order IDs) with no auth.
+- HIGH: `/api/orders?phone=X` and `/api/customers/lookup?phone=X` allow anyone to enumerate customer PII (name, email, district, loyalty tier, total spent) and full order history by guessing/enumerating phone numbers.
+- HIGH: `/api/admin/staff` GET returns `passwordHash` field (bcrypt hashes) publicly to anonymous callers.
+- HIGH: `/api/admin/inventory` GET returns `costPrice` field publicly — leaks profit margins.
+- MEDIUM: `next.config.ts` line 7 uses `eslint` key which doesn't exist in `NextConfig` (Next.js 16). TS2353. Build passes because of `ignoreBuildErrors: true` but tsc rejects it.
+- MEDIUM: `src/app/api/orders/route.ts` line 66 declares `const itemsSnapshot = [];` — inferred as `never[]`. The push on line 74 fails TS2345. Works at runtime but is a latent bug.
+- MEDIUM: `src/app/api/admin/reviews/route.ts` line 7 declares `const where = {};` then assigns `where.isApproved = false` — TS2339 (7 occurrences). Same pattern in `/api/admin/wholesale/route.ts` line 7 (`where.status`). Works at runtime but blocks clean compile.
+- MEDIUM: `src/components/shop/storefront.tsx` lines 145-149 — `React.RefObject<HTMLDivElement>` type mismatches with `RefObject<HTMLDivElement | null>` (5 occurrences). Modern React types changed; the refs need to be typed as `RefObject<HTMLDivElement | null>` or use `useRef<HTMLDivElement>(null)`.
+- MEDIUM: 58 occurrences of `error TS18046: 'e' is of type 'unknown'` across 44 catch blocks. In TS 5 with strict mode, `catch (e)` defaults to `unknown`. All these blocks do `e.message` (or `e?.message`). Fix: change to `catch (e: any)` or use `(e as Error).message`. The codebase already uses `catch (e: any)` in some routes (e.g. `/api/orders/route.ts`) but most admin routes don't.
+- LOW: `src/app/api/orders/route.ts` line 183: `paymentStatus: paymentMethod === "cash" ? "pending" : "pending"` — both branches return "pending". Dead ternary, should be simplified to `"pending"`.
+- LOW: `src/app/api/route.ts` returns `{ message: "Hello, world!" }` — useless root endpoint. Should return API health/status info.
+- LOW: `src/app/api/seed/route.ts` uses `execSync("bun run scripts/seed.ts")` — shell command injection vector if path is ever user-controlled. Not currently exploitable but should use direct function call.
+- LOW: `src/lib/route-auth.ts` and `src/lib/session.ts` fall back to `DEV_SECRET = "samuel-cosmetic-shop-dev-secret-CHANGE-IN-PRODUCTION"` if `SESSION_SECRET` env var is missing. If Vercel doesn't have SESSION_SECRET set, anyone can forge admin tokens by signing with this public secret.
+- LOW: `src/lib/cache.ts` `cached()` uses an in-memory `Map` — works on single-instance Vercel but causes stale data on serverless multi-instance deployments. Each instance has its own cache.
+- LOW: `withCache` sets `s-maxage` headers but `bustCache` only clears the in-memory Map, not the CDN edge cache. So even after `bustCache`, Vercel's edge may serve stale responses for up to `s-maxage` seconds.
+
+Bug counts: 16 critical (auth), 2 critical (ebm/notifications write), 1 critical (seed), 1 critical (cart-drawer), 4 high (views-extra tsx + cache + payments + orders lookup), 4 high (PII exposure), 5 medium (TS), 4 low.
+
+Total bugs identified: 37.

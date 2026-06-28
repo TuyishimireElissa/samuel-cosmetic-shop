@@ -432,3 +432,31 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 - ✅ Cart: passes item prices (retail or wholesale) to order API
 
 **Total bugs fixed: 56 (across 10 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 11 - Full System Scan)
+
+### Round 11 (3 bugs - June 28):
+57. WhatsApp webhook route was lost during git operations - recreated with GET (verify) + POST (receive messages)
+58. Payment simulation responses missing 'provider' field - added provider='simulation' and live=false
+59. Staff and wholesale users not seeded on Vercel/Supabase database - created via API and approved
+
+### Full System Scan Results (June 28 - ALL PASSING):
+- ✅ 8/8 public API endpoints return 200
+- ✅ 20/20 admin API endpoints return 200
+- ✅ Product CRUD: Create ✅, Update ✅, Delete ✅
+- ✅ Order flow: Create ✅, Update status ✅, Track ✅
+- ✅ Admin login: ✅ (admin/admin123)
+- ✅ Staff login: ✅ (staff1/staff123)
+- ✅ Wholesale login: ✅ (TIN 102998877 / wholesale123)
+- ✅ MoMo payment: ✅ (provider=simulation)
+- ✅ Airtel payment: ✅ (provider=simulation)
+- ✅ WhatsApp webhook: ✅ (verify=200)
+- ✅ Sitemap: ✅ (200)
+- ✅ Robots.txt: ✅ (200)
+- ✅ Storefront: ✅ (200 in 0.49s)
+- ✅ Database: PostgreSQL (Supabase) - 22 products, 10 orders, 7 customers, 4 staff
+- ✅ Cloudinary: Connected (dohoc0tmp)
+
+**Total bugs fixed: 59 (across 11 rounds)**

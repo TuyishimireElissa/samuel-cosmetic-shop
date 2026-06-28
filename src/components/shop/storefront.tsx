@@ -127,6 +127,19 @@ export function Storefront() {
     };
   }, [activeCat, search, sort]);
 
+  // Auto-scroll to the shop section when the user starts searching, so they
+  // immediately see the filtered results instead of having to scroll down
+  // past the hero. We skip the very first render (no search on mount).
+  const prevSearchRef = useRef("");
+  useEffect(() => {
+    const prev = prevSearchRef.current;
+    prevSearchRef.current = search;
+    if (search && !prev) {
+      // User just started typing — scroll to the shop section.
+      shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [search]);
+
   function handleNav(target: string) {
     const refs: Record<string, React.RefObject<HTMLDivElement>> = {
       home: shopRef,
@@ -333,7 +346,7 @@ export function Storefront() {
           >
             {search ? t("search.searchResults", lang) : t("nav.shop", lang)}
             <span className="ml-2 text-sm font-normal text-muted-foreground">
-              {products.length} {t("nav.shop", lang).toLowerCase()}
+              {products.length} {products.length === 1 ? t("search.resultSingular", lang) : t("search.resultPlural", lang)}
             </span>
           </h2>
 
@@ -433,8 +446,8 @@ export function Storefront() {
         )}
       </section>
 
-      {/* FEATURED PRODUCTS — hidden when a category filter is active */}
-      {featured.length > 0 && activeCat === "all" && (
+      {/* FEATURED PRODUCTS — hidden when a category filter OR search is active */}
+      {featured.length > 0 && activeCat === "all" && !search && (
         <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 flex items-center gap-2" style={{ fontFamily: "var(--font-playfair)" }}>
             <TrendingUp size={24} className="text-pink-600" /> {t("sections.featured", lang)}
@@ -449,8 +462,8 @@ export function Storefront() {
         </section>
       )}
 
-      {/* BUNDLES */}
-      {bundles.length > 0 && (
+      {/* BUNDLES — hidden when a search is active */}
+      {bundles.length > 0 && !search && (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>🎁 {t("sections.bundles", lang)}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">

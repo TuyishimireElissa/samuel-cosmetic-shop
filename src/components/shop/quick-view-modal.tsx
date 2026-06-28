@@ -32,6 +32,18 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
   const [added, setAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
+  // Reset per-product state when the product changes (SHOP-012 fix).
+  // Without this, switching from a product with a broken image to one
+  // with a valid image keeps imgError=true (broken placeholder shows),
+  // activeImage stays at the old index, and the "Added!" toast can get
+  // stuck if the user rapidly switches products.
+  useEffect(() => {
+    setActiveImage(0);
+    setImgError(false);
+    setAdded(false);
+    setReviews([]);
+  }, [product?.id]);
+
   useEffect(() => {
     if (!product) return;
     addRecently(product.id);
@@ -49,7 +61,7 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
 
   function handleAddToCart() {
     const img = images.length > 0 ? images[0]?.url : undefined;
-    cartAdd({ id: product!.id, priceTTC: displayPrice, name, emoji: product!.emoji, image: img });
+    cartAdd({ id: product!.id, priceTTC: displayPrice, name, image: img });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }

@@ -42,6 +42,11 @@ interface DeliveryZone {
   name: string;
   fee: number;
   etaHours: number;
+  district: string;
+  province?: string;
+  nameEn?: string;
+  nameFr?: string;
+  nameRw?: string;
 }
 
 interface PlacedOrder {
@@ -59,7 +64,7 @@ interface PlacedOrder {
 }
 
 export function CartDrawer() {
-  const { cartOpen, setCartOpen, lang, currency, enterAdmin } = useUI();
+  const { cartOpen, setCartOpen, lang, currency, enterAdmin, wholesaleUser } = useUI();
   const items = useCart((s) => s.items);
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
@@ -91,6 +96,18 @@ export function CartDrawer() {
       })
       .catch(() => {});
   }, []);
+
+  // Reset coupon discount when cart items change (SHOP-005 partial fix).
+  // Without this, a coupon applied to a 3-item cart would still discount
+  // after the user removes 2 items, resulting in a negative subtotal.
+  const itemsKey = items.map((i) => `${i.id}:${i.qty}`).join("|");
+  useEffect(() => {
+    if (couponDiscount > 0) {
+      setCouponDiscount(0);
+      setCouponCode("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsKey]);
 
   const cartLines = items.map((i) => ({
     id: i.id,
@@ -166,6 +183,14 @@ export function CartDrawer() {
     setTimeout(() => {
       setStep("review");
       setPlaced(null);
+      // Clear sensitive customer data for privacy on shared devices (SHOP-019)
+      setName("");
+      setPhone("");
+      setEmail("");
+      setAddress("");
+      setNotes("");
+      setCouponCode("");
+      setCouponDiscount(0);
     }, 300);
   }
 

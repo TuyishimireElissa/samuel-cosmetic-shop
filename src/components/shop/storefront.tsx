@@ -32,6 +32,7 @@ import {
   ArrowUp,
   Camera,
   X,
+  Gift,
 } from "lucide-react";
 
 type ProductWithCat = Product & { category: Category | null };
@@ -141,7 +142,9 @@ export function Storefront() {
   }, [search]);
 
   function handleNav(target: string) {
-    const refs: Record<string, React.RefObject<HTMLDivElement>> = {
+    // API-019 fix: React 19 useRef returns RefObject<T | null>, so the map
+    // must accept null in the generic parameter.
+    const refs: Record<string, React.RefObject<HTMLDivElement | null>> = {
       home: shopRef,
       shop: shopRef,
       categories: catsRef,
@@ -465,11 +468,20 @@ export function Storefront() {
       {/* BUNDLES — hidden when a search is active */}
       {bundles.length > 0 && !search && (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>🎁 {t("sections.bundles", lang)}</h2>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 text-center" style={{ fontFamily: "var(--font-playfair)" }}>{t("sections.bundles", lang)}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {bundles.map((b) => (
+            {bundles.map((b) => {
+              // SHOP-008 fix: use first product's photo instead of emoji (user's #1 rule).
+              const firstProductImage = b.items?.find((it: any) => it.product?.images?.[0]?.url)?.product?.images?.[0]?.url;
+              return (
               <div key={b.id} className="bg-white rounded-2xl border border-pink-100 overflow-hidden hover:shadow-lg transition-all">
-                <div className="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 grid place-items-center text-6xl">{b.emoji}</div>
+                <div className="aspect-video bg-gradient-to-br from-pink-100 to-purple-100 grid place-items-center overflow-hidden">
+                  {firstProductImage ? (
+                    <img src={firstProductImage} alt={b.nameEn} className="w-full h-full object-cover" />
+                  ) : (
+                    <Gift size={48} className="text-pink-400" />
+                  )}
+                </div>
                 <div className="p-4 space-y-2">
                   <h3 className="font-bold text-pink-900 text-lg" style={{ fontFamily: "var(--font-playfair)" }}>{lang === "rw" ? b.nameRw || b.nameEn : lang === "fr" ? b.nameFr || b.nameEn : b.nameEn}</h3>
                   <p className="text-sm text-muted-foreground">{lang === "rw" ? b.descRw || b.descEn || "" : lang === "fr" ? b.descFr || b.descEn || "" : b.descEn || ""}</p>
@@ -483,18 +495,21 @@ export function Storefront() {
                       b.items.forEach((item: any) => {
                         if (item.product) {
                           const prod = item.product;
+                          // SHOP-020 fix: respect BundleItem.qty (was always 1).
+                          const bundleQty = item.qty || 1;
                           const perItemPrice = Math.round(b.bundlePrice / b.items.length);
-                          useCart.getState().add({ id: prod.id, priceTTC: perItemPrice, name: pickLang(prod, lang), emoji: prod.emoji });
+                          useCart.getState().add({ id: prod.id, priceTTC: perItemPrice, name: pickLang(prod, lang), image: prod?.images?.[0]?.url }, bundleQty);
                         }
                       });
                     } else {
-                      useCart.getState().add({ id: b.id, priceTTC: b.bundlePrice, name: lang === "rw" ? b.nameRw || b.nameEn : lang === "fr" ? b.nameFr || b.nameEn : b.nameEn, emoji: b.emoji || "🎁" });
+                      useCart.getState().add({ id: b.id, priceTTC: b.bundlePrice, name: lang === "rw" ? b.nameRw || b.nameEn : lang === "fr" ? b.nameFr || b.nameEn : b.nameEn, image: firstProductImage });
                     }
                     setCartOpen(true);
                   }}>{t("bundle.addToCart", lang)}</Button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}

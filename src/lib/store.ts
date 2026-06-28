@@ -14,8 +14,8 @@ export interface CartItem {
   qty: number;
   priceTTC: number; // current selling price TTC (RWF)
   name: string; // snapshot name (current lang)
-  emoji: string;
-  image?: string; // product photo URL
+  emoji?: string; // deprecated — kept for backward compat with persisted carts
+  image?: string; // product photo URL (preferred over emoji)
 }
 
 interface CartState {

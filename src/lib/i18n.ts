@@ -409,6 +409,31 @@ const dict: Dict = {
   "admin.staff.viewer": { rw: "Mureba", en: "Viewer", fr: "Spectateur" },
   "admin.staff.custom": { rw: "Bisanzwe", en: "Custom", fr: "Personnalisé" },
 
+  // Admin customer (ADMIN-010 fix)
+  "admin.customer.name": { rw: "Amazina", en: "Name", fr: "Nom" },
+  "admin.customer.phone": { rw: "Telefone", en: "Phone", fr: "Téléphone" },
+  "admin.customer.adjustPoints": { rw: "Hindura Amanota", en: "Adjust Points", fr: "Ajuster les points" },
+  "admin.customer.reason": { rw: "Impamvu", en: "Reason", fr: "Raison" },
+  "admin.customer.apply": { rw: "Shyiraho", en: "Apply", fr: "Appliquer" },
+
+  // Admin customer portal (ADMIN-010 fix)
+  "admin.portal.orders": { rw: "Oridere", en: "Orders", fr: "Commandes" },
+  "admin.portal.spent": { rw: "Byakoreshejwe", en: "Spent", fr: "Dépensé" },
+  "admin.portal.tier": { rw: "Icyiciro", en: "Tier", fr: "Niveau" },
+  "admin.portal.points": { rw: "Amanota", en: "Points", fr: "Points" },
+  "admin.portal.history": { rw: "Amateka", en: "History", fr: "Historique" },
+  "admin.portal.noOrders": { rw: "Nta oridere ziboneka.", en: "No orders found.", fr: "Aucune commande." },
+
+  // Admin order statuses (ADMIN-046 fix)
+  "admin.status.processing": { rw: "Birakorwa", en: "Processing", fr: "En traitement" },
+  "admin.status.shipped": { rw: "Byoherejwe", en: "Shipped", fr: "Expédié" },
+  "admin.status.delivered": { rw: "Byageze", en: "Delivered", fr: "Livré" },
+  "admin.status.cancelled": { rw: "Byahagaritswe", en: "Cancelled", fr: "Annulé" },
+
+  // Common
+  "common.error": { rw: "Habaye ikibazo. Ongera ugerageze.", en: "An error occurred. Try again.", fr: "Une erreur s'est produite. Réessayez." },
+  "common.networkError": { rw: "Ikibazo cy'urubuga. Ongera ugerageze.", en: "Network error. Try again.", fr: "Erreur réseau. Réessayez." },
+
   // Admin branding
   "admin.branding.title": { rw: "Ibidukikije", en: "Branding", fr: "Marque" },
   "admin.branding.identity": { rw: "Ikiranga Iduka", en: "Shop Identity", fr: "Identité du Magasin" },

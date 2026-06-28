@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 import { bustCache } from "@/lib/cache";
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
   try {
     const s = await db.siteSetting.findUnique({ where: { id: "singleton" } });
     if (!s) return NextResponse.json({ ok: false, error: "no_settings" }, { status: 500 });
@@ -22,7 +24,9 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ ok: true, config: { apiUrl: updated.ebmApiUrl || apiUrl, hasToken: !!(updated.ebmToken || newToken), sdcId: updated.ebmSdcId || sdcId, tin: updated.tin }, live: !!(apiUrl && newToken) });
   } catch (e: any) { return NextResponse.json({ ok: false, error: e?.message }, { status: 500 }); }
 }
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
   try {
     const s = await db.siteSetting.findUnique({ where: { id: "singleton" } });
     if (s && Object.keys(s as any).includes("ebmApiUrl")) await (db.siteSetting.update as any)({ where: { id: "singleton" }, data: { ebmApiUrl: "", ebmToken: "", ebmSdcId: "" } });

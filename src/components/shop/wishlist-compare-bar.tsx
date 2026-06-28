@@ -4,7 +4,7 @@ import { useCompare, useWishlist, useCart, useUI } from "@/lib/store";
 import { formatPrice } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { GitCompare, Heart, X, Trash2, ShoppingCart } from "lucide-react";
+import { GitCompare, Heart, X, Trash2, ShoppingCart, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export function WishlistCompareBar() {
@@ -36,6 +36,13 @@ export function WishlistCompareBar() {
   const compareProducts = compareIds.map((id) => products[id]).filter(Boolean);
   const wishlistProducts = wishlistIds.map((id) => products[id]).filter(Boolean);
 
+  // SHOP-007 fix: use product photo instead of emoji (user's #1 rule).
+  function productThumb(p: any) {
+    const img = p?.images?.[0]?.url;
+    if (img) return <img src={img} alt={p?.nameEn || "Product"} className="w-12 h-12 rounded-lg object-cover" />;
+    return <div className="w-12 h-12 rounded-lg bg-pink-50 grid place-items-center"><ImageIcon size={20} className="text-pink-300" /></div>;
+  }
+
   return (
     <>
       {(compareIds.length > 0 || wishlistIds.length > 0) && (
@@ -47,13 +54,13 @@ export function WishlistCompareBar() {
       {showCompare && (
         <Dialog open onOpenChange={() => setShowCompare(false)}><DialogContent className="max-w-3xl max-h-[90vh] overflow-x-auto"><DialogHeader><DialogTitle className="flex items-center justify-between"><span className="flex items-center gap-2"><GitCompare size={20} className="text-purple-600" /> Compare Products</span><Button variant="ghost" size="sm" onClick={compareClear}>Clear all</Button></DialogTitle></DialogHeader>
           {compareProducts.length === 0 ? <div className="text-center py-8 text-muted-foreground">No products to compare</div> : (
-            <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-pink-100"><th className="text-left p-2">Feature</th>{compareProducts.map((p) => <th key={p.id} className="p-2 min-w-[140px]"><div className="text-center"><div className="text-4xl mb-1">{p.emoji}</div><div className="text-xs font-medium line-clamp-2">{p.nameEn}</div><button onClick={() => compareRemove(p.id)} className="text-red-500 text-[10px] mt-1 inline-flex items-center gap-0.5"><X size={10} /> Remove</button></div></th>)}</tr></thead>
+            <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-pink-100"><th className="text-left p-2">Feature</th>{compareProducts.map((p) => <th key={p.id} className="p-2 min-w-[140px]"><div className="text-center"><div className="flex justify-center mb-1">{productThumb(p)}</div><div className="text-xs font-medium line-clamp-2">{p.nameEn}</div><button onClick={() => compareRemove(p.id)} className="text-red-500 text-[10px] mt-1 inline-flex items-center gap-0.5"><X size={10} /> Remove</button></div></th>)}</tr></thead>
               <tbody>
                 <tr className="border-b border-pink-50"><td className="p-2 font-semibold">Price</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center font-bold text-pink-700">{formatPrice(p.sellingPrice, currency)}</td>)}</tr>
                 <tr className="border-b border-pink-50"><td className="p-2 font-semibold">Category</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center text-xs">{p.category?.nameEn || "—"}</td>)}</tr>
-                <tr className="border-b border-pink-50"><td className="p-2 font-semibold">Rating</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center text-xs">⭐ {p.ratingAvg?.toFixed(1) || "—"}</td>)}</tr>
+                <tr className="border-b border-pink-50"><td className="p-2 font-semibold">Rating</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center text-xs">{p.ratingAvg?.toFixed(1) || "—"}</td>)}</tr>
                 <tr className="border-b border-pink-50"><td className="p-2 font-semibold">Stock</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center text-xs">{p.stockQty > 0 ? `${p.stockQty} in stock` : "Out"}</td>)}</tr>
-                <tr><td className="p-2 font-semibold">Action</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center"><Button size="sm" onClick={() => { cartAdd({ id: p.id, priceTTC: p.sellingPrice, name: p.nameEn, emoji: p.emoji }); toast.success("Added"); setCartOpen(true); setShowCompare(false); }} className="bg-pink-600 hover:bg-pink-700 h-8" disabled={p.stockQty <= 0}><ShoppingCart size={12} className="mr-1" /> Add</Button></td>)}</tr>
+                <tr><td className="p-2 font-semibold">Action</td>{compareProducts.map((p) => <td key={p.id} className="p-2 text-center"><Button size="sm" onClick={() => { cartAdd({ id: p.id, priceTTC: p.sellingPrice, name: p.nameEn, image: p?.images?.[0]?.url }); toast.success("Added"); setCartOpen(true); setShowCompare(false); }} className="bg-pink-600 hover:bg-pink-700 h-8" disabled={p.stockQty <= 0}><ShoppingCart size={12} className="mr-1" /> Add</Button></td>)}</tr>
               </tbody></table></div>
           )}
         </DialogContent></Dialog>
@@ -62,7 +69,7 @@ export function WishlistCompareBar() {
         <Dialog open onOpenChange={() => setShowWishlist(false)}><DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle className="flex items-center gap-2"><Heart size={20} className="text-pink-600 fill-pink-500" /> My Wishlist</DialogTitle></DialogHeader>
           {wishlistProducts.length === 0 ? <div className="text-center py-8 text-muted-foreground">Your wishlist is empty</div> : (
             <div className="space-y-2">{wishlistProducts.map((p) => (
-              <div key={p.id} className="flex items-center gap-3 p-2 rounded border border-pink-50"><div className="text-3xl">{p.emoji}</div><div className="flex-1 min-w-0"><div className="font-medium text-sm line-clamp-1">{p.nameEn}</div><div className="text-xs text-muted-foreground">{formatPrice(p.sellingPrice, currency)}</div></div><Button size="sm" onClick={() => { cartAdd({ id: p.id, priceTTC: p.sellingPrice, name: p.nameEn, emoji: p.emoji }); toast.success("Added"); }} className="bg-pink-600 hover:bg-pink-700 h-8" disabled={p.stockQty <= 0}><ShoppingCart size={12} className="mr-1" /> Add</Button><Button size="sm" variant="ghost" onClick={() => wishlistToggle(p.id)} className="text-red-500 h-8 w-8 p-0"><Trash2 size={12} /></Button></div>
+              <div key={p.id} className="flex items-center gap-3 p-2 rounded border border-pink-50">{productThumb(p)}<div className="flex-1 min-w-0"><div className="font-medium text-sm line-clamp-1">{p.nameEn}</div><div className="text-xs text-muted-foreground">{formatPrice(p.sellingPrice, currency)}</div></div><Button size="sm" onClick={() => { cartAdd({ id: p.id, priceTTC: p.sellingPrice, name: p.nameEn, image: p?.images?.[0]?.url }); toast.success("Added"); }} className="bg-pink-600 hover:bg-pink-700 h-8" disabled={p.stockQty <= 0}><ShoppingCart size={12} className="mr-1" /> Add</Button><Button size="sm" variant="ghost" onClick={() => wishlistToggle(p.id)} className="text-red-500 h-8 w-8 p-0"><Trash2 size={12} /></Button></div>
             ))}</div>
           )}
         </DialogContent></Dialog>

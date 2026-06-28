@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 import { bustCache } from "@/lib/cache";
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
   try { const rows = await db.siteContent.findMany({ orderBy: { key: "asc" } }); return NextResponse.json({ ok: true, content: rows }); }
   catch (e: any) { return NextResponse.json({ ok: false, error: e?.message }, { status: 500 }); }
 }

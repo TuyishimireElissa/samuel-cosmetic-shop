@@ -7,9 +7,12 @@ import { Camera, Upload } from "lucide-react";
 interface Props { onMatch: (categoryHint: string) => void; onClose: () => void; }
 
 function classifyColor(r: number, g: number, b: number) {
+  // SHOP-009 fix: hints must match actual category IDs from the database.
+  // Previously "perfume" was returned but the real category ID is "fragrance",
+  // so setActiveCat("perfume") matched nothing and showed 0 products.
   if (r > 180 && g < 150 && b < 180) return { hint: "makeup", label: "Makeup", emoji: "💄" };
   if (r > 200 && g > 200 && b > 180) return { hint: "skincare", label: "Skincare", emoji: "🧴" };
-  if (b > 150 && r < 150) return { hint: "perfume", label: "Fragrances", emoji: "🌸" };
+  if (b > 150 && r < 150) return { hint: "fragrance", label: "Fragrances", emoji: "🌸" };
   if (g > 130 && r < 180) return { hint: "haircare", label: "Hair care", emoji: "💆🏾‍♀️" };
   return { hint: "all", label: "All products", emoji: "🛍️" };
 }

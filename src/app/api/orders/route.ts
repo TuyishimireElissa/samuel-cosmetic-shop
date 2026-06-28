@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     // Build cart lines & snapshot items
     const cartLines: CartLine[] = [];
-    const itemsSnapshot = [];
+    const itemsSnapshot: any[] = [];
     for (const item of items) {
       const product = await db.product.findUnique({ where: { id: item.id } });
       if (!product) continue;
@@ -84,6 +84,13 @@ export async function POST(req: NextRequest) {
         vatAmount: vatAmount(itemPrice),
         lineTTC: itemPrice * qty,
       });
+      // SHOP-006 fix: check stock before decrement — don't allow negative stock.
+      if (product.stockQty < qty) {
+        return NextResponse.json(
+          { ok: false, error: `Insufficient stock for ${product.nameEn}. Only ${product.stockQty} left.` },
+          { status: 400 }
+        );
+      }
       // decrement stock + increment sales count
       await db.product.update({
         where: { id: product.id },
@@ -180,7 +187,8 @@ export async function POST(req: NextRequest) {
         discount,
         totalTTC: totals.totalTTC,
         paymentMethod,
-        paymentStatus: paymentMethod === "cash" ? "pending" : "pending",
+        // API-021 fix: cash = unpaid (COD), online = pending (awaiting gateway).
+        paymentStatus: paymentMethod === "cash" ? "unpaid" : "pending",
         status: "pending",
         notes,
         mrcCode: mrc,

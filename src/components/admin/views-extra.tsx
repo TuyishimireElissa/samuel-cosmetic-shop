@@ -5,7 +5,7 @@ import { useUI } from "@/lib/store";
 import { t } from "@/lib/i18n";
 import { formatPrice, priceHT, vatAmount, profitMarginPct } from "@/lib/format";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
-import { shopWhatsappUrl } from "@/lib/whatsapp";
+import { shopWhatsappUrl, whatsappUrl } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -255,7 +255,7 @@ export function MessagesView() {
   useEffect(() => { adminFetch("/api/admin/messages").then(r => r.json()).then(d => d.ok && setMessages(d.messages)).finally(() => setLoading(false)); }, []);
   async function markRead(id: string) { const r = await safeFetch(`/api/admin/messages/${id}/read`, { method: "PATCH" }); if (r.ok) setMessages(prev => prev.map(m => m.id === id ? { ...m, isRead: true } : m)); }
   async function del(id: string) { if (!confirm(t("admin.deleteConfirm", lang))) return; const r = await safeFetch(`/api/admin/messages/${id}`, { method: "DELETE" }); if (r.ok) setMessages(prev => prev.filter(m => m.id !== id)); }
-  async function sendReply() { window.open(shopWhatsappUrl(reply.phone, `Muraho ${reply.name}!\n\n${replyText}`), "_blank"); await markRead(reply.id); setReply(null); setReplyText(""); }
+  async function sendReply() { window.open(whatsappUrl(reply.phone, `Muraho ${reply.name}!\n\n${replyText}`), "_blank"); await markRead(reply.id); setReply(null); setReplyText(""); }
   return (
     <div className="space-y-4">
       <h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.messages", lang)}</h1>
@@ -403,8 +403,8 @@ export function CategoriesView() {
   async function del(id: string) {
     if (!confirm(lang === "rw" ? "Siba iyi nzego?" : lang === "fr" ? "Supprimer cette catégorie?" : "Delete this category?")) return;
     const r = await safeFetch(`/api/admin/categories/${id}`, { method: "DELETE" });
-    if (r.ok) { toast.success(lang === "rw" ? "Byasibwe" : "Deleted"); load(); }
-    else toast.error((await r.json()).error || "Failed");
+    if (r.ok) { toast.success(lang === "rw" ? "Byasibwe" : lang === "fr" ? "Supprimé" : "Deleted"); load(); }
+    else toast.error(r.error || "Failed");
   }
 
   if (loading) return <div className="text-center py-10">{t("admin.loading", lang)}</div>;
@@ -473,7 +473,7 @@ function CategoryForm({ category, onClose, onSaved }: any) {
     const method = isEdit ? "PUT" : "POST";
     const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     setSaving(false);
-    if (r.ok) { toast.success(t("admin.saved", lang)); onSaved(); } else toast.error((await r.json()).error || "Failed");
+    if (r.ok) { toast.success(t("admin.saved", lang)); onSaved(); } else toast.error(r.error || "Failed");
   }
   return (
     <Dialog open onOpenChange={onClose}><DialogContent className="max-w-lg">

@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
+import { bustCache } from "@/lib/cache";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
   try {
     const products = await db.product.findMany({
       orderBy: { createdAt: "desc" },
@@ -31,6 +34,10 @@ export async function POST(req: NextRequest) {
     }
     if (!body.sku) body.sku = `SKU-${body.id}`;
     const created = await db.product.create({ data: body });
+    // API-009 fix: bust public product cache so new product appears on storefront.
+    bustCache("/api/products");
+    bustCache("/api/products:all");
+    bustCache("/api/products/featured");
     return NextResponse.json({ ok: true, product: created });
   } catch (e: any) {
     return NextResponse.json(

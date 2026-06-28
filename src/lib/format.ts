@@ -84,7 +84,11 @@ export function calcCartTotals(
   }
   const subtotalHT = priceHT(subtotalTTC);
   const vatAmt = vatAmount(subtotalTTC);
-  const totalTTC = Math.max(0, subtotalTTC + deliveryFee - discount);
+  // Discount applies to the product subtotal only, NOT to the delivery fee.
+  // The total cannot go below the delivery fee (you can't discount delivery).
+  // Fix for SHOP-011: previously discount reduced the delivery fee too.
+  const discountedSubtotal = Math.max(0, subtotalTTC - discount);
+  const totalTTC = discountedSubtotal + deliveryFee;
   return {
     subtotalHT,
     vatAmount: vatAmt,

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useUI } from "@/lib/store";
 import { t, pickLang } from "@/lib/i18n";
 import { formatPrice, priceHT, vatAmount, profitMarginPct, grossProfitHT } from "@/lib/format";
-import { WHATSAPP_LINK, shopWhatsappUrl, buildOrderMessage } from "@/lib/whatsapp";
+import { WHATSAPP_LINK, shopWhatsappUrl, whatsappUrl, buildOrderMessage } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
 
 function adminFetch(url: string, options?: RequestInit): Promise<Response> {
@@ -224,25 +224,46 @@ export function AdminApp() {
           </Button>
         </header>
 
-        {/* Mobile tab bar */}
-        <nav className="md:hidden sticky top-[57px] z-10 bg-white border-b border-pink-100 grid grid-cols-4">
-          {[
-            { id: "dashboard", label: "Dash", icon: LayoutDashboard },
-            { id: "products", label: "Items", icon: Package },
-            { id: "orders", label: "Orders", icon: ShoppingCart },
-            { id: "vat", label: "VAT", icon: FileSpreadsheet },
-          ].map((n) => (
-            <button
-              key={n.id}
-              onClick={() => setView(n.id as View)}
-              className={`flex flex-col items-center gap-0.5 py-2 text-[10px] ${
-                view === n.id ? "text-pink-700 border-b-2 border-pink-600 font-semibold" : "text-muted-foreground"
-              }`}
-            >
-              <n.icon size={16} />
-              {n.label}
-            </button>
-          ))}
+        {/* Mobile tab bar — ADMIN-004 fix: show ALL tabs (scrollable), not just 4. */}
+        <nav className="md:hidden sticky top-[57px] z-10 bg-white border-b border-pink-100 overflow-x-auto no-scrollbar">
+          <div className="flex gap-1 px-2 py-1">
+            {[
+              { id: "dashboard", label: t("admin.dashboard", lang), icon: LayoutDashboard },
+              { id: "products", label: t("admin.products", lang), icon: Package },
+              { id: "orders", label: t("admin.orders", lang), icon: ShoppingCart },
+              { id: "customers", label: t("admin.customers", lang), icon: Users },
+              { id: "reviews", label: t("admin.reviews", lang), icon: Star },
+              { id: "stock", label: t("admin.inventory", lang), icon: Package },
+              { id: "coupons", label: t("admin.coupons", lang), icon: Tag },
+              { id: "bundles", label: t("admin.bundles", lang), icon: Gift },
+              { id: "flash", label: t("admin.flashSales", lang), icon: Zap },
+              { id: "bookings", label: t("admin.bookings", lang), icon: Calendar },
+              { id: "wholesale", label: t("admin.wholesale", lang), icon: Building },
+              { id: "messages", label: t("admin.messages", lang), icon: Mail },
+              { id: "subscribers", label: t("admin.subscribers", lang), icon: Megaphone },
+              { id: "testimonials", label: t("admin.testimonials", lang), icon: Quote },
+              { id: "staff", label: t("admin.staff", lang), icon: UserCog },
+              { id: "branding", label: t("admin.branding", lang), icon: Palette },
+              { id: "notifications", label: t("admin.notifications", lang), icon: Bell },
+              { id: "vat", label: t("admin.vatReport", lang), icon: FileSpreadsheet },
+              { id: "health", label: t("admin.siteHealth", lang), icon: Activity },
+              { id: "categories", label: t("admin.categoriesTab", lang), icon: LayoutGrid },
+            ].filter((n) => hasPermission(TAB_PERMISSIONS[n.id])).map((n) => {
+              const Icon = n.icon;
+              return (
+                <button
+                  key={n.id}
+                  onClick={() => setView(n.id as View)}
+                  className={`flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-lg text-[10px] whitespace-nowrap ${
+                    view === n.id ? "bg-pink-100 text-pink-700 font-semibold" : "text-muted-foreground"
+                  }`}
+                >
+                  <Icon size={16} />
+                  {n.label}
+                </button>
+              );
+            })}
+          </div>
         </nav>
 
         <div className="p-4 sm:p-6 max-w-7xl mx-auto">
@@ -278,13 +299,16 @@ export function AdminApp() {
 function DashboardView() {
   const { lang, currency } = useUI();
   const [data, setData] = useState<any>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     adminFetch("/api/admin/analytics")
       .then((r) => r.json())
-      .then((d) => d.ok && setData(d.analytics));
+      .then((d) => { if (d.ok) setData(d.analytics); else setLoadError(true); })
+      .catch(() => setLoadError(true));
   }, []);
 
+  if (loadError) return <div className="text-center py-20 text-muted-foreground">{t("common.error", lang)}</div>;
   if (!data) return <div className="text-center py-20 text-muted-foreground">{t("common.loading", lang)}</div>;
 
   const kpis = [
@@ -414,7 +438,7 @@ function DashboardView() {
                 <div key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-red-50/50">
                   <ImageIcon size={20} className="text-pink-300 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{p.name}</div>
+                    <div className="text-sm font-medium truncate">{p.nameEn || p.name}</div>
                     <div className="text-xs text-red-600">
                       Only {p.stockQty} left — reorder soon
                     </div>
@@ -831,10 +855,13 @@ function OrdersView() {
       .then((d) => {
         if (d.ok) {
           setOrders(d.orders);
-          setLoading(false);
         }
+        // ADMIN-011 fix: always stop loading, even on 401/403/500.
+        // Previously loading only stopped inside `if (d.ok)`, so a 401
+        // (expired token) left the admin staring at "Loading..." forever.
       })
-      .catch(() => setLoading(false));
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [statusFilter]);
 
   useEffect(() => { load(); }, [load]);
@@ -845,18 +872,23 @@ function OrdersView() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    if (res.ok) {
+    // ADMIN-015 fix: handle both success and failure with proper feedback.
+    const d = await res.json().catch(() => ({}));
+    if (res.ok && d.ok) {
       toast.success(`Status → ${status}`);
       load();
+    } else {
+      toast.error(d.error || "Failed to update status");
     }
   }
 
   function notifyWhatsApp(order: any) {
     const items = JSON.parse(order.itemsJson || "[]");
-    let itemsText = items.map((item: any, i: number) => `${i + 1}. ${item.nameEn || item.name || "Product"} x${item.qty} — RWF ${Math.round((item.priceTTC || 0) * item.qty).toLocaleString()}`).join("\n");
+    let itemsText = items.map((item: any, i: number) => `${i + 1}. ${pickLang(item, lang) || item.nameEn || item.name || "Product"} x${item.qty} — RWF ${Math.round((item.priceTTC || 0) * item.qty).toLocaleString()}`).join("\n");
     const statusLabel = order.status === "pending" ? t("admin.pending", lang) : order.status === "confirmed" ? t("admin.confirm", lang) : order.status === "shipped" ? (lang === "rw" ? "Byoherejwe" : "Shipped") : order.status === "delivered" ? (lang === "rw" ? "Byageze" : "Delivered") : order.status;
-    const msg = `*${"Samuel Cosmetic Shop"} - ${order.orderNumber}*\n\nMuraho ${order.customerName}!\n\nOrder status: *${statusLabel.toUpperCase()}*\n\n*Items:*\n${itemsText}\n\n*Total: RWF ${order.totalTTC.toLocaleString()}*\n\nMurakoze!`;
-    window.open(shopWhatsappUrl(msg), "_blank");
+    const msg = `*Samuel Cosmetic Shop - ${order.orderNumber}*\n\nMuraho ${order.customerName}!\n\nOrder status: *${statusLabel.toUpperCase()}*\n\n*Items:*\n${itemsText}\n\n*Total: RWF ${order.totalTTC.toLocaleString()}*\n\nMurakoze!`;
+    // ADMIN-009 fix: send to the CUSTOMER's WhatsApp, not the shop's own number.
+    window.open(whatsappUrl(order.customerPhone, msg), "_blank");
   }
 
   function generateEBM(order: any) {

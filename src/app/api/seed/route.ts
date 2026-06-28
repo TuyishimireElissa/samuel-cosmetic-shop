@@ -1,7 +1,10 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import { checkAuth } from "@/lib/route-auth";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  // Admin-only: seeding wipes & rebuilds the entire database.
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
   // Trigger the seed by importing & running
   try {
     const { execSync } = await import("child_process");

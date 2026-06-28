@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 import { HAS_WHATSAPP_API } from "@/lib/whatsapp-api";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = checkAuth(req);
+  if (!auth.ok) return auth.response;
   try {
     const [
       products, orders, customers, reviews, bookings, coupons, bundles,

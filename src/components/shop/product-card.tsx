@@ -34,7 +34,7 @@ export function ProductCard({ product, currency, onQuickView }: Props) {
   function handleAdd(e: React.MouseEvent) {
     e.stopPropagation();
     if (outOfStock) return;
-    add({ id: product.id, priceTTC: displayPrice, name, emoji: product.emoji, image: primaryImage?.url });
+    add({ id: product.id, priceTTC: displayPrice, name, image: primaryImage?.url });
     setAdded(true); setBump(true);
     setTimeout(() => setAdded(false), 2000);
     setTimeout(() => setBump(false), 350);

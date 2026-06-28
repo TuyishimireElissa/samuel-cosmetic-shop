@@ -969,6 +969,16 @@ function OrdersView() {
 
 function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void }) {
   const { currency, lang } = useUI();
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoEmoji, setLogoEmoji] = useState<string>("✿");
+  useEffect(() => {
+    fetch("/api/settings").then((r) => r.json()).then((d) => {
+      if (d.ok && d.settings) {
+        if (d.settings.logoUrl) setLogoUrl(d.settings.logoUrl);
+        if (d.settings.logoEmoji) setLogoEmoji(d.settings.logoEmoji);
+      }
+    }).catch(() => {});
+  }, []);
   const items = typeof order.items === "string" ? JSON.parse(order.items || "[]") : (order.items || JSON.parse(order.itemsJson || "[]"));
 
   return (

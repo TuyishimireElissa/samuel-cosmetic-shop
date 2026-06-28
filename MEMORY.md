@@ -526,4 +526,19 @@ Database: 20 products, 11 orders, 8 customers, 4 staff
   - The shop section heading changes to "Search Results" when a search is active.
   - Added 5 new i18n keys (rw/en/fr): `search.resultsFor`, `search.searchResults`, `search.clear`, `search.resultSingular`, `search.resultPlural`.
 
-**Total bugs fixed: 63 (across 13 rounds)**
+**Bug #69: Featured/Bundles sections made search look broken (the REAL cause)**
+- **Symptom:** After Bug #67 and #68 fixes, the user reported "search still not works". Investigation with agent-browser revealed the search WAS actually working — the API returned correct filtered results, the `products` state was correctly updated (heading showed "3 ibicuruzwa"), but the user saw 11 product cards on screen and thought search wasn't filtering.
+- **Root cause:** The "Featured Products" section (8 products) and "Bundles" section were displayed BELOW the search results grid, with no visual separation. When the user searched "cream" (1 result), they saw 1 search result + 8 featured = 9 cards. When they searched "x" (3 results), they saw 3 + 8 = 11 cards. When they searched "zzznonexistenq" (0 results), they saw 0 + 8 = 8 featured cards. In all cases, it LOOKED like search wasn't working because products were still visible.
+- **The featured section condition was:** `{featured.length > 0 && activeCat === "all" && (` — it only hid when a CATEGORY was active, not when a SEARCH was active.
+- **Fix:**
+  1. Hide Featured section when search is active: `{featured.length > 0 && activeCat === "all" && !search && (`
+  2. Hide Bundles section when search is active: `{bundles.length > 0 && !search && (`
+  3. Fix heading count to use singular/plural nouns: changed `{products.length} {t("nav.shop", lang).toLowerCase()}` (which showed "3 iduka" = "3 shop") to `{products.length} {products.length === 1 ? t("search.resultSingular", lang) : t("search.resultPlural", lang)}` (which shows "3 ibicuruzwa" = "3 products")
+  4. Auto-scroll to shop section when user starts typing (via `prevSearchRef`), so they immediately see filtered results instead of the hero section
+- **Verification (agent-browser on live Vercel):**
+  - Search "cream" → 1 article (CeraVe), heading "1 igicuruzwa", no featured/bundles ✓
+  - Search "dior" → 1 article (Dior Sauvage), heading "1 igicuruzwa" ✓
+  - Search "zzznonexistenq" → 0 articles, no-results message with search term, clear button ✓
+  - VLM confirmed: no featured/bundles sections visible during search ✓
+
+**Total bugs fixed: 64 (across 13 rounds)**

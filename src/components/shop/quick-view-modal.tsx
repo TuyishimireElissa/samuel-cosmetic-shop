@@ -48,7 +48,8 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
   const displayPrice = isWholesale && (product as any).wholesalePrice > 0 ? (product as any).wholesalePrice : product.sellingPrice;
 
   function handleAddToCart() {
-    cartAdd({ id: product!.id, priceTTC: displayPrice, name, emoji: product!.emoji });
+    const img = images.length > 0 ? images[0]?.url : undefined;
+    cartAdd({ id: product!.id, priceTTC: displayPrice, name, emoji: product!.emoji, image: img });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }

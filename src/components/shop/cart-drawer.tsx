@@ -331,8 +331,14 @@ export function CartDrawer() {
                     key={item.id}
                     className="flex gap-3 p-3 rounded-xl border border-pink-100 hover:border-pink-200 transition-colors bg-white"
                   >
-                    <div className="w-16 h-16 rounded-lg grid place-items-center bg-gradient-to-br from-pink-50 to-purple-50 shrink-0 overflow-hidden">
-                      <ShoppingCart size={24} className="text-pink-300" />
+                    <div className="w-16 h-16 rounded-lg shrink-0 overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50">
+                      {item.image ? (
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full grid place-items-center">
+                          <ShoppingCart size={24} className="text-pink-300" />
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm leading-tight line-clamp-2">

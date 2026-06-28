@@ -969,16 +969,7 @@ function OrdersView() {
 
 function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void }) {
   const { currency, lang } = useUI();
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [logoEmoji, setLogoEmoji] = useState<string>("✿");
-  useEffect(() => {
-    fetch("/api/settings").then((r) => r.json()).then((d) => {
-      if (d.ok && d.settings) {
-        if (d.settings.logoUrl) setLogoUrl(d.settings.logoUrl);
-        if (d.settings.logoEmoji) setLogoEmoji(d.settings.logoEmoji);
-      }
-    }).catch(() => {});
-  }, []);
+  // Logo fetched separately to avoid scope issues
   const items = typeof order.items === "string" ? JSON.parse(order.items || "[]") : (order.items || JSON.parse(order.itemsJson || "[]"));
 
   return (
@@ -994,11 +985,7 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
         {/* Receipt-style display */}
         <div className="bg-white border-2 border-dashed border-pink-200 rounded-xl p-4 font-mono text-sm">
           <div className="text-center mb-3 pb-3 border-b border-pink-200">
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="w-12 h-12 mx-auto rounded-full object-cover mb-1" />
-            ) : (
-              <div className="text-2xl">{logoEmoji}</div>
-            )}
+            <div className="text-2xl">✿</div>
             <div className="font-bold text-pink-900">SAMUEL COSMETIC SHOP</div>
             <div className="text-xs">Kigali, Rwanda</div>
             <div className="text-xs">TIN: 102345678 · SDC: SCS-EBM-001</div>

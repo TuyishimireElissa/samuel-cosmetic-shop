@@ -3,7 +3,7 @@ import { checkAuth } from "@/lib/route-auth";
 import { db } from "@/lib/db";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = checkAuth(req);

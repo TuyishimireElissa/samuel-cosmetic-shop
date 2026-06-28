@@ -80,6 +80,18 @@ const dict: Dict = {
   "search.resultSingular": { rw: "igicuruzwa", en: "product", fr: "produit" },
   "search.resultPlural": { rw: "ibicuruzwa", en: "products", fr: "produits" },
 
+  // Wishlist & Compare (FE-007 fix)
+  "wishlist.title": { rw: "Ibyifuzo Byanjye", en: "My Wishlist", fr: "Mes Favoris" },
+  "wishlist.compare": { rw: "Kugereranya", en: "Compare", fr: "Comparer" },
+  "wishlist.clearAll": { rw: "Siba Byose", en: "Clear all", fr: "Tout effacer" },
+  "wishlist.remove": { rw: "Kuraho", en: "Remove", fr: "Retirer" },
+  "wishlist.noCompare": { rw: "Nta bicuruzwa byo kugereranya", en: "No products to compare", fr: "Aucun produit à comparer" },
+  "wishlist.empty": { rw: "Ibyifuzo byawe birimo ubusa", en: "Your wishlist is empty", fr: "Votre liste de favoris est vide" },
+  "wishlist.feature": { rw: "Ikiranga", en: "Feature", fr: "Caractéristique" },
+  "wishlist.price": { rw: "Igiciro", en: "Price", fr: "Prix" },
+  "wishlist.action": { rw: "Igikorwa", en: "Action", fr: "Action" },
+  "wishlist.inStock": { rw: "kuri stock", en: "in stock", fr: "en stock" },
+
   "sections.featured": { rw: "Ibicuruzwa Byiza", en: "Featured Products", fr: "Produits en Vedette" },
   "sections.bundles": { rw: "Imibonano Yihariye", en: "Special Bundles", fr: "Ensembles Spéciaux" },
   "sections.quickServices": { rw: "Serivisi Zihuta", en: "Quick Services", fr: "Services Rapides" },

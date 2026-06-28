@@ -32,7 +32,7 @@ import {
   Truck,
   CreditCard,
 } from "lucide-react";
-import { WHATSAPP_LINK } from "@/lib/whatsapp";
+import { WHATSAPP_LINK, whatsappUrl, buildOrderMessage } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
 
 type Step = "review" | "delivery" | "payment" | "confirm" | "success";
@@ -61,6 +61,14 @@ interface PlacedOrder {
   paymentMethod: string;
   items: any[];
   whatsappMessage?: string;
+  customerName: string;
+  customerPhone: string;
+  district: string;
+  address: string;
+  notes: string;
+  subtotalTTC: number;
+  paymentRef?: string;
+  paymentInstructions?: string | null;
 }
 
 export function CartDrawer() {
@@ -139,8 +147,14 @@ export function CartDrawer() {
   }
 
   async function placeOrder() {
-    if (!name || !phone || !zone) {
-      toast.error("Please fill name, phone, and district");
+    // FE-003: Validate required fields with proper error messages
+    if (!name.trim()) { toast.error(lang === "rw" ? "Andika amazina" : lang === "fr" ? "Entrez votre nom" : "Please enter your name"); return; }
+    if (!phone.trim()) { toast.error(lang === "rw" ? "Andika telefone" : lang === "fr" ? "Entrez votre téléphone" : "Please enter your phone number"); return; }
+    if (!zone) { toast.error(lang === "rw" ? "Hitamo akarere" : lang === "fr" ? "Choisissez le district" : "Please select your district"); return; }
+    // Validate phone format (Rwandan: +250 7XX XXX XXX or 07XX XXX XXX)
+    const cleanPhone = phone.replace(/[\s-]/g, "");
+    if (!/^(\+250|0)?7\d{8}$/.test(cleanPhone)) {
+      toast.error(lang === "rw" ? "Nimero ya telefone ntabwo ijyanye. Mfasha: +250 7XX XXX XXX" : lang === "fr" ? "Numéro de téléphone invalide. Format: +250 7XX XXX XXX" : "Invalid phone format. Use: +250 7XX XXX XXX");
       return;
     }
     setPlacing(true);
@@ -166,7 +180,33 @@ export function CartDrawer() {
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || "Failed");
-      setPlaced(data.order);
+      const order = data.order;
+
+      // FE-001: Initiate MoMo/Airtel payment if selected
+      if (paymentMethod === "momo" || paymentMethod === "airtel") {
+        try {
+          const payRes = await fetch(`/api/payments/${paymentMethod}/initiate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderId: order.id,
+              phoneNumber: phone,
+              amount: order.totalTTC,
+            }),
+          });
+          const payData = await payRes.json();
+          if (payData.ok) {
+            // Store payment ref so success screen can show instructions
+            order.paymentRef = payData.reference || payData.transactionId;
+            order.paymentInstructions = payData.instructions || null;
+          }
+        } catch (payErr: any) {
+          // Payment initiation failed — order is still created, show fallback
+          console.warn("Payment initiation failed:", payErr?.message);
+        }
+      }
+
+      setPlaced(order);
       setStep("success");
       clear();
       setCouponDiscount(0);
@@ -307,22 +347,63 @@ export function CartDrawer() {
               )}
             </div>
 
-            {placed.paymentMethod === "whatsapp" && (
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  {t("order.success.whatsapp", lang)}
+            {/* FE-001: Show payment instructions for MoMo/Airtel */}
+            {(placed.paymentMethod === "momo" || placed.paymentMethod === "airtel") && (
+              <div className="space-y-3 bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <div className="flex items-center gap-2">
+                  <CreditCard size={18} className="text-blue-600" />
+                  <span className="font-semibold text-blue-900">
+                    {placed.paymentMethod === "momo" ? "MTN MoMo" : "Airtel Money"}
+                  </span>
+                </div>
+                <p className="text-sm text-blue-800">
+                  {lang === "rw"
+                    ? `Menyesho yo kwishyura yoherejwe kuri ${placed.customerPhone}. Kanda kwishyura muri telefoni yawe.`
+                    : lang === "fr"
+                    ? `Une demande de paiement a été envoyée au ${placed.customerPhone}. Veuillez payer sur votre téléphone.`
+                    : `A payment request has been sent to ${placed.customerPhone}. Please approve it on your phone.`}
                 </p>
-                <a
-                  href={WHATSAPP_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-semibold transition-colors"
-                >
-                  <WhatsAppIcon size={20} />
-                  {t("order.success.sendWhatsapp", lang)}
-                </a>
+                {placed.paymentRef && (
+                  <div className="text-xs text-blue-700 font-mono">
+                    Ref: {placed.paymentRef}
+                  </div>
+                )}
+                <p className="text-xs text-blue-600">
+                  {lang === "rw" ? "Nyuma yo kwishyura, oridere yawe izaba yemejwe." : lang === "fr" ? "Après paiement, votre commande sera confirmée." : "After payment, your order will be confirmed."}
+                </p>
               </div>
             )}
+
+            {/* FE-002: WhatsApp button with prefilled order message */}
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                {placed.paymentMethod === "whatsapp"
+                  ? t("order.success.whatsapp", lang)
+                  : (lang === "rw" ? "Cyangwa, twugeze kuri WhatsApp:" : lang === "fr" ? "Ou contactez-nous sur WhatsApp :" : "Or contact us on WhatsApp:")}
+              </p>
+              <a
+                href={whatsappUrl(placed.customerPhone, buildOrderMessage({
+                  orderNumber: placed.orderNumber,
+                  customerName: placed.customerName,
+                  customerPhone: placed.customerPhone,
+                  district: placed.district,
+                  address: placed.address,
+                  items: (typeof placed.items === "string" ? JSON.parse(placed.items || "[]") : placed.items) || [],
+                  subtotalTTC: placed.subtotalTTC,
+                  deliveryFee: placed.deliveryFee,
+                  discount: placed.discount,
+                  totalTTC: placed.totalTTC,
+                  paymentMethod: placed.paymentMethod,
+                  notes: placed.notes,
+                }))}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-semibold transition-colors"
+              >
+                <WhatsAppIcon size={20} />
+                {t("order.success.sendWhatsapp", lang)}
+              </a>
+            </div>
 
             <Button
               variant="outline"

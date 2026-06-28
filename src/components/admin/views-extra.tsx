@@ -522,11 +522,21 @@ export function NotificationsView() {
 export function SiteHealthView() {
   const { lang } = useUI();
   const [health, setHealth] = useState<any>(null);
-  useEffect(() => { adminFetch("/api/admin/site-health").then(r => r.json()).then(d => d.ok && setHealth(d.health)); }, []);
-  if (!health) return <div className="text-center py-10">{t("admin.loading", lang)}</div>;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const load = useCallback(() => {
+    setLoading(true); setError(false);
+    adminFetch("/api/admin/site-health").then(r => r.json()).then(d => { if (d.ok) setHealth(d.health); else setError(true); }).catch(() => setError(true)).finally(() => setLoading(false));
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  if (loading) return <div className="text-center py-10">{t("admin.loading", lang)}</div>;
+  if (error) return <div className="text-center py-10 space-y-3"><div className="text-muted-foreground">{t("common.error", lang)}</div><Button onClick={load} variant="outline" size="sm">{t("admin.health.refresh", lang) || "Refresh"}</Button></div>;
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.health.title", lang)}</h1>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.health.title", lang)}</h1>
+        <Button onClick={load} variant="outline" size="sm">{t("admin.health.refresh", lang) || "Refresh"}</Button>
+      </div>
       <Card><CardHeader><CardTitle>{t("admin.health.services", lang)}</CardTitle></CardHeader><CardContent className="space-y-2">{health.services.map((s: any) => <div key={s.name} className="flex items-center justify-between p-2 rounded border border-pink-50"><div className="flex items-center gap-2"><span className={s.ok ? "text-green-500" : "text-amber-500"}>●</span><span className="font-medium">{s.name}</span></div><div className="text-sm text-muted-foreground">{s.message}</div></div>)}</CardContent></Card>
       <Card><CardHeader><CardTitle>{t("admin.health.database", lang)}</CardTitle></CardHeader><CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">{Object.entries(health.counts).map(([k, v]: any) => <div key={k} className="bg-pink-50/50 p-2 rounded"><div className="text-xs text-muted-foreground capitalize">{k}</div><div className="font-bold text-pink-700">{v}</div></div>)}</CardContent></Card>
     </div>

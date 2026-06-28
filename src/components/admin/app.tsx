@@ -673,21 +673,34 @@ function ProductForm({ product, categories, onClose, onSaved }: {
   const margin = profitMarginPct(form.sellingPrice, form.costPrice);
 
   async function save() {
+    // ADM-021/022: Validate required fields before submit
+    if (!form.nameEn?.trim()) { toast.error(lang === "rw" ? "Izina (EN) cyangwa" : lang === "fr" ? "Le nom (EN) est requis" : "Name (EN) is required"); return; }
+    if (!form.categoryId) { toast.error(lang === "rw" ? "Hitamo izina rya category" : lang === "fr" ? "Sélectionnez une catégorie" : "Please select a category"); return; }
+    if (!form.sellingPrice || form.sellingPrice <= 0) { toast.error(lang === "rw" ? "Igiciro cyo kugurisha kibaye" : lang === "fr" ? "Le prix de vente est invalide" : "Selling price must be greater than 0"); return; }
+    if (form.costPrice && form.sellingPrice && Number(form.costPrice) >= Number(form.sellingPrice)) {
+      toast.error(lang === "rw" ? "Igiciro cyo kugurisha kigomba kuba kinini cyane cyo gutunga" : lang === "fr" ? "Le prix de vente doit être supérieur au prix de revient" : "Selling price must be greater than cost price");
+      return;
+    }
     setSaving(true);
-    const url = isEdit ? `/api/admin/products/${form.id}` : "/api/admin/products";
-    const method = isEdit ? "PUT" : "POST";
-    const res = await adminFetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const data = await res.json();
-    setSaving(false);
-    if (data.ok) {
-      toast.success(isEdit ? "Product updated" : "Product added");
-      onSaved();
-    } else {
-      toast.error(data.error || "Save failed");
+    try {
+      const url = isEdit ? `/api/admin/products/${form.id}` : "/api/admin/products";
+      const method = isEdit ? "PUT" : "POST";
+      const res = await adminFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast.success(isEdit ? (lang === "rw" ? "Ibicuruzwa byavuguruwe" : lang === "fr" ? "Produit mis à jour" : "Product updated") : (lang === "rw" ? "Ibicuruzwa byongereye" : lang === "fr" ? "Produit ajouté" : "Product added"));
+        onSaved();
+      } else {
+        toast.error(data.error || "Save failed");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Network error");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -1086,12 +1099,18 @@ function OrderDetailModal({ order, onClose }: { order: any; onClose: () => void 
 function VatView() {
   const { lang, currency } = useUI();
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
   useEffect(() => {
+    setLoading(true);
+    setError(false);
     adminFetch(`/api/admin/vat-report?month=${month}`)
       .then((r) => r.json())
-      .then((d) => d.ok && setData(d));
+      .then((d) => { if (d.ok) setData(d); else setError(true); })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, [month]);
 
   function exportCSV() {
@@ -1109,7 +1128,7 @@ function VatView() {
       r.mrcCode,
       r.itemCount,
     ]);
-    const csv = [headers, ...rows].map((row) => row.map((c: any) => `"${c}"`).join(",")).join("\n");
+    const csv = [headers, ...rows].map((row) => row.map((c: any) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -1119,7 +1138,9 @@ function VatView() {
     URL.revokeObjectURL(url);
   }
 
-  if (!data) return <div className="text-center py-20 text-muted-foreground">{t("common.loading", lang)}</div>;
+  if (loading) return <div className="text-center py-20 text-muted-foreground">{t("common.loading", lang)}</div>;
+  if (error) return <div className="text-center py-20 text-muted-foreground">{t("common.error", lang)}</div>;
+  if (!data) return null;
 
   return (
     <div className="space-y-4">

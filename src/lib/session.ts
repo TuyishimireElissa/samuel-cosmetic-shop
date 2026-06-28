@@ -4,6 +4,11 @@ const DEV_SECRET = "samuel-cosmetic-shop-dev-secret-CHANGE-IN-PRODUCTION";
 const TOKEN_TTL = 24 * 60 * 60 * 1000;
 
 function getSecret(): string {
+  // Security: in production, SESSION_SECRET must be set. If it's missing,
+  // anyone who reads the source code can forge admin tokens.
+  if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+    console.error("[FATAL] SESSION_SECRET environment variable is not set in production. Using fallback dev secret — THIS IS A SECURITY RISK. Set SESSION_SECRET in Vercel Project Settings → Environment Variables.");
+  }
   return process.env.SESSION_SECRET || DEV_SECRET;
 }
 

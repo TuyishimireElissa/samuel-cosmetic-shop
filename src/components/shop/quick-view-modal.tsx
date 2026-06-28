@@ -65,12 +65,15 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
-  function toggleWishlist() { wishlistToggle(product!.id); toast.success(inWishlist ? "Removed" : "❤️ Added to wishlist"); }
-  function toggleCompare() { if (!inCompare && compareIds.length >= 3) { toast.error("Max 3"); return; } compareToggle(product!.id); toast.success(inCompare ? "Removed" : "📊 Added to compare"); }
+  function toggleWishlist() { wishlistToggle(product!.id); toast.success(inWishlist ? (lang === "rw" ? "Byakuwemo" : lang === "fr" ? "Retiré" : "Removed") : (lang === "rw" ? "Byongerewe mu byifuzo" : lang === "fr" ? "Ajouté aux favoris" : "Added to wishlist")); }
+  function toggleCompare() { if (!inCompare && compareIds.length >= 3) { toast.error(lang === "rw" ? "Ushobora gusera 3 gusa" : lang === "fr" ? "Max 3" : "Max 3"); return; } compareToggle(product!.id); toast.success(inCompare ? (lang === "rw" ? "Byakuwemo" : "Removed") : (lang === "rw" ? "Byongerwe ku bigereranywa" : lang === "fr" ? "Ajouté à la comparaison" : "Added to compare")); }
   async function setPriceAlert() {
-    const phone = prompt("Enter WhatsApp number:", "+250 7XX XXX XXX"); if (!phone) return;
-    const res = await fetch("/api/price-alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: product!.id, customerName: "Customer", customerPhone: phone, targetPrice: Math.round(product!.sellingPrice * 0.9) }) });
-    if (res.ok) toast.success("🔔 Price alert set!"); else toast.error("Failed");
+    const phone = window.prompt(lang === "rw" ? "Andika nimero ya WhatsApp:" : lang === "fr" ? "Entrez votre numéro WhatsApp:" : "Enter WhatsApp number:", "+250 7XX XXX XXX"); if (!phone) return;
+    try {
+      const res = await fetch("/api/price-alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: product!.id, customerName: "Customer", customerPhone: phone, targetPrice: Math.round(product!.sellingPrice * 0.9) }) });
+      const d = await res.json();
+      if (d.ok) toast.success(lang === "rw" ? "Menyesho y'igiciro cyashyizweho!" : lang === "fr" ? "Alerte de prix définie !" : "Price alert set!"); else toast.error(d.error || "Failed");
+    } catch { toast.error("Network error"); }
   }
   async function share() {
     const url = `${window.location.origin}/?product=${product!.id}`;
@@ -110,7 +113,7 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
               <Button onClick={share} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Share2 size={18} className="text-pink-500" /></Button>
               <Button onClick={setPriceAlert} variant="outline" size="icon" className="h-12 w-12 border-pink-200"><Bell size={18} className="text-pink-500" /></Button>
             </div>
-            <a href={shopWhatsappUrl(`Muraho! Ndashaka kugura: ${name} (${formatPrice(product.sellingPrice, currency)})`)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-11 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold"><WhatsAppIcon size={18} /> {t("cart.orderWhatsapp", lang)}</a>
+            <a href={shopWhatsappUrl(`Muraho! Ndashaka kugura: ${name} (${formatPrice(displayPrice, currency)})`)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-11 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold"><WhatsAppIcon size={18} /> {t("cart.orderWhatsapp", lang)}</a>
           </div>
         </div>
         <div className="mt-4 border-t border-pink-100 pt-4">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useUI, useCart } from "@/lib/store";
 import { pickLang, t } from "@/lib/i18n";
-import { formatPrice, calcCartTotals, priceHT, vatAmount } from "@/lib/format";
+import { formatPrice, calcCartTotals } from "@/lib/format";
 import {
   Sheet,
   SheetContent,
@@ -64,7 +64,7 @@ interface PlacedOrder {
 }
 
 export function CartDrawer() {
-  const { cartOpen, setCartOpen, lang, currency, enterAdmin, wholesaleUser } = useUI();
+  const { cartOpen, setCartOpen, lang, currency, wholesaleUser } = useUI();
   const items = useCart((s) => s.items);
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
 import {
   priceHT,
   vatAmount,
@@ -14,7 +15,18 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const phone = url.searchParams.get("phone");
     const where: any = {};
-    if (phone) where.customerPhone = phone;
+    if (phone) {
+      // Security: when filtering by phone, rate-limit by IP to slow enumeration.
+      const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+      const rl = rateLimit(`orders-lookup:${ip}`);
+      if (!rl.ok) {
+        return NextResponse.json(
+          { ok: false, error: "rate_limited", message: "Too many requests. Try again in a minute." },
+          { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+        );
+      }
+      where.customerPhone = phone;
+    }
     const orders = await db.order.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -68,8 +80,16 @@ export async function POST(req: NextRequest) {
       const product = await db.product.findUnique({ where: { id: item.id } });
       if (!product) continue;
       const qty = Math.max(1, Number(item.qty) || 1);
-      // Use price from cart (supports wholesale pricing) or fall back to sellingPrice
-      const itemPrice = item.priceTTC || product.sellingPrice;
+      // SECURITY FIX (SHOP-005): Never trust client-supplied prices.
+      // The server computes the correct price based on whether the buyer
+      // is an approved wholesale customer. The client's priceTTC is ignored.
+      const isApprovedWholesale = isWholesale && wholesaleUserId;
+      let itemPrice: number;
+      if (isApprovedWholesale && product.wholesalePrice > 0) {
+        itemPrice = product.wholesalePrice;
+      } else {
+        itemPrice = product.sellingPrice;
+      }
       cartLines.push({ id: product.id, qty, priceTTC: itemPrice });
       itemsSnapshot.push({
         id: product.id,
@@ -101,9 +121,43 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const totals = calcCartTotals(cartLines, deliveryFee, discount);
+    // SECURITY FIX (SHOP-005): Re-validate coupon server-side.
+    // The client sends a `discount` value, but we must NOT trust it.
+    // If a couponCode is provided, look it up and compute the discount here.
+    let serverDiscount = 0;
+    if (couponCode) {
+      const coupon = await db.coupon.findUnique({ where: { code: couponCode } });
+      if (coupon && coupon.isActive && coupon.usesCount < coupon.maxUses) {
+        const now = new Date();
+        const notExpired = !coupon.expiresAt || new Date(coupon.expiresAt) > now;
+        const notBeforeStart = new Date(coupon.validFrom) <= now;
+        if (notExpired && notBeforeStart) {
+          const subtotalTTC = cartLines.reduce((s, l) => s + l.priceTTC * l.qty, 0);
+          if (subtotalTTC >= coupon.minOrder) {
+            if (coupon.type === "percent") {
+              serverDiscount = Math.round((subtotalTTC * coupon.value) / 100);
+              if (coupon.maxDiscount && serverDiscount > coupon.maxDiscount) {
+                serverDiscount = coupon.maxDiscount;
+              }
+            } else {
+              serverDiscount = Math.min(coupon.value, subtotalTTC);
+            }
+          }
+        }
+      }
+    }
+
+    const totals = calcCartTotals(cartLines, deliveryFee, serverDiscount);
     const orderNum = orderNumber();
     const mrc = generateMRC(orderNum, totals.totalTTC);
+
+    // Increment coupon usage if applicable
+    if (couponCode && serverDiscount > 0) {
+      await db.coupon.updateMany({
+        where: { code: couponCode },
+        data: { usesCount: { increment: 1 } },
+      }).catch(() => {});
+    }
 
     // Upsert customer
     let customer = await db.customer.findUnique({ where: { phone: customerPhone } });

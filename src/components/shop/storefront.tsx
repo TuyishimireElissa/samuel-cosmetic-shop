@@ -16,6 +16,7 @@ import { WishlistCompareBar } from "./wishlist-compare-bar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
+import { toast } from "sonner";
 import {
   Search,
   Filter,
@@ -643,19 +644,28 @@ export function Storefront() {
               e.preventDefault();
               const form = e.currentTarget;
               const data = new FormData(form);
-              await fetch("/api/contact", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  name: data.get("name"),
-                  phone: data.get("phone"),
-                  email: data.get("email"),
-                  subject: data.get("subject") || "General",
-                  message: data.get("message"),
-                }),
-              });
-              form.reset();
-              alert("Message sent! We will reply on WhatsApp.");
+              try {
+                const res = await fetch("/api/contact", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: data.get("name"),
+                    phone: data.get("phone"),
+                    email: data.get("email"),
+                    subject: data.get("subject") || "General",
+                    message: data.get("message"),
+                  }),
+                });
+                const d = await res.json();
+                if (d.ok) {
+                  form.reset();
+                  toast.success(lang === "rw" ? "Ubutumwa bwoherejwe! Tuzagusubize kuri WhatsApp." : lang === "fr" ? "Message envoyé ! Nous répondrons sur WhatsApp." : "Message sent! We will reply on WhatsApp.");
+                } else {
+                  toast.error(d.error || "Failed to send message");
+                }
+              } catch {
+                toast.error(lang === "rw" ? "Ikibazo cy'urubuga. Ongera ugerageze." : lang === "fr" ? "Erreur réseau. Réessayez." : "Network error. Try again.");
+              }
             }}
             className="bg-white rounded-2xl sm:rounded-3xl border border-pink-100 p-4 sm:p-6 space-y-3"
           >

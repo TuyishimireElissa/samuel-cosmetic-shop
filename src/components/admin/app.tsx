@@ -525,7 +525,7 @@ function ProductsView() {
   );
 
   async function handleDelete(p: any) {
-    if (!confirm(`Delete ${p.nameEn}?`)) return;
+    if (!confirm(`${t("admin.deleteConfirm", lang)} ${p.nameEn}?`)) return;
     const res = await adminFetch(`/api/admin/products/${p.id}`, { method: "DELETE" });
     if (res.ok) {
       toast.success("Product deleted");
@@ -1256,6 +1256,7 @@ function VatView() {
 
 // Product Image Manager
 function ProductImageManager({ productId }: { productId: string }) {
+  const { lang } = useUI();
   const [images, setImages] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -1284,7 +1285,7 @@ function ProductImageManager({ productId }: { productId: string }) {
     setUploading(false);
   }
   async function deleteImage(imgId: string) {
-    if (!confirm("Delete?")) return;
+    if (!confirm(t("admin.deleteConfirm", lang))) return;
     const r = await adminFetch(`/api/admin/products/${productId}/images?imgId=${imgId}`, { method: "DELETE" });
     if (r.ok) setImages(prev => prev.filter(i => i.id !== imgId));
   }

@@ -137,7 +137,7 @@ export function CouponsView() {
   const [edit, setEdit] = useState<any | null>(null);
   useEffect(() => { adminFetch("/api/admin/coupons").then(r => r.json()).then(d => d.ok && setCoupons(d.coupons)).finally(() => setLoading(false)); }, []);
   async function toggleActive(c: any) { const r = await safeFetch(`/api/admin/coupons/${c.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isActive: !c.isActive }) }); if (r.ok) setCoupons(prev => prev.map(x => x.id === c.id ? { ...x, isActive: !x.isActive } : x)); }
-  async function del(id: string) { if (!confirm("Delete?")) return; const r = await safeFetch(`/api/admin/coupons/${id}`, { method: "DELETE" }); if (r.ok) setCoupons(prev => prev.filter(x => x.id !== id)); }
+  async function del(id: string) { if (!confirm(t("admin.deleteConfirm", lang))) return; const r = await safeFetch(`/api/admin/coupons/${id}`, { method: "DELETE" }); if (r.ok) setCoupons(prev => prev.filter(x => x.id !== id)); }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3"><h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.coupons", lang)}</h1><Button onClick={() => setEdit({})} className="bg-pink-600 hover:bg-pink-700"><Plus size={16} className="mr-1" /> {t("admin.new", lang)}</Button></div>
@@ -163,7 +163,7 @@ export function BundlesView() {
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState<any | null>(null);
   useEffect(() => { adminFetch("/api/admin/bundles").then(r => r.json()).then(d => d.ok && setBundles(d.bundles)).finally(() => setLoading(false)); }, []);
-  async function del(id: string) { if (!confirm("Delete?")) return; const r = await safeFetch(`/api/admin/bundles/${id}`, { method: "DELETE" }); if (r.ok) setBundles(prev => prev.filter(x => x.id !== id)); }
+  async function del(id: string) { if (!confirm(t("admin.deleteConfirm", lang))) return; const r = await safeFetch(`/api/admin/bundles/${id}`, { method: "DELETE" }); if (r.ok) setBundles(prev => prev.filter(x => x.id !== id)); }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3"><h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.bundles", lang)}</h1><Button onClick={() => setEdit({})} className="bg-pink-600 hover:bg-pink-700"><Plus size={16} className="mr-1" /> {t("admin.new", lang)}</Button></div>
@@ -191,7 +191,7 @@ export function FlashSalesView() {
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState<any | null>(null);
   useEffect(() => { adminFetch("/api/admin/flash-sales").then(r => r.json()).then(d => d.ok && setSales(d.sales)).finally(() => setLoading(false)); }, []);
-  async function del(id: string) { if (!confirm("Delete?")) return; const r = await safeFetch(`/api/admin/flash-sales/${id}`, { method: "DELETE" }); if (r.ok) setSales(prev => prev.filter(x => x.id !== id)); }
+  async function del(id: string) { if (!confirm(t("admin.deleteConfirm", lang))) return; const r = await safeFetch(`/api/admin/flash-sales/${id}`, { method: "DELETE" }); if (r.ok) setSales(prev => prev.filter(x => x.id !== id)); }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3"><h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.flashSales", lang)}</h1><Button onClick={() => setEdit({})} className="bg-pink-600 hover:bg-pink-700"><Plus size={16} className="mr-1" /> {t("admin.new", lang)}</Button></div>
@@ -310,7 +310,7 @@ export function StaffView() {
   const [edit, setEdit] = useState<any | null>(null);
   useEffect(() => { adminFetch("/api/admin/staff").then(r => r.json()).then(d => d.ok && setStaff(d.staff)).finally(() => setLoading(false)); }, []);
   async function toggle(s: any) { const r = await safeFetch(`/api/admin/staff/${s.id}/toggle`, { method: "PATCH" }); if (r.ok) setStaff(prev => prev.map(x => x.id === s.id ? { ...x, isActive: !x.isActive } : x)); }
-  async function del(id: string) { if (!confirm("Delete?")) return; const r = await safeFetch(`/api/admin/staff/${id}`, { method: "DELETE" }); if (r.ok) setStaff(prev => prev.filter(x => x.id !== id)); }
+  async function del(id: string) { if (!confirm(t("admin.deleteConfirm", lang))) return; const r = await safeFetch(`/api/admin/staff/${id}`, { method: "DELETE" }); if (r.ok) setStaff(prev => prev.filter(x => x.id !== id)); }
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3"><h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.staff", lang)}</h1><Button onClick={() => setEdit({})} className="bg-pink-600 hover:bg-pink-700"><Plus size={16} className="mr-1" /> {t("admin.add", lang)}</Button></div>

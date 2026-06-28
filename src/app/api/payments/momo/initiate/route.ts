@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         }
       } catch {}
     }, 3000);
-    return NextResponse.json({ ok: true, transactionId: txn.id, providerRef: txn.providerRef, status: "pending" });
+    return NextResponse.json({ ok: true, transactionId: txn.id, providerRef: txn.providerRef, status: "pending", provider: "simulation", live: false });
   } catch (e) {
     return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
   }

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       where: { isActive: true },
       orderBy: { createdAt: "desc" },
       include: { category: true, images: { orderBy: { sortOrder: "asc" } } },
-    }), 60);
+    }), 300);
 
     let products = allProducts;
 

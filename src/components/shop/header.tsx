@@ -30,7 +30,7 @@ export function ShopHeader({
   onSearch: (q: string) => void;
   onNav: (target: string) => void;
 }) {
-  const { lang, setLang, currency, setCurrency, setCartOpen, enterAdmin } = useUI();
+  const { lang, setLang, currency, setCurrency, setCartOpen, enterAdmin, wholesaleUser, wholesaleLogout } = useUI();
   const count = useCart((s) => s.items.reduce((a, i) => a + i.qty, 0));
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [logoEmoji, setLogoEmoji] = useState<string>("✿");
@@ -174,6 +174,15 @@ export function ShopHeader({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Wholesale badge */}
+          {wholesaleUser && wholesaleUser.status === "approved" && (
+            <div className="hidden sm:flex items-center gap-1 px-2 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold">
+              <span className="w-2 h-2 rounded-full bg-purple-500" />
+              {wholesaleUser.businessName}
+              <button onClick={wholesaleLogout} className="ml-1 text-purple-400 hover:text-purple-700">×</button>
+            </div>
+          )}
 
           {/* Cart */}
           <Button

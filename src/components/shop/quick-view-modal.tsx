@@ -20,7 +20,7 @@ import type { Product } from "@prisma/client";
 interface Review { id: string; customerName: string; rating: number; title: string; body: string; adminReply: string; helpfulCount: number; createdAt: string; }
 
 export function QuickViewModal({ product, onClose }: { product: (Product & { category?: any; images?: any[] }) | null; onClose: () => void; }) {
-  const { lang, currency } = useUI();
+  const { lang, currency, wholesaleUser } = useUI();
   const cartAdd = useCart((s) => s.add);
   const wishlistToggle = useWishlist((s) => s.toggle);
   const wishlistHas = useWishlist((s) => s.has);
@@ -44,9 +44,11 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
   const images = product.images || [];
   const inWishlist = wishlistHas(product.id);
   const inCompare = compareIds.includes(product.id);
+  const isWholesale = !!(wholesaleUser && wholesaleUser.status === "approved");
+  const displayPrice = isWholesale && (product as any).wholesalePrice > 0 ? (product as any).wholesalePrice : product.sellingPrice;
 
   function handleAddToCart() {
-    cartAdd({ id: product!.id, priceTTC: product!.sellingPrice, name, emoji: product!.emoji });
+    cartAdd({ id: product!.id, priceTTC: displayPrice, name, emoji: product!.emoji });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -79,7 +81,7 @@ export function QuickViewModal({ product, onClose }: { product: (Product & { cat
               <h2 className="text-2xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{name}</h2>
               <div className="flex items-center gap-2 mt-2"><StarRating value={product.ratingAvg} readOnly size={16} lang={lang} /><span className="text-sm text-muted-foreground">{product.ratingAvg > 0 ? `${product.ratingAvg.toFixed(1)} (${product.ratingCount})` : t("product.noReviews", lang)}</span></div>
             </div>
-            <div><div className="text-3xl font-bold text-pink-700">{formatPrice(product.sellingPrice, currency)}</div><div className="text-xs text-muted-foreground mt-1">HT: {formatPrice(priceHT(product.sellingPrice), currency)} · VAT 18%: {formatPrice(vatAmount(product.sellingPrice), currency)}</div></div>
+            <div><div className="text-3xl font-bold text-pink-700">{formatPrice(displayPrice, currency)}</div><div className="text-xs text-muted-foreground mt-1">{isWholesale ? "Wholesale price · TTC" : "HT: " + formatPrice(priceHT(product.sellingPrice), currency) + " · VAT 18%: " + formatPrice(vatAmount(product.sellingPrice), currency)}</div>{isWholesale && <div className="text-xs text-green-700 mt-1">Retail: <span className="line-through">{formatPrice(product.sellingPrice, currency)}</span></div>}</div>
             <p className="text-sm text-foreground/80 leading-relaxed">{desc}</p>
             {product.stockQty <= 0 ? (
               <Badge variant="destructive">{t("product.outOfStock", lang)}</Badge>

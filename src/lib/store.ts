@@ -144,6 +144,8 @@ interface UIState {
   adminName: string | null;
   adminType: "admin" | "staff" | null;
   adminPermissions: string[];
+  wholesaleToken: string | null;
+  wholesaleUser: any | null;
   setLang: (l: Lang) => void;
   setCurrency: (c: Currency) => void;
   setCartOpen: (v: boolean) => void;
@@ -151,6 +153,8 @@ interface UIState {
   exitAdmin: () => void;
   adminLogin: (token: string, name: string, type: "admin" | "staff", permissions: string[]) => void;
   adminLogout: () => void;
+  wholesaleLogin: (token: string, user: any) => void;
+  wholesaleLogout: () => void;
 }
 
 export const useUI = create<UIState>()(
@@ -164,6 +168,8 @@ export const useUI = create<UIState>()(
       adminName: null,
       adminType: null,
       adminPermissions: [],
+      wholesaleToken: null,
+      wholesaleUser: null,
       setLang: (l) => {
         if (typeof window !== "undefined") localStorage.setItem("sc_language", l);
         set({ lang: l });
@@ -174,6 +180,8 @@ export const useUI = create<UIState>()(
       exitAdmin: () => set({ adminView: "storefront" }),
       adminLogin: (token, name, type, permissions) => set({ adminView: "admin-app", adminToken: token, adminName: name, adminType: type, adminPermissions: permissions }),
       adminLogout: () => set({ adminView: "storefront", adminToken: null, adminName: null, adminType: null, adminPermissions: [] }),
+      wholesaleLogin: (token, user) => set({ wholesaleToken: token, wholesaleUser: user }),
+      wholesaleLogout: () => set({ wholesaleToken: null, wholesaleUser: null }),
     }),
     {
       name: "sc_ui",
@@ -186,6 +194,8 @@ export const useUI = create<UIState>()(
         adminType: state.adminType,
         adminPermissions: state.adminPermissions,
         adminView: state.adminView,
+        wholesaleToken: state.wholesaleToken,
+        wholesaleUser: state.wholesaleUser,
       }),
       onRehydrateStorage: () => (state) => {
         // Re-detect language if not set

@@ -152,7 +152,25 @@ function CouponForm({ coupon, onClose, onSaved }: any) {
   const isEdit = !!coupon.id;
   const [form, setForm] = useState({ code: coupon.code || "", description: coupon.description || "", type: coupon.type || "percent", value: coupon.value || 5, minOrder: coupon.minOrder || 0, maxUses: coupon.maxUses || 0, isPublic: coupon.isPublic ?? true, isActive: coupon.isActive ?? true, expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : "" });
   const [saving, setSaving] = useState(false);
-  async function save() { setSaving(true); const url = isEdit ? `/api/admin/coupons/${coupon.id}` : "/api/admin/coupons"; const method = isEdit ? "PUT" : "POST"; const data = { ...form, code: form.code.toUpperCase() }; if (form.expiresAt) data.expiresAt = new Date(form.expiresAt).toISOString(); else delete data.expiresAt; const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); setSaving(false); if (r.ok) { toast.success("Saved"); onSaved(); } else toast.error(r.error); }
+  async function save() {
+    // ADM-027: Validate coupon fields
+    if (!form.code.trim()) { toast.error(lang === "rw" ? "Andika code ya coupon" : lang === "fr" ? "Entrez le code" : "Coupon code is required"); return; }
+    if (form.type === "percent" && (form.value <= 0 || form.value > 100)) { toast.error(lang === "rw" ? "Ku ijana rigomba kuba hagati ya 0 na 100" : lang === "fr" ? "Le pourcentage doit être entre 0 et 100" : "Percent value must be between 0 and 100"); return; }
+    if (form.type === "fixed" && form.value <= 0) { toast.error(lang === "rw" ? "Igiciro kigomba kuba kinini cy'a 0" : lang === "fr" ? "La valeur doit être supérieure à 0" : "Fixed value must be greater than 0"); return; }
+    setSaving(true);
+    try {
+      const url = isEdit ? `/api/admin/coupons/${coupon.id}` : "/api/admin/coupons";
+      const method = isEdit ? "PUT" : "POST";
+      const data: any = { ...form, code: form.code.toUpperCase() };
+      if (form.expiresAt) data.expiresAt = new Date(form.expiresAt).toISOString(); else delete data.expiresAt;
+      const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (r.ok) { toast.success(lang === "rw" ? "Byabitswe" : lang === "fr" ? "Enregistré" : "Saved"); onSaved(); } else toast.error(r.error);
+    } catch (e: any) {
+      toast.error(e?.message || "Network error");
+    } finally {
+      setSaving(false);
+    }
+  }
   return <Dialog open onOpenChange={onClose}><DialogContent><DialogHeader><DialogTitle>{isEdit ? t("admin.edit", lang) : t("admin.new", lang)} {t("admin.coupons", lang)}</DialogTitle></DialogHeader><div className="grid grid-cols-2 gap-3"><div><Label>{t("admin.coupon.code", lang)}</Label><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} className="bg-pink-50/50 font-mono" /></div><div><Label>{t("admin.coupon.type", lang)}</Label><Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}><SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="percent">{t("admin.coupon.percent", lang)}</SelectItem><SelectItem value="fixed">{t("admin.coupon.fixed", lang)}</SelectItem></SelectContent></Select></div><div><Label>{t("admin.coupon.value", lang)}</Label><Input type="number" value={form.value} onChange={(e) => setForm({ ...form, value: Number(e.target.value) })} className="bg-pink-50/50" /></div><div><Label>{t("admin.coupon.minOrder", lang)}</Label><Input type="number" value={form.minOrder} onChange={(e) => setForm({ ...form, minOrder: Number(e.target.value) })} className="bg-pink-50/50" /></div></div><div><Label>{t("admin.coupon.description", lang)}</Label><Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="bg-pink-50/50" /></div><div className="flex items-center gap-4"><label className="flex items-center gap-2 text-sm"><Switch checked={form.isPublic} onCheckedChange={(v) => setForm({ ...form, isPublic: v })} /> {t("admin.coupon.public", lang)}</label><label className="flex items-center gap-2 text-sm"><Switch checked={form.isActive} onCheckedChange={(v) => setForm({ ...form, isActive: v })} /> {t("admin.active", lang)}</label></div><DialogFooter><Button variant="outline" onClick={onClose}>{t("admin.cancel", lang)}</Button><Button onClick={save} disabled={saving} className="bg-pink-600 hover:bg-pink-700">{saving ? t("admin.saving", lang) : t("admin.save", lang)}</Button></DialogFooter></DialogContent></Dialog>;
 }
 
@@ -208,7 +226,20 @@ function FlashSaleForm({ sale, onClose, onSaved }: any) {
   const [selected, setSelected] = useState<string[]>(sale.items?.map((i: any) => i.productId) || []);
   const [form, setForm] = useState({ titleEn: sale.titleEn || "", discountType: sale.discountType || "percent", discountValue: sale.discountValue || 15, startTime: sale.startTime ? new Date(sale.startTime).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16), endTime: sale.endTime ? new Date(sale.endTime).toISOString().slice(0, 16) : new Date(Date.now() + 86400000).toISOString().slice(0, 16) });
   useEffect(() => { adminFetch("/api/admin/products").then(r => r.json()).then(d => d.ok && setProducts(d.products)); }, []);
-  async function save() { const url = isEdit ? `/api/admin/flash-sales/${sale.id}` : "/api/admin/flash-sales"; const method = isEdit ? "PUT" : "POST"; const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, startTime: new Date(form.startTime).toISOString(), endTime: new Date(form.endTime).toISOString(), productIds: selected }) }); if (r.ok) { toast.success("Saved"); onSaved(); } else toast.error(r.error); }
+  async function save() {
+    // ADM-030/031: Validate flash sale fields
+    if (!form.titleEn.trim()) { toast.error(lang === "rw" ? "Andika umutwe wa flash sale" : lang === "fr" ? "Entrez le titre" : "Title is required"); return; }
+    if (form.discountType === "percent" && (form.discountValue <= 0 || form.discountValue > 100)) { toast.error(lang === "rw" ? "Ku ijana rigomba kuba hagati ya 0 na 100" : lang === "fr" ? "Le pourcentage doit être entre 0 et 100" : "Percent must be between 0 and 100"); return; }
+    if (form.discountType === "fixed" && form.discountValue <= 0) { toast.error(lang === "rw" ? "Igiciro kigomba kuba kinini cy'a 0" : lang === "fr" ? "La valeur doit être supérieure à 0" : "Fixed value must be greater than 0"); return; }
+    const start = new Date(form.startTime);
+    const end = new Date(form.endTime);
+    if (end <= start) { toast.error(lang === "rw" ? "Igihe cyo kurangira kigomba kuba kinini cy'icyo gutangira" : lang === "fr" ? "La date de fin doit être après la date de début" : "End time must be after start time"); return; }
+    if (selected.length === 0) { toast.error(lang === "rw" ? "Hitamo nibura igicuruzwa kimwe" : lang === "fr" ? "Sélectionnez au moins un produit" : "Select at least one product"); return; }
+    const url = isEdit ? `/api/admin/flash-sales/${sale.id}` : "/api/admin/flash-sales";
+    const method = isEdit ? "PUT" : "POST";
+    const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, startTime: new Date(form.startTime).toISOString(), endTime: new Date(form.endTime).toISOString(), productIds: selected }) });
+    if (r.ok) { toast.success(lang === "rw" ? "Byabitswe" : lang === "fr" ? "Enregistré" : "Saved"); onSaved(); } else toast.error(r.error);
+  }
   return <Dialog open onOpenChange={onClose}><DialogContent aria-describedby={undefined} className="max-w-2xl max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>{isEdit ? t("admin.edit", lang) : t("admin.new", lang)} {t("admin.flashSales", lang)}</DialogTitle></DialogHeader><div className="grid grid-cols-2 gap-3"><div><Label>{t("admin.flash.title", lang)}</Label><Input value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.coupon.type", lang)}</Label><Select value={form.discountType} onValueChange={(v) => setForm({ ...form, discountType: v })}><SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="percent">{t("admin.coupon.percent", lang)}</SelectItem><SelectItem value="fixed">{t("admin.coupon.fixed", lang)}</SelectItem></SelectContent></Select></div><div><Label>{t("admin.coupon.value", lang)}</Label><Input type="number" value={form.discountValue} onChange={(e) => setForm({ ...form, discountValue: Number(e.target.value) })} className="bg-pink-50/50" /></div><div><Label>{t("admin.flash.start", lang)}</Label><Input type="datetime-local" value={form.startTime} onChange={(e) => setForm({ ...form, startTime: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.flash.end", lang)}</Label><Input type="datetime-local" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} className="bg-pink-50/50" /></div></div><div><Label>{t("admin.flash.productsAll", lang)}</Label><div className="grid grid-cols-2 gap-1 max-h-40 overflow-y-auto border border-pink-100 rounded p-2">{products.map(p => <label key={p.id} className="flex items-center gap-2 text-xs cursor-pointer p-1 hover:bg-pink-50 rounded"><input type="checkbox" checked={selected.includes(p.id)} onChange={(e) => { if (e.target.checked) setSelected([...selected, p.id]); else setSelected(selected.filter(x => x !== p.id)); }} /><span className="truncate">{p.nameEn}</span></label>)}</div></div><DialogFooter><Button variant="outline" onClick={onClose}>{t("admin.cancel", lang)}</Button><Button onClick={save} className="bg-pink-600 hover:bg-pink-700">{t("admin.save", lang)}</Button></DialogFooter></DialogContent></Dialog>;
 }
 
@@ -330,7 +361,27 @@ function StaffForm({ staff, onClose, onSaved }: any) {
   const [form, setForm] = useState({ name: staff.name || "", username: staff.username || "", password: "", role: staff.role || "viewer" });
   const [perms, setPerms] = useState<string[]>(staff.permissions ? (typeof staff.permissions === "string" ? JSON.parse(staff.permissions) : staff.permissions) : []);
   const [saving, setSaving] = useState(false);
-  async function save() { setSaving(true); const url = isEdit ? `/api/admin/staff/${staff.id}` : "/api/admin/staff"; const method = isEdit ? "PUT" : "POST"; const body: any = { ...form, permissions: perms }; if (!form.password) delete body.password; const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); setSaving(false); if (r.ok) { toast.success("Saved"); onSaved(); } else toast.error(r.error); }
+  async function save() {
+    // ADM-023/024/025: Validate staff fields
+    if (!form.name.trim()) { toast.error(lang === "rw" ? "Andika amazina" : lang === "fr" ? "Entrez le nom" : "Name is required"); return; }
+    if (!form.username.trim()) { toast.error(lang === "rw" ? "Andika izina ryo gukoresha" : lang === "fr" ? "Entrez le nom d'utilisateur" : "Username is required"); return; }
+    if (form.username.length < 3) { toast.error(lang === "rw" ? "Izina ryo gukoresha rigomba kuba rifite inyuguti 3 cyangwa zinshi" : lang === "fr" ? "Le nom d'utilisateur doit avoir au moins 3 caractères" : "Username must be at least 3 characters"); return; }
+    if (!isEdit && form.password.length < 6) { toast.error(lang === "rw" ? "Ijambo ry'ibanga rigomba kuba rifite inyuguti 6 cyangwa zinshi" : lang === "fr" ? "Le mot de passe doit avoir au moins 6 caractères" : "Password must be at least 6 characters"); return; }
+    if (form.password && form.password.length < 6) { toast.error(lang === "rw" ? "Ijambo ry'ibanga rishya rigomba kuba rifite inyuguti 6 cyangwa zinshi" : lang === "fr" ? "Le nouveau mot de passe doit avoir au moins 6 caractères" : "New password must be at least 6 characters"); return; }
+    setSaving(true);
+    try {
+      const url = isEdit ? `/api/admin/staff/${staff.id}` : "/api/admin/staff";
+      const method = isEdit ? "PUT" : "POST";
+      const body: any = { ...form, permissions: perms };
+      if (!form.password) delete body.password;
+      const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (r.ok) { toast.success(lang === "rw" ? "Byabitswe" : lang === "fr" ? "Enregistré" : "Saved"); onSaved(); } else toast.error(r.error);
+    } catch (e: any) {
+      toast.error(e?.message || "Network error");
+    } finally {
+      setSaving(false);
+    }
+  }
   return <Dialog open onOpenChange={onClose}><DialogContent aria-describedby={undefined} className="max-w-lg max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>{isEdit ? t("admin.edit", lang) : t("admin.new", lang)} {t("admin.staff", lang)}</DialogTitle></DialogHeader><div className="space-y-3"><div><Label>{t("admin.staff.name", lang)}</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.staff.username", lang)}</Label><Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="bg-pink-50/50 font-mono" /></div><div><Label>{isEdit ? t("admin.staff.newPassword", lang) : t("admin.staff.password", lang)}</Label><Input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="bg-pink-50/50" /></div><div><Label>{t("admin.staff.role", lang)}</Label><Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}><SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="sales">{t("admin.staff.sales", lang)}</SelectItem><SelectItem value="inventory">{t("admin.staff.inventory", lang)}</SelectItem><SelectItem value="viewer">{t("admin.staff.viewer", lang)}</SelectItem><SelectItem value="custom">{t("admin.staff.custom", lang)}</SelectItem></SelectContent></Select></div><div><Label>{t("admin.staff.permissions", lang)} ({perms.length})</Label><div className="grid grid-cols-2 gap-1 mt-1 max-h-48 overflow-y-auto border border-pink-100 rounded p-2">{ALL_PERMS.map(p => <label key={p} className="flex items-center gap-1 text-xs cursor-pointer p-1 hover:bg-pink-50 rounded"><input type="checkbox" checked={perms.includes(p)} onChange={() => setPerms(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p])} />{p}</label>)}</div></div></div><DialogFooter><Button variant="outline" onClick={onClose}>{t("admin.cancel", lang)}</Button><Button onClick={save} disabled={saving} className="bg-pink-600 hover:bg-pink-700">{saving ? t("admin.saving", lang) : t("admin.save", lang)}</Button></DialogFooter></DialogContent></Dialog>;
 }
 

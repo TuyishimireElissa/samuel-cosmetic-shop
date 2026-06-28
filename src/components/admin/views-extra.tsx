@@ -388,6 +388,117 @@ export function BrandingView() {
   );
 }
 
+// ═══ CATEGORIES ═══
+export function CategoriesView() {
+  const { lang } = useUI();
+  const [cats, setCats] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [edit, setEdit] = useState<any | null>(null);
+
+  const load = useCallback(() => {
+    adminFetch("/api/admin/categories").then(r => r.json()).then(d => { if (d.ok) setCats(d.categories); }).finally(() => setLoading(false));
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  async function del(id: string) {
+    if (!confirm(lang === "rw" ? "Siba iyi nzego?" : lang === "fr" ? "Supprimer cette catégorie?" : "Delete this category?")) return;
+    const r = await safeFetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+    if (r.ok) { toast.success(lang === "rw" ? "Byasibwe" : "Deleted"); load(); }
+    else toast.error((await r.json()).error || "Failed");
+  }
+
+  if (loading) return <div className="text-center py-10">{t("admin.loading", lang)}</div>;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>{t("admin.categoriesTab", lang)}</h1>
+        <Button onClick={() => setEdit({})} className="bg-pink-600 hover:bg-pink-700"><Plus size={16} className="mr-1" /> {t("admin.new", lang)}</Button>
+      </div>
+      <div className="bg-white rounded-2xl border border-pink-100 overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-pink-50/50 text-pink-800">
+            <tr>
+              <th className="text-left p-3">{t("admin.category.id", lang)}</th>
+              <th className="text-left p-3">{t("admin.category.nameEn", lang)}</th>
+              <th className="text-left p-3 hidden sm:table-cell">{t("admin.category.nameRw", lang)}</th>
+              <th className="text-center p-3">{t("admin.category.products", lang)}</th>
+              <th className="text-center p-3">{t("admin.category.active", lang)}</th>
+              <th className="text-right p-3">{t("admin.edit", lang)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cats.map((c) => (
+              <tr key={c.id} className="border-t border-pink-50 hover:bg-pink-50/30">
+                <td className="p-3 font-mono text-xs">{c.id}</td>
+                <td className="p-3 font-medium">{c.nameEn}</td>
+                <td className="p-3 hidden sm:table-cell text-xs">{c.nameRw}</td>
+                <td className="p-3 text-center">{c._count?.products || 0}</td>
+                <td className="p-3 text-center">
+                  <Badge className={c.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}>{c.isActive ? t("admin.active", lang) : t("admin.off", lang)}</Badge>
+                </td>
+                <td className="p-3 text-right">
+                  <div className="flex gap-1 justify-end">
+                    <Button size="sm" variant="outline" onClick={() => setEdit(c)} className="border-pink-200 text-pink-700 h-8"><Edit size={12} className="mr-1" /> {t("admin.edit", lang)}</Button>
+                    <Button size="sm" variant="ghost" onClick={() => del(c.id)} className="text-red-600 h-8"><Trash2 size={12} /></Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {edit && <CategoryForm category={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); load(); }} />}
+    </div>
+  );
+}
+
+function CategoryForm({ category, onClose, onSaved }: any) {
+  const { lang } = useUI();
+  const isEdit = !!category.id;
+  const [form, setForm] = useState({
+    id: category.id || "",
+    nameEn: category.nameEn || "",
+    nameFr: category.nameFr || "",
+    nameRw: category.nameRw || "",
+    slug: category.slug || "",
+    isActive: category.isActive ?? true,
+    sortOrder: category.sortOrder || 0,
+  });
+  const [saving, setSaving] = useState(false);
+  async function save() {
+    setSaving(true);
+    if (!form.id || !form.nameEn || !form.slug) { toast.error("ID, Name (EN), and Slug required"); setSaving(false); return; }
+    const url = isEdit ? `/api/admin/categories/${category.id}` : "/api/admin/categories";
+    const method = isEdit ? "PUT" : "POST";
+    const r = await safeFetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    setSaving(false);
+    if (r.ok) { toast.success(t("admin.saved", lang)); onSaved(); } else toast.error((await r.json()).error || "Failed");
+  }
+  return (
+    <Dialog open onOpenChange={onClose}><DialogContent className="max-w-lg">
+      <DialogHeader><DialogTitle>{isEdit ? t("admin.edit", lang) : t("admin.new", lang)} {t("admin.categoriesTab", lang)}</DialogTitle></DialogHeader>
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label>{t("admin.category.id", lang)}</Label><Input value={form.id} onChange={(e) => setForm({ ...form, id: e.target.value })} disabled={isEdit} className="bg-pink-50/50 font-mono" /></div>
+          <div><Label>{t("admin.category.slug", lang)}</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="bg-pink-50/50 font-mono" /></div>
+        </div>
+        <div><Label>{t("admin.category.nameEn", lang)}</Label><Input value={form.nameEn} onChange={(e) => setForm({ ...form, nameEn: e.target.value })} className="bg-pink-50/50" /></div>
+        <div><Label>{t("admin.category.nameFr", lang)}</Label><Input value={form.nameFr} onChange={(e) => setForm({ ...form, nameFr: e.target.value })} className="bg-pink-50/50" /></div>
+        <div><Label>{t("admin.category.nameRw", lang)}</Label><Input value={form.nameRw} onChange={(e) => setForm({ ...form, nameRw: e.target.value })} className="bg-pink-50/50" /></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label>{t("admin.category.sortOrder", lang)}</Label><Input type="number" value={form.sortOrder} onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) })} className="bg-pink-50/50" /></div>
+          <div className="flex items-end pb-2"><label className="flex items-center gap-2 text-sm"><Switch checked={form.isActive} onCheckedChange={(v) => setForm({ ...form, isActive: v })} /> {t("admin.active", lang)}</label></div>
+        </div>
+      </div>
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose}>{t("admin.cancel", lang)}</Button>
+        <Button onClick={save} disabled={saving} className="bg-pink-600 hover:bg-pink-700">{saving ? t("admin.saving", lang) : t("admin.save", lang)}</Button>
+      </DialogFooter>
+    </DialogContent></Dialog>
+  );
+}
+
 // ═══ NOTIFICATIONS ═══
 export function NotificationsView() {
   const { lang } = useUI();

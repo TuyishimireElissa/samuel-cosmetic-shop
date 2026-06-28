@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { CustomersView, ReviewsView, StockView, CouponsView, BundlesView, FlashSalesView, BookingsView, WholesaleAdminView, MessagesView, SubscribersView, TestimonialsView, StaffView, BrandingView, NotificationsView, SiteHealthView } from "./views-extra";
+import { CustomersView, ReviewsView, StockView, CouponsView, BundlesView, FlashSalesView, BookingsView, WholesaleAdminView, MessagesView, SubscribersView, TestimonialsView, StaffView, BrandingView, NotificationsView, SiteHealthView, CategoriesView } from "./views-extra";
 import {
   LayoutDashboard,
   Package,
@@ -57,7 +57,7 @@ import {
   Search,
   ExternalLink,
   Banknote,
-  Star, Tag, Gift, Zap, Calendar, Building, Mail, Megaphone, Quote, UserCog, Palette, Bell, Activity, ImageIcon,
+  Star, Tag, Gift, Zap, Calendar, Building, Mail, Megaphone, Quote, UserCog, Palette, Bell, Activity, ImageIcon, LayoutGrid,
 } from "lucide-react";
 import {
   BarChart,
@@ -75,7 +75,7 @@ import {
   Legend,
 } from "recharts";
 
-type View = "dashboard" | "products" | "orders" | "vat" | "customers" | "reviews" | "stock" | "coupons" | "bundles" | "flash" | "bookings" | "wholesale" | "messages" | "subscribers" | "testimonials" | "staff" | "branding" | "notifications" | "health";
+type View = "dashboard" | "products" | "orders" | "vat" | "customers" | "reviews" | "stock" | "coupons" | "bundles" | "flash" | "bookings" | "wholesale" | "messages" | "subscribers" | "testimonials" | "staff" | "branding" | "notifications" | "health" | "categories";
 
 export function AdminApp() {
   const { adminName, adminLogout, lang, adminType, adminPermissions } = useUI();
@@ -117,6 +117,7 @@ export function AdminApp() {
     notifications: "view_dashboard",
     vat: "view_analytics",
     health: "view_dashboard",
+    categories: "manage_products",
   };
 
   const isAdmin = adminType === "admin" || (adminPermissions || []).includes("*");
@@ -167,6 +168,7 @@ export function AdminApp() {
             { id: "notifications", label: t("admin.notifications", lang), icon: Bell },
             { id: "vat", label: t("admin.vatReport", lang), icon: FileSpreadsheet },
             { id: "health", label: t("admin.siteHealth", lang), icon: Activity },
+            { id: "categories", label: t("admin.categoriesTab", lang), icon: LayoutGrid },
           ].filter((n) => hasPermission(TAB_PERMISSIONS[n.id])).map((n) => {
             const Icon = n.icon;
             return (
@@ -263,6 +265,7 @@ export function AdminApp() {
           {view === "notifications" && <NotificationsView />}
           {view === "health" && <SiteHealthView />}
           {view === "vat" && <VatView />}
+          {view === "categories" && <CategoriesView />}
         </div>
       </main>
     </div>

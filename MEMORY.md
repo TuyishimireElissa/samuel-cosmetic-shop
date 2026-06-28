@@ -401,3 +401,34 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 6. To remove: click "Remove" then "Save" → falls back to emoji
 
 **Total bugs fixed: 47 (across 9 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 10 - Order System)
+
+### Round 10 (4 bugs - June 28):
+53. Order status dropdown in admin showed English options (Pending, Confirmed, etc.) — translated all 6 options to rw/en/fr
+54. WhatsApp notification from admin didn't include order items — now includes full item list with names, quantities, and prices
+55. Order creation always used product.sellingPrice (retail) — now uses item.priceTTC from cart (supports wholesale pricing)
+56. Orders not marked as wholesale when wholesale buyer places order — now sets isWholesale=true and wholesaleUserId in database
+
+### Order System Features (all working):
+- ✅ Order creation (storefront): validates fields, decrements stock, increments sales count
+- ✅ Order creation: creates/updates customer with loyalty points + tier upgrade
+- ✅ Order creation: generates order number, MRC code, EBM receipt number
+- ✅ Order creation: supports wholesale pricing (uses cart item priceTTC)
+- ✅ Order creation: marks orders as wholesale with wholesaleUserId
+- ✅ Admin: list orders with status filter
+- ✅ Admin: view single order with items
+- ✅ Admin: update order status (translated dropdown)
+- ✅ Admin: update payment status
+- ✅ Admin: WhatsApp notification on status change (sends template messages)
+- ✅ Admin: creates admin notification on status change
+- ✅ Admin: EBM receipt generation (RRA-compliant)
+- ✅ Admin: VAT report with monthly summary
+- ✅ Storefront: track order by phone number
+- ✅ Storefront: order confirmation with WhatsApp link
+- ✅ Cart: passes wholesale info when placing order
+- ✅ Cart: passes item prices (retail or wholesale) to order API
+
+**Total bugs fixed: 56 (across 10 rounds)**

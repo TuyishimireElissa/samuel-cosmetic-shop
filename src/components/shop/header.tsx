@@ -26,9 +26,17 @@ import { Input } from "@/components/ui/input";
 export function ShopHeader({
   onSearch,
   onNav,
+  searchValue,
 }: {
   onSearch: (q: string) => void;
   onNav: (target: string) => void;
+  /**
+   * The current search string owned by the parent (Storefront).
+   * The header keeps its own `inputVal` for snappy typing, but syncs to
+   * this prop whenever the parent changes it (e.g. when the user clicks
+   * "Clear" in the storefront search-results bar).
+   */
+  searchValue: string;
 }) {
   const { lang, setLang, currency, setCurrency, setCartOpen, enterAdmin, wholesaleUser, wholesaleLogout } = useUI();
   const count = useCart((s) => s.items.reduce((a, i) => a + i.qty, 0));
@@ -47,7 +55,7 @@ export function ShopHeader({
       .catch(() => {});
   }, []);
   const [bounce, setBounce] = useState(false);
-  const [searchVal, setSearchVal] = useState("");
+  const [inputVal, setInputVal] = useState(searchValue);
   const [mobileOpen, setMobileOpen] = useState(false);
   const prevCountRef = useRef(count);
 
@@ -56,16 +64,52 @@ export function ShopHeader({
     if (count > prevCountRef.current) {
       prevCountRef.current = count;
       const id = setTimeout(() => setBounce(false), 350);
-      // use requestAnimationFrame to defer setState to next frame
       requestAnimationFrame(() => setBounce(true));
       return () => clearTimeout(id);
     }
     prevCountRef.current = count;
   }, [count]);
 
+  // Sync input from parent (e.g. when the user clicks "Clear search"
+  // in the storefront search-results bar, the parent sets searchValue
+  // to "" and we must reflect that in the visible input).
+  useEffect(() => {
+    if (searchValue !== inputVal) {
+      setInputVal(searchValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
+
+  // Debounced live search (Bug #68 fix):
+  // The user types into the input (local state `inputVal` updates instantly
+  // for a snappy feel). 350ms after they stop typing, we propagate the value
+  // to the parent via onSearch(). The parent's useEffect on `search` then
+  // refetches /api/products?search=... This means the user no longer needs
+  // to press Enter — search happens automatically as they type.
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      // Skip the initial mount so we don't trigger an immediate duplicate
+      // fetch (the parent's own mount useEffect already loads products).
+      firstRender.current = false;
+      return;
+    }
+    const t = setTimeout(() => {
+      onSearch(inputVal);
+    }, 350);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputVal]);
+
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
-    onSearch(searchVal);
+    // Still honor the Enter key: propagate immediately (skip debounce).
+    onSearch(inputVal);
+  }
+
+  function clearSearch() {
+    setInputVal("");
+    onSearch("");
   }
 
   return (
@@ -100,19 +144,30 @@ export function ShopHeader({
           className="hidden md:flex flex-1 max-w-xl mx-2 relative"
         >
           <Input
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
             placeholder={t("search.placeholder", lang)}
             className="pr-10 h-11 bg-pink-50/50 border-pink-100 focus-visible:ring-pink-400"
             aria-label="Search products"
           />
-          <button
-            type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-pink-500 hover:text-pink-700"
-            aria-label="Search"
-          >
-            <Search size={18} />
-          </button>
+          {inputVal ? (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-pink-400 hover:text-pink-700 p-1 rounded-full hover:bg-pink-100"
+              aria-label={t("search.clear", lang)}
+            >
+              <X size={16} />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-pink-500 hover:text-pink-700"
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
+          )}
         </form>
 
         {/* Right side */}
@@ -241,15 +296,26 @@ export function ShopHeader({
         <div className="md:hidden px-4 pb-3 space-y-2 border-t border-pink-100 bg-white">
           <form onSubmit={submitSearch} className="relative">
             <Input
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
               placeholder={t("search.placeholder", lang)}
               className="pr-10 h-11 bg-pink-50/50 border-pink-100"
               aria-label="Search products"
             />
-            <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-pink-500">
-              <Search size={18} />
-            </button>
+            {inputVal ? (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-pink-400 hover:text-pink-700"
+                aria-label={t("search.clear", lang)}
+              >
+                <X size={18} />
+              </button>
+            ) : (
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-pink-500">
+                <Search size={18} />
+              </button>
+            )}
           </form>
           <nav className="flex flex-col gap-1">
             {[

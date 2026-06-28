@@ -183,6 +183,10 @@ Secondary Key=86c5661abc044050b02edb573ee14447
 30. StockView: 9 hardcoded English strings
 31. CustomersView table headers: 6 hardcoded English strings
 
+### Round 6 (search fix — 2 bugs) [continuation, see also Round 13 below]:
+32. **Bug #67: Storefront search race condition** — The first `useEffect` in `storefront.tsx` used `Promise.all` to fetch 7 endpoints and called `setProducts(p.products)` with ALL products when it resolved. If the user searched before this slow Promise.all resolved, the late resolution OVERWROTE the filtered search results with all products (because the closure captured the initial `search=""`/`activeCat="all"` values from mount time). FIX: Removed the `/api/products` fetch from the first useEffect entirely; the dedicated filter useEffect is now the ONLY place that calls `setProducts`. Also moved `setLoading(false)` outside the `d.ok` check so the grid never gets stuck loading.
+33. **Bug #68: Search required Enter key (no live search)** — The header search input only triggered a search on form submit (Enter key). Modern users expect live search. If the user typed but didn't press Enter, no search happened. FIX: Implemented debounced live search in `header.tsx` — the input has local `inputVal` state for snappy typing, and 350ms after the user stops typing, the value propagates to the parent's `search` state via `onSearch()`. Added a clear (X) button in the input. Added a `searchValue` prop so the input syncs when search is cleared elsewhere (e.g. from the storefront's "Clear search" button). Also added a "Search results for: X" indicator bar above the product grid with a clear button, and replaced the 🔍 emoji in the no-results state with a Lucide `Search` icon. Added 5 new i18n keys (rw/en/fr): `search.resultsFor`, `search.searchResults`, `search.clear`, `search.resultSingular`, `search.resultPlural`.
+
 ---
 
 ## 🚀 DEPLOYMENT HISTORY
@@ -492,3 +496,34 @@ All screenshots are in `/home/z/my-project/upload/`. Key ones:
 Database: 20 products, 11 orders, 8 customers, 4 staff
 
 **Total bugs fixed: 61 (across 12 rounds)**
+
+---
+
+## 🐛 BUGS FIXED (Round 13 - Storefront Search Fix)
+
+### Round 13 (2 bugs - June 28):
+
+**Bug #67: Storefront search race condition**
+- **Symptom:** User typed a search term (e.g. "zzznonexistenq") in the storefront search bar, but ALL products were still displayed — the search filter was not applied.
+- **Root cause:** The first `useEffect` in `storefront.tsx` used `Promise.all` to fetch 7 endpoints in parallel. When it resolved, it called `setProducts(p.products)` with ALL products. If the user searched BEFORE this slow Promise.all resolved, the late resolution OVERWROTE the filtered search results with the full product list. The bug was intermittent and depended on network speed — on slow connections (like Vercel cold starts), the Promise.all could take 2-3 seconds, during which any search would be silently overwritten.
+- **Additional subtlety:** Even adding a guard like `if (search === "" && activeCat === "all")` did NOT fix it, because the closure captured the initial `search=""`/`activeCat="all"` values from mount time. By the time Promise.all resolved, the user might have already typed a search, but the closure still saw the stale empty values.
+- **Fix:** Removed the `/api/products` fetch from the first `useEffect` entirely. The dedicated filter `useEffect` (which has `[activeCat, search, sort]` deps) is now the ONLY place that calls `setProducts`. Also moved `setLoading(false)` outside the `d.ok` check so the grid never gets stuck in the loading state if the API returns `{ok: false}`.
+
+**Bug #68: Search required Enter key (no live search)**
+- **Symptom:** User typed in the search bar but didn't press Enter. No search happened, and all products remained displayed. Modern users expect live search (results update as they type).
+- **Root cause:** The header search input only called `onSearch()` inside `submitSearch()`, which was wired to the form's `onSubmit` handler. This meant the search only fired when the user pressed Enter or clicked the search button.
+- **Fix:** Implemented debounced live search in `header.tsx`:
+  - The input has a local `inputVal` state for snappy typing (no lag).
+  - A `useEffect` watches `inputVal` and, 350ms after the user stops typing, propagates the value to the parent's `search` state via `onSearch()`.
+  - The parent's `useEffect` on `search` then refetches `/api/products?search=...`.
+  - The first render is skipped (via `firstRender` ref) to avoid a duplicate fetch on mount.
+  - Added a `searchValue` prop so the input syncs when search is cleared elsewhere (e.g. from the storefront's "Clear search" button).
+  - Added a clear (X) button inside the input (replaces the search icon when there's text).
+  - Enter key still works for immediate search (skips the debounce).
+- **Additional UI improvements:**
+  - Added a "Search results for: X" indicator bar above the product grid with a clear button.
+  - Replaced the 🔍 emoji in the no-results state with a Lucide `Search` icon (consistent with the rest of the UI).
+  - The shop section heading changes to "Search Results" when a search is active.
+  - Added 5 new i18n keys (rw/en/fr): `search.resultsFor`, `search.searchResults`, `search.clear`, `search.resultSingular`, `search.resultPlural`.
+
+**Total bugs fixed: 63 (across 13 rounds)**

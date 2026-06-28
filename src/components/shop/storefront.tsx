@@ -31,6 +31,7 @@ import {
   Clock,
   ArrowUp,
   Camera,
+  X,
 } from "lucide-react";
 
 type ProductWithCat = Product & { category: Category | null };
@@ -69,15 +70,20 @@ export function Storefront() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/products").then((r) => r.json()),
       fetch("/api/categories").then((r) => r.json()),
       fetch("/api/products/featured").then((r) => r.json()),
       fetch("/api/bundles").then((r) => r.json()),
       fetch("/api/testimonials").then((r) => r.json()),
       fetch("/api/flash-sales").then((r) => r.json()),
       fetch("/api/settings").then((r) => r.json()),
-    ]).then(([p, c, f, b, ts, fs, st]) => {
-      if (p.ok) setProducts(p.products);
+    ]).then(([c, f, b, ts, fs, st]) => {
+      // NOTE: do NOT fetch /api/products here.
+      // The dedicated filter useEffect below is the ONLY place that calls
+      // setProducts. Calling setProducts here too caused a race condition
+      // (Bug #67): a slow Promise.all resolution would overwrite filtered
+      // search results with the full product list, because the closure here
+      // captures the initial search="" / activeCat="all" values from mount
+      // time and could fire AFTER the user had already typed a search.
       if (c.ok) setCategories(c.categories);
       if (f?.ok) setFeatured(f.products);
       if (b?.ok) setBundles(b.bundles);
@@ -91,7 +97,6 @@ export function Storefront() {
         if (st.settings.logoUrl) setLogoUrl(st.settings.logoUrl);
         if (st.settings.logoEmoji) setLogoEmoji(st.settings.logoEmoji);
       }
-      setLoading(false);
     });
   }, []);
 
@@ -109,8 +114,10 @@ export function Storefront() {
         if (cancelled) return;
         if (d.ok) {
           setProducts(d.products);
-          setLoading(false);
         }
+        // Always hide skeletons once a response (success or error) arrives,
+        // so the grid never gets stuck in the loading state.
+        setLoading(false);
       } catch {
         if (!cancelled) setLoading(false);
       }
@@ -133,7 +140,7 @@ export function Storefront() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-pink-50/30 via-white to-purple-50/30">
-      <ShopHeader onSearch={setSearch} onNav={handleNav} />
+      <ShopHeader onSearch={setSearch} onNav={handleNav} searchValue={search} />
 
       {/* HERO */}
       <section className="relative overflow-hidden">
@@ -295,12 +302,36 @@ export function Storefront() {
 
       {/* SHOP / PRODUCT GRID */}
       <section ref={shopRef} className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
+        {/* Active search indicator with clear button */}
+        {search && (
+          <div className="mb-4 flex items-center gap-3 flex-wrap p-3 rounded-xl bg-pink-50 border border-pink-200">
+            <Search size={16} className="text-pink-600 shrink-0" />
+            <span className="text-sm text-pink-900">
+              <span className="text-muted-foreground">{t("search.resultsFor", lang)}: </span>
+              <span className="font-semibold">&ldquo;{search}&rdquo;</span>
+              <span className="ml-2 text-muted-foreground">
+                ({products.length} {products.length === 1 ? t("search.resultSingular", lang) : t("search.resultPlural", lang)})
+              </span>
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSearch("")}
+              className="ml-auto h-8 px-2 text-pink-700 hover:bg-pink-100"
+              aria-label={t("search.clear", lang)}
+            >
+              <X size={14} className="mr-1" />
+              {t("search.clear", lang)}
+            </Button>
+          </div>
+        )}
+
         <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
           <h2
             className="text-2xl sm:text-3xl font-bold text-pink-900"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
-            {t("nav.shop", lang)}
+            {search ? t("search.searchResults", lang) : t("nav.shop", lang)}
             <span className="ml-2 text-sm font-normal text-muted-foreground">
               {products.length} {t("nav.shop", lang).toLowerCase()}
             </span>
@@ -374,8 +405,15 @@ export function Storefront() {
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-6xl mb-3">🔍</div>
-            <p className="text-pink-800 font-medium">{t("search.noResults", lang)}</p>
+            <div className="mx-auto mb-3 w-16 h-16 rounded-full bg-pink-100 grid place-items-center">
+              <Search size={28} className="text-pink-400" />
+            </div>
+            <p className="text-pink-800 font-medium text-lg">{t("search.noResults", lang)}</p>
+            {search && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {t("search.resultsFor", lang)}: <span className="font-semibold">&ldquo;{search}&rdquo;</span>
+              </p>
+            )}
             <Button
               onClick={() => {
                 setSearch("");

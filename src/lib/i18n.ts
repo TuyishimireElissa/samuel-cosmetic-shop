@@ -74,6 +74,11 @@ const dict: Dict = {
     fr: "Aucun produit trouvé. Essayez: rouge à lèvres, crème, parfum",
   },
   "search.photo": { rw: "Shakisha n'Ifoto", en: "Photo Search", fr: "Recherche Photo" },
+  "search.resultsFor": { rw: "Ibisubizo byo gushakisha", en: "Search results for", fr: "Résultats de recherche pour" },
+  "search.searchResults": { rw: "Ibisubizo byo Gushakisha", en: "Search Results", fr: "Résultats de Recherche" },
+  "search.clear": { rw: "Siba Gushakisha", en: "Clear search", fr: "Effacer la recherche" },
+  "search.resultSingular": { rw: "igicuruzwa", en: "product", fr: "produit" },
+  "search.resultPlural": { rw: "ibicuruzwa", en: "products", fr: "produits" },
 
   "sections.featured": { rw: "Ibicuruzwa Byiza", en: "Featured Products", fr: "Produits en Vedette" },
   "sections.bundles": { rw: "Imibonano Yihariye", en: "Special Bundles", fr: "Ensembles Spéciaux" },

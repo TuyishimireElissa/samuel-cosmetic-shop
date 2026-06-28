@@ -44,6 +44,8 @@ export async function POST(req: NextRequest) {
       discount = 0,
       couponCode = "",
       paymentMethod = "whatsapp",
+      isWholesale = false,
+      wholesaleUserId = null,
     } = body;
 
     if (!customerName || !customerPhone || !district) {
@@ -66,7 +68,9 @@ export async function POST(req: NextRequest) {
       const product = await db.product.findUnique({ where: { id: item.id } });
       if (!product) continue;
       const qty = Math.max(1, Number(item.qty) || 1);
-      cartLines.push({ id: product.id, qty, priceTTC: product.sellingPrice });
+      // Use price from cart (supports wholesale pricing) or fall back to sellingPrice
+      const itemPrice = item.priceTTC || product.sellingPrice;
+      cartLines.push({ id: product.id, qty, priceTTC: itemPrice });
       itemsSnapshot.push({
         id: product.id,
         sku: product.sku,
@@ -75,10 +79,10 @@ export async function POST(req: NextRequest) {
         nameRw: product.nameRw,
         emoji: product.emoji,
         qty,
-        priceTTC: product.sellingPrice,
-        priceHT: priceHT(product.sellingPrice),
-        vatAmount: vatAmount(product.sellingPrice),
-        lineTTC: product.sellingPrice * qty,
+        priceTTC: itemPrice,
+        priceHT: priceHT(itemPrice),
+        vatAmount: vatAmount(itemPrice),
+        lineTTC: itemPrice * qty,
       });
       // decrement stock + increment sales count
       await db.product.update({
@@ -182,6 +186,8 @@ export async function POST(req: NextRequest) {
         mrcCode: mrc,
         receiptNumber: `EBM-${orderNum}`,
         itemsJson: JSON.stringify(itemsSnapshot),
+        isWholesale,
+        wholesaleUserId: wholesaleUserId || null,
       },
     });
 

@@ -850,7 +850,9 @@ function OrdersView() {
 
   function notifyWhatsApp(order: any) {
     const items = JSON.parse(order.itemsJson || "[]");
-    const msg = `*${order.orderNumber} Update*\n\nHello ${order.customerName}, your order status is now: *${order.status.toUpperCase()}*\n\nTotal: RWF ${order.totalTTC.toLocaleString()}\n\nThank you for shopping with Samuel Cosmetic Shop!`;
+    let itemsText = items.map((item: any, i: number) => `${i + 1}. ${item.nameEn || item.name || "Product"} x${item.qty} — RWF ${Math.round((item.priceTTC || 0) * item.qty).toLocaleString()}`).join("\n");
+    const statusLabel = order.status === "pending" ? t("admin.pending", lang) : order.status === "confirmed" ? t("admin.confirm", lang) : order.status === "shipped" ? (lang === "rw" ? "Byoherejwe" : "Shipped") : order.status === "delivered" ? (lang === "rw" ? "Byageze" : "Delivered") : order.status;
+    const msg = `*${"Samuel Cosmetic Shop"} - ${order.orderNumber}*\n\nMuraho ${order.customerName}!\n\nOrder status: *${statusLabel.toUpperCase()}*\n\n*Items:*\n${itemsText}\n\n*Total: RWF ${order.totalTTC.toLocaleString()}*\n\nMurakoze!`;
     window.open(shopWhatsappUrl(msg), "_blank");
   }
 
@@ -865,7 +867,7 @@ function OrdersView() {
           <h1 className="text-2xl sm:text-3xl font-bold text-pink-900" style={{ fontFamily: "var(--font-playfair)" }}>
             {t("admin.orders", lang)}
           </h1>
-          <p className="text-sm text-muted-foreground">{orders.length} orders</p>
+          <p className="text-sm text-muted-foreground">{orders.length} {t("admin.orders", lang).toLowerCase()}</p>
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-40 bg-white border-pink-100">
@@ -907,7 +909,7 @@ function OrdersView() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-mono font-bold text-pink-700">{o.orderNumber}</span>
                     <Badge className={`text-[10px] ${statusColors[o.status] || "bg-gray-100"}`}>
-                      {o.status}
+                      {o.status === "pending" ? t("admin.pending", lang) : o.status === "confirmed" ? t("admin.confirm", lang) : o.status === "processing" ? (lang === "rw" ? "Mu gukora" : lang === "fr" ? "En cours" : "Processing") : o.status === "shipped" ? (lang === "rw" ? "Byoherejwe" : lang === "fr" ? "Expédié" : "Shipped") : o.status === "delivered" ? (lang === "rw" ? "Byageze" : lang === "fr" ? "Livré" : "Delivered") : o.status === "cancelled" ? t("admin.cancel", lang) : o.status}
                     </Badge>
                     <Badge className="text-[10px] bg-pink-100 text-pink-700 capitalize">{o.paymentMethod}</Badge>
                   </div>
@@ -932,12 +934,12 @@ function OrdersView() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="processing">Processing</SelectItem>
-                      <SelectItem value="shipped">Shipped</SelectItem>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                      <SelectItem value="pending">{t("admin.pending", lang)}</SelectItem>
+                      <SelectItem value="confirmed">{t("admin.confirm", lang)}</SelectItem>
+                      <SelectItem value="processing">{lang === "rw" ? "Mu gukora" : lang === "fr" ? "En cours" : "Processing"}</SelectItem>
+                      <SelectItem value="shipped">{lang === "rw" ? "Byoherejwe" : lang === "fr" ? "Expédié" : "Shipped"}</SelectItem>
+                      <SelectItem value="delivered">{lang === "rw" ? "Byageze" : lang === "fr" ? "Livré" : "Delivered"}</SelectItem>
+                      <SelectItem value="cancelled">{t("admin.cancel", lang)}</SelectItem>
                     </SelectContent>
                   </Select>
                   <div className="flex gap-1">

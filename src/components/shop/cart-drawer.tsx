@@ -138,11 +138,13 @@ export function CartDrawer() {
           district: zone.district,
           address,
           notes,
-          items: items.map((i) => ({ id: i.id, qty: i.qty })),
+          items: items.map((i) => ({ id: i.id, qty: i.qty, priceTTC: i.priceTTC })),
           deliveryFee: zone.fee,
           discount: couponDiscount,
           couponCode,
           paymentMethod,
+          isWholesale: !!(wholesaleUser && wholesaleUser.status === "approved"),
+          wholesaleUserId: wholesaleUser?.id || null,
         }),
       });
       const data = await res.json();

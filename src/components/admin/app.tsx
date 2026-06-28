@@ -690,7 +690,7 @@ function ProductForm({ product, categories, onClose, onSaved }: {
               <SelectTrigger className="bg-pink-50/50"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.emoji} {c.nameEn}</SelectItem>
+                  <SelectItem key={c.id} value={c.id}>{c.nameEn}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

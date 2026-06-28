@@ -285,9 +285,6 @@ export function Storefront() {
                   : "border-pink-100 bg-white hover:border-pink-300"
               }`}
             >
-              <div className="text-5xl mb-2 group-hover:scale-110 transition-transform">
-                {c.emoji}
-              </div>
               <div className="font-semibold text-pink-800 text-sm sm:text-base">
                 {pickLang(c, lang)}
               </div>
@@ -336,7 +333,7 @@ export function Storefront() {
                       : "border-pink-200 text-pink-700"
                   }
                 >
-                  {c.emoji} {pickLang(c, lang)}
+{pickLang(c, lang)}
                 </Button>
               ))}
             </div>
@@ -398,8 +395,8 @@ export function Storefront() {
         )}
       </section>
 
-      {/* FEATURED PRODUCTS */}
-      {featured.length > 0 && (
+      {/* FEATURED PRODUCTS — hidden when a category filter is active */}
+      {featured.length > 0 && activeCat === "all" && (
         <section className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-pink-900 mb-4 sm:mb-6 flex items-center gap-2" style={{ fontFamily: "var(--font-playfair)" }}>
             <TrendingUp size={24} className="text-pink-600" /> {t("sections.featured", lang)}

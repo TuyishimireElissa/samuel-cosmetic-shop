@@ -104,25 +104,25 @@ export function ShopHeader({
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/85 border-b border-pink-100 shadow-sm">
-      <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto max-w-7xl px-2 sm:px-4 py-2 sm:py-3 flex items-center gap-1.5 sm:gap-3">
         {/* Logo */}
         <button
           onClick={() => onNav("home")}
-          className="flex items-center gap-2 shrink-0"
+          className="flex items-center gap-1.5 sm:gap-2 shrink-0"
           aria-label="Samuel Cosmetic Shop home"
         >
           {logoUrl ? (
-            <img src={logoUrl} alt="Samuel Cosmetic Shop" className="w-10 h-10 rounded-full object-cover shadow-md" />
+            <img src={logoUrl} alt="Samuel Cosmetic Shop" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shadow-md" />
           ) : (
-            <span className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white grid place-items-center text-xl shadow-md">
+            <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 text-white grid place-items-center text-base sm:text-xl shadow-md">
               {logoEmoji}
             </span>
           )}
           <div className="leading-tight text-left">
-            <div className="font-bold text-[13px] sm:text-[15px]" style={{ fontFamily: "var(--font-playfair)" }}>
+            <div className="font-bold text-[12px] sm:text-[15px]" style={{ fontFamily: "var(--font-playfair)" }}>
               Samuel
             </div>
-            <div className="text-[9px] sm:text-[10px] text-pink-600 uppercase tracking-wider hidden sm:block">
+            <div className="text-[8px] sm:text-[10px] text-pink-600 uppercase tracking-wider hidden sm:block">
               Kigali · Rwanda
             </div>
           </div>
@@ -139,21 +139,21 @@ export function ShopHeader({
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-1 sm:gap-2 ml-auto">
+        <div className="flex items-center gap-0.5 sm:gap-2 ml-auto">
           {/* Language */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-10 px-2 text-sm hover:bg-pink-50"
+                className="h-9 sm:h-10 px-1.5 sm:px-2 text-sm hover:bg-pink-50"
                 aria-label="Change language"
               >
                 <Globe size={16} className="text-pink-500" />
                 <span className="ml-1 hidden sm:inline">
                   {LANGS.find((l) => l.code === lang)?.flag} {lang.toUpperCase()}
                 </span>
-                <ChevronDown size={14} className="opacity-60" />
+                <ChevronDown size={14} className="opacity-60 hidden sm:block" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">
@@ -177,11 +177,11 @@ export function ShopHeader({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-10 px-2 text-sm hover:bg-pink-50"
+                className="h-9 sm:h-10 px-1.5 sm:px-2 text-xs sm:text-sm hover:bg-pink-50"
                 aria-label="Change currency"
               >
                 <span className="font-semibold">{currency}</span>
-                <ChevronDown size={14} className="opacity-60" />
+                <ChevronDown size={14} className="opacity-60 hidden sm:block" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
@@ -212,11 +212,12 @@ export function ShopHeader({
           <Button
             variant="ghost"
             size="sm"
-            className={`h-10 px-2 relative hover:bg-pink-50 ${bounce ? "bounce-once" : ""}`}
+            className={`h-9 sm:h-10 px-1.5 sm:px-2 relative hover:bg-pink-50 ${bounce ? "bounce-once" : ""}`}
             onClick={() => setCartOpen(true)}
             aria-label={`Cart with ${count} items`}
           >
-            <ShoppingCart size={20} className="text-pink-600" />
+            <ShoppingCart size={18} className="text-pink-600 sm:hidden" />
+            <ShoppingCart size={20} className="text-pink-600 hidden sm:block" />
             {count > 0 && (
               <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-pink-600 text-white text-[10px] font-bold grid place-items-center">
                 {count}
@@ -229,7 +230,7 @@ export function ShopHeader({
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 h-10 w-10 sm:w-auto sm:px-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold transition-colors shadow-sm shrink-0"
+            className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-10 w-9 sm:w-auto sm:px-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold transition-colors shadow-sm shrink-0"
             aria-label="Chat with us on WhatsApp"
           >
             <WhatsAppIcon size={16} />
@@ -241,7 +242,7 @@ export function ShopHeader({
             variant="ghost"
             size="sm"
             onClick={enterAdmin}
-            className="h-10 px-2 text-xs text-pink-700 hover:bg-pink-100"
+            className="h-9 sm:h-10 px-1.5 sm:px-2 text-[10px] sm:text-xs text-pink-700 hover:bg-pink-100 shrink-0"
             aria-label="Admin login"
           >
             Admin
@@ -251,7 +252,7 @@ export function ShopHeader({
           <Button
             variant="ghost"
             size="sm"
-            className="md:hidden h-10 w-10 p-0"
+            className="md:hidden h-9 w-9 p-0 shrink-0"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Menu"
           >

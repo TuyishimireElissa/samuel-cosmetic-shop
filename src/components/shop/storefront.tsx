@@ -407,8 +407,8 @@ export function Storefront() {
               className="border-pink-200 text-pink-700 hover:bg-pink-50"
               title={t("search.photo", lang)}
             >
-              <Camera size={14} className="sm:mr-1" />
-              <span className="hidden sm:inline">{t("search.photo", lang)}</span>
+              <Camera size={14} className="mr-1" />
+              <span>{t("search.photo", lang)}</span>
             </Button>
           </div>
         </div>

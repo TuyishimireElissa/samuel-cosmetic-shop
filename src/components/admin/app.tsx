@@ -568,10 +568,10 @@ function ProductsView() {
               <thead className="bg-pink-50/50 text-pink-800">
                 <tr>
                   <th className="text-left p-3 font-semibold">Product</th>
-                  <th className="text-left p-3 font-semibold hidden sm:table-cell">SKU</th>
+                  <th className="text-left p-3 font-semibold">SKU</th>
                   <th className="text-left p-3 font-semibold">Cost HT</th>
                   <th className="text-left p-3 font-semibold">Sell TTC</th>
-                  <th className="text-left p-3 font-semibold hidden md:table-cell">Margin</th>
+                  <th className="text-left p-3 font-semibold">Margin</th>
                   <th className="text-left p-3 font-semibold">Stock</th>
                   <th className="text-right p-3 font-semibold">{t("admin.orders.actions", lang)}</th>
                 </tr>
@@ -590,10 +590,10 @@ function ProductsView() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-3 hidden sm:table-cell font-mono text-xs">{p.sku}</td>
+                      <td className="p-3 font-mono text-xs">{p.sku}</td>
                       <td className="p-3 text-xs">{formatPrice(p.costPrice, currency)}</td>
                       <td className="p-3 font-semibold text-pink-700">{formatPrice(p.sellingPrice, currency)}</td>
-                      <td className="p-3 hidden md:table-cell">
+                      <td className="p-3">
                         <Badge className={margin > 30 ? "bg-green-100 text-green-700" : margin > 15 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700"}>
                           {margin}%
                         </Badge>
@@ -1234,11 +1234,11 @@ function VatView() {
               <tr>
                 <th className="text-left p-3 font-semibold">Date</th>
                 <th className="text-left p-3 font-semibold">Receipt #</th>
-                <th className="text-left p-3 font-semibold hidden sm:table-cell">Customer</th>
+                <th className="text-left p-3 font-semibold">Customer</th>
                 <th className="text-right p-3 font-semibold">HT</th>
                 <th className="text-right p-3 font-semibold">TVA</th>
                 <th className="text-right p-3 font-semibold">TTC</th>
-                <th className="text-left p-3 font-semibold hidden md:table-cell">MRC</th>
+                <th className="text-left p-3 font-semibold">MRC</th>
               </tr>
             </thead>
             <tbody>
@@ -1253,14 +1253,14 @@ function VatView() {
                   <tr key={r.orderNumber} className="border-t border-pink-50 hover:bg-pink-50/30">
                     <td className="p-3 text-xs">{new Date(r.date).toLocaleDateString()}</td>
                     <td className="p-3 font-mono text-xs">{r.receiptNumber || r.orderNumber}</td>
-                    <td className="p-3 hidden sm:table-cell">
+                    <td className="p-3">
                       <div className="font-medium text-xs">{r.customer}</div>
                       <div className="text-[10px] text-muted-foreground">{r.customerPhone}</div>
                     </td>
                     <td className="p-3 text-right text-xs">{formatPrice(r.subtotalHT, currency)}</td>
                     <td className="p-3 text-right text-xs text-purple-700">{formatPrice(r.vatAmount, currency)}</td>
                     <td className="p-3 text-right font-semibold text-pink-700 text-xs">{formatPrice(r.totalTTC, currency)}</td>
-                    <td className="p-3 hidden md:table-cell font-mono text-[10px]">{r.mrcCode}</td>
+                    <td className="p-3 font-mono text-[10px]">{r.mrcCode}</td>
                   </tr>
                 ))
               )}
@@ -1268,11 +1268,11 @@ function VatView() {
             {data.rows.length > 0 && (
               <tfoot className="bg-pink-100/50 font-bold">
                 <tr>
-                  <td colSpan={3} className="p-3 text-right">TOTALS:</td>
+                  <td colSpan={2} className="p-3 text-right">TOTALS:</td>
                   <td className="p-3 text-right text-pink-700">{formatPrice(data.totals.salesHT, currency)}</td>
                   <td className="p-3 text-right text-purple-700">{formatPrice(data.totals.collected, currency)}</td>
                   <td className="p-3 text-right text-green-700">{formatPrice(data.totals.salesTTC, currency)}</td>
-                  <td className="p-3 hidden md:table-cell"></td>
+                  <td className="p-3"></td>
                 </tr>
               </tfoot>
             )}

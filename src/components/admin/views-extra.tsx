@@ -58,8 +58,8 @@ export function CustomersView() {
       <div className="relative max-w-md"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400" /><Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("common.search", lang)+"..."} className="pl-9 h-10 bg-white border-pink-100" /></div>
       {loading ? <div className="text-center py-10">{t("admin.loading", lang)}</div> : (
         <div className="bg-white rounded-2xl border border-pink-100 overflow-x-auto">
-          <table className="w-full text-sm"><thead className="bg-pink-50/50 text-pink-800"><tr><th className="text-left p-3">{t("admin.staff.name", lang)}</th><th className="text-left p-3 hidden sm:table-cell">{t("admin.staff.username", lang)}</th><th className="text-right p-3">{t("admin.portal.orders", lang)}</th><th className="text-right p-3">{t("admin.portal.spent", lang)}</th><th className="text-center p-3">{t("admin.portal.tier", lang)}</th><th className="text-right p-3">{t("admin.edit", lang)}</th></tr></thead>
-            <tbody>{filtered.map(c => (<tr key={c.id} className="border-t border-pink-50 hover:bg-pink-50/30"><td className="p-3 font-medium">{c.name}</td><td className="p-3 hidden sm:table-cell text-xs">{c.phone}</td><td className="p-3 text-right">{c.totalOrders}</td><td className="p-3 text-right font-semibold text-pink-700">{formatPrice(c.totalSpent, currency)}</td><td className="p-3 text-center"><Badge className={`text-[10px] capitalize ${tierColors[c.tier]}`}>{c.tier}</Badge></td><td className="p-3 text-right"><Button size="sm" variant="ghost" onClick={() => setEdit(c)} aria-label={t("admin.edit", lang)}><Eye size={14} /></Button></td></tr>))}</tbody>
+          <table className="w-full text-sm"><thead className="bg-pink-50/50 text-pink-800"><tr><th className="text-left p-3">{t("admin.staff.name", lang)}</th><th className="text-left p-3">{t("admin.staff.username", lang)}</th><th className="text-right p-3">{t("admin.portal.orders", lang)}</th><th className="text-right p-3">{t("admin.portal.spent", lang)}</th><th className="text-center p-3">{t("admin.portal.tier", lang)}</th><th className="text-right p-3">{t("admin.edit", lang)}</th></tr></thead>
+            <tbody>{filtered.map(c => (<tr key={c.id} className="border-t border-pink-50 hover:bg-pink-50/30"><td className="p-3 font-medium">{c.name}</td><td className="p-3 text-xs">{c.phone}</td><td className="p-3 text-right">{c.totalOrders}</td><td className="p-3 text-right font-semibold text-pink-700">{formatPrice(c.totalSpent, currency)}</td><td className="p-3 text-center"><Badge className={`text-[10px] capitalize ${tierColors[c.tier]}`}>{c.tier}</Badge></td><td className="p-3 text-right"><Button size="sm" variant="ghost" onClick={() => setEdit(c)} aria-label={t("admin.edit", lang)}><Eye size={14} /></Button></td></tr>))}</tbody>
           </table>
         </div>
       )}
@@ -525,7 +525,7 @@ export function CategoriesView() {
             <tr>
               <th className="text-left p-3">{t("admin.category.id", lang)}</th>
               <th className="text-left p-3">{t("admin.category.nameEn", lang)}</th>
-              <th className="text-left p-3 hidden sm:table-cell">{t("admin.category.nameRw", lang)}</th>
+              <th className="text-left p-3">{t("admin.category.nameRw", lang)}</th>
               <th className="text-center p-3">{t("admin.category.products", lang)}</th>
               <th className="text-center p-3">{t("admin.category.active", lang)}</th>
               <th className="text-right p-3">{t("admin.edit", lang)}</th>
@@ -536,7 +536,7 @@ export function CategoriesView() {
               <tr key={c.id} className="border-t border-pink-50 hover:bg-pink-50/30">
                 <td className="p-3 font-mono text-xs">{c.id}</td>
                 <td className="p-3 font-medium">{c.nameEn}</td>
-                <td className="p-3 hidden sm:table-cell text-xs">{c.nameRw}</td>
+                <td className="p-3 text-xs">{c.nameRw}</td>
                 <td className="p-3 text-center">{c._count?.products || 0}</td>
                 <td className="p-3 text-center">
                   <Badge className={c.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}>{c.isActive ? t("admin.active", lang) : t("admin.off", lang)}</Badge>

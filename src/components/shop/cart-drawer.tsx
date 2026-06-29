@@ -286,7 +286,7 @@ export function CartDrawer() {
                       {done ? "✓" : i + 1}
                     </div>
                     <span
-                      className={`hidden sm:inline ${active ? "font-semibold text-pink-700" : "text-muted-foreground"}`}
+                      className={`text-[10px] sm:text-xs ${active ? "font-semibold text-pink-700" : "text-muted-foreground"}`}
                     >
                       {s.label}
                     </span>

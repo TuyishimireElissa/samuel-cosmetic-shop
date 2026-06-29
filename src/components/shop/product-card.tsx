@@ -71,7 +71,7 @@ export function ProductCard({ product, currency, onQuickView }: Props) {
         <div className="mt-auto pt-2 flex items-end justify-between gap-2">
           <div><div className="text-lg sm:text-xl font-bold text-pink-700 leading-none">{price}</div><div className="text-[10px] text-muted-foreground mt-0.5">{isWholesale ? "Wholesale · TTC" : "TTC · VAT 18%"}</div></div>
           <Button size="sm" onClick={handleAdd} disabled={outOfStock} className={`h-9 px-2 sm:px-3 shrink-0 ${added ? "bg-green-600" : "bg-pink-600 hover:bg-pink-700"}`}>
-            {added ? <><Check size={14} className="mr-1" /><span className="hidden sm:inline">{t("product.added", lang)}</span></> : <><ShoppingCart size={14} className="sm:mr-1" /><span className="hidden sm:inline">{t("product.addToCart", lang)}</span></>}
+            {added ? <><Check size={14} className="mr-1" />{t("product.added", lang)}</> : <><ShoppingCart size={14} className="mr-1" />{t("product.addToCart", lang)}</>}
           </Button>
         </div>
       </div>

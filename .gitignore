@@ -60,9 +60,8 @@ server.log
 # Database
 db/
 
-# Uploads (user-generated content)
+# Uploads (user-generated content) — only ignore the public/uploads directory
 public/uploads/
-upload/
 
 # Tool results (internal)
 tool-results/

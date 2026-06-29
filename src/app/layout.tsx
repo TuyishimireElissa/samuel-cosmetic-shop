@@ -64,6 +64,14 @@ const jsonLd = {
   sameAs: ["https://wa.me/250790215965"],
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#e75480",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

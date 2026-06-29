@@ -219,6 +219,61 @@ html { scroll-behavior: smooth; }
   .text-6xl { font-size: 2.25rem !important; }
 }
 
+/* Fluid typography with clamp() — scales smoothly from 320px to 1920px */
+.text-fluid-xs { font-size: clamp(0.7rem, 0.65rem + 0.2vw, 0.75rem); }
+.text-fluid-sm { font-size: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem); }
+.text-fluid-base { font-size: clamp(0.875rem, 0.82rem + 0.3vw, 1rem); }
+.text-fluid-lg { font-size: clamp(1rem, 0.95rem + 0.35vw, 1.125rem); }
+.text-fluid-xl { font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem); }
+.text-fluid-2xl { font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem); }
+.text-fluid-3xl { font-size: clamp(1.5rem, 1.3rem + 1vw, 1.875rem); }
+.text-fluid-4xl { font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem); }
+.text-fluid-5xl { font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3rem); }
+.text-fluid-6xl { font-size: clamp(2.5rem, 2rem + 3vw, 3.75rem); }
+
+/* Fluid spacing */
+.p-fluid { padding: clamp(0.5rem, 0.4rem + 0.5vw, 1rem); }
+.px-fluid { padding-left: clamp(0.75rem, 0.6rem + 0.8vw, 1.5rem); padding-right: clamp(0.75rem, 0.6rem + 0.8vw, 1.5rem); }
+.py-fluid { padding-top: clamp(0.75rem, 0.6rem + 0.8vw, 1.5rem); padding-bottom: clamp(0.75rem, 0.6rem + 0.8vw, 1.5rem); }
+.gap-fluid { gap: clamp(0.5rem, 0.4rem + 0.5vw, 1rem); }
+
+/* Responsive container — max-width adapts to screen */
+.container-fluid { width: 100%; margin-inline: auto; padding-inline: clamp(0.75rem, 0.5rem + 1vw, 2rem); }
+
+/* Prevent text overflow on small screens */
+.truncate-mobile { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 640px) {
+  .truncate-mobile-sm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
+}
+
+/* Responsive table — scroll horizontally on small screens */
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-responsive table { min-width: 500px; }
+
+/* Minimum tap target — 44x44px for touch devices */
+@media (pointer: coarse) {
+  button, [role="button"], a.btn, .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Responsive grid that adapts automatically */
+.grid-auto-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.5rem, 0.4rem + 0.5vw, 1.25rem);
+}
+
+/* Prevent layout shift on image load */
+img { max-width: 100%; height: auto; }
+
+/* Safe area insets for notched phones */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left { padding-left: env(safe-area-inset-left); }
+.safe-right { padding-right: env(safe-area-inset-right); }
+
 /* Better scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }

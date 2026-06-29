@@ -6,9 +6,9 @@ import { LANGS, t } from "@/lib/i18n";
 import { CURRENCIES } from "@/lib/format";
 import { WHATSAPP_LINK } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
+import { SearchSuggestions } from "./search-suggestions";
 import {
   ShoppingCart,
-  Search,
   Menu,
   X,
   Globe,
@@ -21,7 +21,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export function ShopHeader({
   onSearch,
@@ -101,16 +100,7 @@ export function ShopHeader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputVal]);
 
-  function submitSearch(e: React.FormEvent) {
-    e.preventDefault();
-    // Still honor the Enter key: propagate immediately (skip debounce).
-    onSearch(inputVal);
-  }
-
-  function clearSearch() {
-    setInputVal("");
-    onSearch("");
-  }
+  // submitSearch and clearSearch are handled by the SearchSuggestions component.
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/85 border-b border-pink-100 shadow-sm">
@@ -138,37 +128,15 @@ export function ShopHeader({
           </div>
         </button>
 
-        {/* Search (desktop) */}
-        <form
-          onSubmit={submitSearch}
-          className="hidden md:flex flex-1 max-w-xl mx-2 relative"
-        >
-          <Input
+        {/* Search (desktop) — with suggestions dropdown */}
+        <div className="hidden md:flex flex-1 max-w-xl mx-2">
+          <SearchSuggestions
             value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
+            onChange={setInputVal}
+            onSubmit={onSearch}
             placeholder={t("search.placeholder", lang)}
-            className="pr-10 h-11 bg-pink-50/50 border-pink-100 focus-visible:ring-pink-400"
-            aria-label="Search products"
           />
-          {inputVal ? (
-            <button
-              type="button"
-              onClick={clearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-pink-400 hover:text-pink-700 p-1 rounded-full hover:bg-pink-100"
-              aria-label={t("search.clear", lang)}
-            >
-              <X size={16} />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-pink-500 hover:text-pink-700"
-              aria-label="Search"
-            >
-              <Search size={18} />
-            </button>
-          )}
-        </form>
+        </div>
 
         {/* Right side */}
         <div className="flex items-center gap-1 sm:gap-2 ml-auto">
@@ -294,29 +262,12 @@ export function ShopHeader({
       {/* Mobile search */}
       {mobileOpen && (
         <div className="md:hidden px-4 pb-3 space-y-2 border-t border-pink-100 bg-white">
-          <form onSubmit={submitSearch} className="relative">
-            <Input
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              placeholder={t("search.placeholder", lang)}
-              className="pr-10 h-11 bg-pink-50/50 border-pink-100"
-              aria-label="Search products"
-            />
-            {inputVal ? (
-              <button
-                type="button"
-                onClick={clearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-pink-400 hover:text-pink-700"
-                aria-label={t("search.clear", lang)}
-              >
-                <X size={18} />
-              </button>
-            ) : (
-              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-pink-500">
-                <Search size={18} />
-              </button>
-            )}
-          </form>
+          <SearchSuggestions
+            value={inputVal}
+            onChange={setInputVal}
+            onSubmit={(v) => { onSearch(v); setMobileOpen(false); }}
+            placeholder={t("search.placeholder", lang)}
+          />
           <nav className="flex flex-col gap-1">
             {[
               { id: "home", label: t("nav.home", lang) },

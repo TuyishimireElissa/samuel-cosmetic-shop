@@ -118,11 +118,11 @@ export function ShopHeader({
               {logoEmoji}
             </span>
           )}
-          <div className="hidden sm:block leading-tight text-left">
-            <div className="font-bold text-[15px]" style={{ fontFamily: "var(--font-playfair)" }}>
-              Samuel Cosmetic
+          <div className="leading-tight text-left">
+            <div className="font-bold text-[13px] sm:text-[15px]" style={{ fontFamily: "var(--font-playfair)" }}>
+              Samuel
             </div>
-            <div className="text-[10px] text-pink-600 uppercase tracking-wider">
+            <div className="text-[9px] sm:text-[10px] text-pink-600 uppercase tracking-wider hidden sm:block">
               Kigali · Rwanda
             </div>
           </div>
@@ -198,12 +198,13 @@ export function ShopHeader({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Wholesale badge */}
+          {/* Wholesale badge — visible on all screens */}
           {wholesaleUser && wholesaleUser.status === "approved" && (
-            <div className="hidden sm:flex items-center gap-1 px-2 h-8 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-purple-500" />
-              {wholesaleUser.businessName}
-              <button onClick={wholesaleLogout} className="ml-1 text-purple-400 hover:text-purple-700">×</button>
+            <div className="flex items-center gap-1 px-1.5 sm:px-2 h-8 rounded-full bg-purple-100 text-purple-700 text-[10px] sm:text-xs font-semibold max-w-[60px] sm:max-w-none shrink-0">
+              <span className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
+              <span className="truncate sm:hidden">B2B</span>
+              <span className="truncate hidden sm:inline">{wholesaleUser.businessName}</span>
+              <button onClick={wholesaleLogout} className="ml-0.5 sm:ml-1 text-purple-400 hover:text-purple-700 shrink-0" aria-label="Wholesale logout">×</button>
             </div>
           )}
 
@@ -223,12 +224,12 @@ export function ShopHeader({
             )}
           </Button>
 
-          {/* WhatsApp */}
+          {/* WhatsApp — visible on all screens, icon-only on mobile */}
           <a
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 h-10 px-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center justify-center gap-1.5 h-10 w-10 sm:w-auto sm:px-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white text-sm font-semibold transition-colors shadow-sm shrink-0"
             aria-label="Chat with us on WhatsApp"
           >
             <WhatsAppIcon size={16} />
